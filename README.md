@@ -149,13 +149,13 @@
         schreibeZeile().
 
 # Fizzbuzz
-für jedes i von 1 bis 100 mache:
-    wenn i modulo 3 0 ist, dann:
-        schreibeZeile("Fizz").
-    wenn aber i modulo 5 0 ist, dann:
-        schreibeZeile("Buzz").
-    sonst:
-        schreibeZeile(i).
+    für jedes i von 1 bis 100 mache:
+        wenn i modulo 3 0 ist, dann:
+            schreibeZeile("Fizz").
+        wenn aber i modulo 5 0 ist, dann:
+            schreibeZeile("Buzz").
+        sonst:
+            schreibeZeile(i).
 
     wenn i modulo 3 0 ist und i modulo 5 0 ist, dann:
         schreibeZeile("FizzBuzz").
