@@ -129,7 +129,7 @@
 
 # Schleifen
     ## for
-        für jedes i von 1 bis 100 mache:
+        für jede Zahl i von 1 bis 100, mache:
             <anweisung>.
 
     ## while
@@ -149,7 +149,7 @@
         schreibeZeile().
 
 # Fizzbuzz
-    für jedes i von 1 bis 100 mache:
+    für jede Zahl i von 1 bis 100, mache:
         wenn i modulo 3 0 ist, dann:
             schreibeZeile("Fizz").
         wenn aber i modulo 5 0 ist, dann:
