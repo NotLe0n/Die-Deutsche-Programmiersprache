@@ -55,8 +55,8 @@
 - ## exponent
   `x ist 1 hoch 2.`
 
-- ## sqrt
-  `x ist 2. wurzel aus 9.`
+- ## root
+  `x ist n. wurzel aus 9.`
 
 # Mathematische Funktionen
 - ## Math.PI
