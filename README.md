@@ -264,7 +264,7 @@ wenn i modulo 3 0 ist und i modulo 5 0 ist, dann:
     schreibeZeile("FizzBuzz").
 ```
 
-# Syntaktische Fehlermeldung:
+# Fehlermeldungen:
 - ## Syntax Error
   `"[zeile x] Sprich Deutsch!"`
 - ## Divide by 0 Error
