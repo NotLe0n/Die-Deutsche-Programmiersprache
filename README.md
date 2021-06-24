@@ -58,6 +58,66 @@
 - ## sqrt
   `x ist 2. wurzel aus 9.`
 
+# Mathematische Funktionen
+- ## Math.PI
+  `x ist Pi.`
+  
+- ## Math.E
+  `x ist e hoch 5.`
+  
+- ## Math.Tau
+  `x ist tau.` 
+  
+- ## Math.Log
+  `x ist ln 2.`
+
+- ## Math.Abs
+  `x ist |-2|.`
+  
+- ## Math.Min
+  `x ist die kleinere zahl von y und z.`
+  
+- ## Math.Max
+  `x ist die größere zahl von y und z.`
+  
+- ## Math.Clamp
+  `x ist zwischen 2 und 4.`
+  
+- ## Math.Truncate
+  `x ist y ohne Kommazahlen.`
+  
+- ## Math.Round
+  `x ist 5.29 auf 1 stelle gerundet.`
+
+- ## Trigonometrische Funktionen
+
+- - ### Math.Sin
+  `x ist der Sinus von 2,4.`
+
+- - ### Math.Cos
+  `x ist der Kosinus von 2,4.`
+
+- - ### Math.Tan
+  `x ist der Tangens von 2,4.`
+
+- - ### Math.Asin
+  `x ist der Arkussinus von 2,4.`
+  
+- - ### Math.Acin
+  `x ist der Arkuskosinus von 2,4.`
+  
+- - ### Math.Atan
+  `x ist der Arkustangens von 2,4.`
+  
+- - ### Math.Sinh
+  `x ist der Hyperbelsinus von 2,4.`
+  
+- - ### Math.Cosh
+  `x ist der Hyperbelkosinus von 2,4.`
+  
+- - ### Math.Tanh
+  `x ist der Hyperbeltangens von 2,4.`
+
 # Bool'sche Operatoren
 - ## &&
   ```
@@ -180,6 +240,16 @@
 - ## Console.WriteLine()
   `schreibeZeile().`
 
+# Funktionen
+```
+funktion foo() macht:
+  <Anweisungen>.
+```
+
+# Kommentare
+- `// das ist ein Kommentar!`
+- `/* das ist ein mehrzeiliges Kommentar! */`
+
 # Fizzbuzz
 ```
 für jede Zahl i von 1 bis 100, mache:
@@ -196,8 +266,10 @@ wenn i modulo 3 0 ist und i modulo 5 0 ist, dann:
 
 # Syntaktische Fehlermeldung:
 - ## Syntax Error
-  `"[zeile x] Sprich Deutsch du Hurensohn."`
+  `"[zeile x] Sprich Deutsch!"`
 - ## Divide by 0 Error
-  `"[zeile x] bruh, durch 0 kann man nicht teilen."`
+  `"[zeile x] bruh, durch 0 kann man nicht teilen!"`
 - ## Typ Error
   `"[zeile x] mischen kann man nicht..."`
+- ## Punkt error
+  `"[zeile x] Satzzeichen gibts auch noch!"`
