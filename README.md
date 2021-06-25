@@ -188,6 +188,22 @@
       der boolean x ist wahr.
   ```
 
+# Bitweise operatoren
+- ## <<
+  `die Zahl x ist y um 1 bit nach links verschoben.`
+  
+- ## >>
+  `die Zahl x ist y um 1 bit nach rechts verschoben.`
+
+- ## & 
+  `die Zahl x ist logisch y und z.`
+
+- ## |
+  `die Zahl x ist logisch y oder z.`
+
+- ## ~
+  `die Zahl x ist logisch nicht y.`
+
 # Verzweigungen
 - ## if
   ```
@@ -215,8 +231,14 @@
 
 # Schleifen
 - ## for
+  ### Hochzählende
   ```
   für jede Zahl i von 1 bis 100, mache:
+      <anweisung>.
+  ```
+  ### Runterzählende
+    ```
+  für jede Zahl i von 100 bis 1, mache:
       <anweisung>.
   ```
 
