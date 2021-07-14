@@ -373,7 +373,7 @@ namespace DDP
 
         private Expression Comparison()
         {
-            Expression expr = Term();
+            Expression expr = Bitweise();
 
             while (Match(GRÖßER, KLEINER))
             {
@@ -396,7 +396,33 @@ namespace DDP
                         op.type = GRÖßER_GLEICH;
                 }
 
+                Expression right = Bitweise();
+                expr = new Expression.Binary(expr, op, right);
+            }
+
+            return expr;
+        }
+
+        private Expression Bitweise()
+        {
+            while (Match(LOGISCH))
+            {
+                Expression _expr = Term();
+                Token op = Advance();
                 Expression right = Term();
+                return new Expression.Binary(_expr, op, right);
+            }
+
+            Expression expr = Term();
+
+            while (Match(UM))
+            {
+                Expression right = Term();
+                Consume(BIT, "fehlt bit");
+                Consume(NACH, "fehlt nach");
+                Token op = Advance();
+                Consume(VERSCHOBEN, "fehlt verschoben");
+
                 expr = new Expression.Binary(expr, op, right);
             }
 
@@ -469,6 +495,20 @@ namespace DDP
 
         private Expression Unary()
         {
+            if (Match(LOGISCH))
+            {
+                if (Match(NICHT))
+                {
+                    Token op = Previous();
+                    Expression right = Unary();
+                    return new Expression.Unary(op, right);
+                }
+                else
+                {
+                    current--;
+                }
+            }
+
             if (Match(LOG))
             {
                 Token op = Previous();

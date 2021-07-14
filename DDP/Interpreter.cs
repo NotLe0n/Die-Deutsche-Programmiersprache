@@ -268,6 +268,21 @@ namespace DDP
                 case WURZEL:
                     CheckNumberOperands(expr.op, left, right);
                     return Math.Pow((double)left, 1 / (double)right);
+                case UND:
+                    CheckNumberOperands(expr.op, left, right);
+                    return (int)left & (int)right;
+                case ODER:
+                    CheckNumberOperands(expr.op, left, right);
+                    return (int)left | (int)right;
+                case KONTRA:
+                    CheckNumberOperands(expr.op, left, right);
+                    return (int)left ^ (int)right;
+                case LINKS:
+                    CheckNumberOperands(expr.op, left, right);
+                    return (int)left << (int)right;
+                case RECHTS:
+                    CheckNumberOperands(expr.op, left, right);
+                    return (int)left >> (int)right;
             }
 
             // Unreachable.
@@ -331,7 +346,15 @@ namespace DDP
             switch (expr.op.type)
             {
                 case NICHT:
-                    return !IsTruthy(right);
+                    if (right is bool)
+                    {
+                        return !IsTruthy(right);
+                    }
+                    else if (right is int)
+                    {
+                        return ~(int)right;
+                    }
+                    break;
                 case BANG_MINUS:
                     CheckNumberOperand(expr.op, right);
 
@@ -376,7 +399,7 @@ namespace DDP
                 return globals.Get(name);
             }
         }
-
+        
         private void CheckNumberOperand(Token op, object operand)
         {
             if (operand is double || operand is int) return;

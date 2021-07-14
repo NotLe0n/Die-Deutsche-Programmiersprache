@@ -8,7 +8,10 @@
         L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT, TAB, STRICH,
 
         // Mathematische operatoren
-        PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG,
+        PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, 
+
+        // Bitweise operatoren
+        LOGISCH, KONTRA, UM, BIT, NACH, LINKS, RECHTS, VERSCHOBEN,
 
         // Vergleichs operatoren
         NICHT, UNGLEICH, GLEICH,

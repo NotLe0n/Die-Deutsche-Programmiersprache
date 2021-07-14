@@ -20,8 +20,7 @@ namespace DDP
             { "vom", VOM },
             { "Typ", TYP },
 
-            { "print", PRINT },
-            { "ist", IST },
+            { "schreibe", PRINT },
 
             // verzweigungen
             { "wenn", WENN },
@@ -61,6 +60,7 @@ namespace DDP
             { "Zeichen", ZEICHEN },
 
             // mathematische operatoren
+            { "ist", IST },
             { "plus", PLUS },
             { "minus", MINUS },
             { "mal", MAL },
@@ -78,6 +78,16 @@ namespace DDP
             { "größer", GRÖßER },
             { "größer als, oder gleich", GRÖßER_GLEICH },
             { "als", ALS },
+
+            // bitweise operatoren
+            { "logisch", LOGISCH },
+            { "kontra", KONTRA },
+            { "um", UM },
+            { "bit", BIT },
+            { "nach", NACH },
+            { "links", LINKS },
+            { "rechts", RECHTS },
+            { "verschoben", VERSCHOBEN },
 
             // konstante
             { "Pi", PI },
