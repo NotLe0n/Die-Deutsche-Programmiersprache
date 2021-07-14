@@ -21,6 +21,7 @@ namespace DDP
             globals.Define("schreibe", new Schreibe());
             globals.Define("schreibeZeile", new SchreibeZeile());
             globals.Define("lese", new Lese());
+            globals.Define("leseZeile", new LeseZeile());
         }
 
 

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace DDP
 {
-    class Lese : ICallable
+    class LeseZeile : ICallable
     {
         public int Arity => 0;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            return Console.Read();
+            return Console.ReadLine();
         }
 
         public override string ToString() => "<native fn>";
