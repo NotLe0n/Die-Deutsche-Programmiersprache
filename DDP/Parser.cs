@@ -218,7 +218,7 @@ namespace DDP
 
             // handle parameters
             Consume(L_KLAMMER, "da fehlt linke klammer");
-            
+
             do
             {
                 if (parameters.Count >= 255)

@@ -121,7 +121,7 @@ namespace DDP
                 value = Evaluate(stmt.initializer);
             }
 
-            switch (stmt.type.type) 
+            switch (stmt.type.type)
             {
                 case ZAHL:
                     if (value is not int)
@@ -261,12 +261,12 @@ namespace DDP
                         return (int)left - (int)right;
                     break;
                 case PLUS:
-                    if (left is double dlval && right is double drval)  
+                    if (left is double dlval && right is double drval)
                         return dlval + drval;
-                    
+
                     if (left is int ilval && right is int irval)
                         return ilval + irval;
-                    
+
                     if (left is string lstr && right is string rstr)
                     {
                         return lstr + rstr;
@@ -416,7 +416,7 @@ namespace DDP
                 return globals.Get(name);
             }
         }
-        
+
         private void CheckNumberOperand(Token op, object operand)
         {
             if (operand is double || operand is int) return;

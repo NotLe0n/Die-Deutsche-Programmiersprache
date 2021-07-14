@@ -298,7 +298,7 @@ namespace DDP
 
             if (source[start..current].Contains(","))
             {
-                AddToken(FLOAT, double.Parse(source[start..current], NumberStyles.Float, new CultureInfo("de-DE"))); 
+                AddToken(FLOAT, double.Parse(source[start..current], NumberStyles.Float, new CultureInfo("de-DE")));
             }
             else
             {

@@ -17,7 +17,7 @@ namespace DDP
         private enum FunctionType
         {
             NONE,
-            FUNCTION       
+            FUNCTION
         }
 
         public void Resolve(List<Statement> statements)

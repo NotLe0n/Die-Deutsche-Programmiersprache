@@ -39,7 +39,7 @@
         FUNKTION, GIB, MACHT, ZURÜCK, VOM, TYP,
 
         // Konstante
-        PI, E, TAU, 
+        PI, E, TAU,
 
         EOF
     }
