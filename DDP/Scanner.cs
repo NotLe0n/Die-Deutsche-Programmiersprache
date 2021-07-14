@@ -12,41 +12,6 @@ namespace DDP
 
         private readonly Dictionary<string, TokenType> keywords = new()
         {
-            // funktionen
-            { "funktion", FUNKTION },
-            { "macht", MACHT },
-            { "gib", GIB },
-            { "zurück", ZURÜCK },
-            { "vom", VOM },
-            { "Typ", TYP },
-
-            { "schreibe", PRINT },
-
-            // verzweigungen
-            { "wenn", WENN },
-            { "aber", ABER },
-            { "dann", DANN },
-            { "sonst", SONST },
-
-            // schleifen
-            { "für", FÜR },
-            { "solange", SOLANGE },
-            { "mache", MACHE },
-            { "jede", JEDE },
-            { "von", VON },
-            { "bis", BIS },
-            { "schrittgröße", SCHRITTGRÖßE },
-            { "mit", MIT },
-
-            // logische operatoren
-            { "und", UND },
-            { "oder", ODER },
-            { "nicht", NICHT },
-
-            // boolean
-            { "wahr", WAHR },
-            { "falsch", FALSCH },
-
             // Artikel
             { "der", DER },
             { "die", DIE },
@@ -58,6 +23,10 @@ namespace DDP
             { "Boolean", BOOLEAN },
             { "Zeichenkette", ZEICHENKETTE },
             { "Zeichen", ZEICHEN },
+
+            // boolean
+            { "wahr", WAHR },
+            { "falsch", FALSCH },
 
             // mathematische operatoren
             { "ist", IST },
@@ -92,7 +61,38 @@ namespace DDP
             // konstante
             { "Pi", PI },
             { "e", E },
-            { "Tau", TAU }
+            { "Tau", TAU },
+
+            // logische operatoren
+            { "und", UND },
+            { "oder", ODER },
+            { "nicht", NICHT },
+
+            // verzweigungen
+            { "wenn", WENN },
+            { "aber", ABER },
+            { "dann", DANN },
+            { "sonst", SONST },
+
+            // schleifen
+            { "für", FÜR },
+            { "solange", SOLANGE },
+            { "mache", MACHE },
+            { "jede", JEDE },
+            { "von", VON },
+            { "bis", BIS },
+            { "schrittgröße", SCHRITTGRÖßE },
+            { "mit", MIT },
+
+            // funktionen
+            { "funktion", FUNKTION },
+            { "macht", MACHT },
+            { "gib", GIB },
+            { "zurück", ZURÜCK },
+            { "vom", VOM },
+            { "Typ", TYP },
+
+            { "schreibe", PRINT }
         };
 
         private bool IsAtEnd => current >= source.Length;

@@ -2,13 +2,20 @@
 {
     public enum TokenType
     {
-        IST,
-
-        // Single-character tokens.
+        // Einzelne Charaktere
         L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT, TAB, STRICH,
 
+        // Artikel
+        DER, DIE, DAS,
+
+        // Typen
+        ZAHL, FLIEßKOMMAZAHL, BOOLEAN, ZEICHENKETTE, ZEICHEN,
+
+        // Literals.
+        IDENTIFIER, INT, FLOAT, STRING, CHAR, WAHR, FALSCH,
+
         // Mathematische operatoren
-        PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, 
+        IST, PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, 
 
         // Bitweise operatoren
         LOGISCH, KONTRA, UM, BIT, NACH, LINKS, RECHTS, VERSCHOBEN,
@@ -27,18 +34,6 @@
 
         // schleifen
         FÜR, SOLANGE, MACHE, JEDE, VON, BIS, SCHRITTGRÖßE, MIT,
-
-        // boolean
-        WAHR, FALSCH,
-
-        // Typen
-        ZAHL, FLIEßKOMMAZAHL, BOOLEAN, ZEICHENKETTE, ZEICHEN,
-
-        // Artikel
-        DER, DIE, DAS,
-
-        // Literals.
-        IDENTIFIER, INT, FLOAT, STRING, CHAR,
 
         // funktionen
         FUNKTION, GIB, MACHT, ZURÜCK, VOM, TYP,
