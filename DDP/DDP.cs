@@ -15,7 +15,7 @@ namespace DDP
         {
             if (args.Length > 1)
             {
-                Console.WriteLine("Usage: jlox [script]");
+                Console.WriteLine("Usage: DDP [script]");
                 System.Environment.Exit(64);
             }
             else if (args.Length == 1)
