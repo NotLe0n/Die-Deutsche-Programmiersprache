@@ -13,7 +13,6 @@ namespace DDP
             public R VisitExpressionStmt(Expression stmt);
             public R VisitFunctionStmt(Function stmt);
             public R VisitIfStmt(If stmt);
-            public R VisitPrintStmt(Print stmt);
             public R VisitReturnStmt(Return stmt);
             public R VisitVarStmt(Var stmt);
             public R VisitWhileStmt(While stmt);
@@ -109,21 +108,6 @@ namespace DDP
             public readonly global::DDP.Expression condition;
             public readonly Statement thenBranch;
             public readonly Statement elseBranch;
-        }
-
-        public class Print : Statement
-        {
-            public Print(global::DDP.Expression expression)
-            {
-                this.expression = expression;
-            }
-
-            public override R Accept<R>(IVisitor<R> visitor)
-            {
-                return visitor.VisitPrintStmt(this);
-            }
-
-            public readonly global::DDP.Expression expression;
         }
 
         public class Return : Statement

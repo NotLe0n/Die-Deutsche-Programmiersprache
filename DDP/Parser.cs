@@ -51,7 +51,6 @@ namespace DDP
         {
             if (Match(FÜR)) return ForStatement();
             if (Match(WENN)) return IfStatement();
-            if (Match(PRINT)) return PrintStatement();
             if (Match(GIB)) return ReturnStatement();
             if (Match(SOLANGE)) return WhileStatement();
             if (Match(MACHE)) return DoWhileStatement();
@@ -143,13 +142,6 @@ namespace DDP
             }
 
             return new Statement.If(condition, thenBranch, elseBranch);
-        }
-
-        private Statement PrintStatement()
-        {
-            Expression value = Expression();
-            Consume(PUNKT, "Satzzeichen beachten! Ein Punkt muss nach einer print Anweisung folgen!");
-            return new Statement.Print(value);
         }
 
         private Statement VarDeclaration(TokenType artikel)
@@ -713,7 +705,6 @@ namespace DDP
                     case FÜR:
                     case WENN:
                     case SOLANGE:
-                    case PRINT:
                     case GIB:
                         return;
                 }

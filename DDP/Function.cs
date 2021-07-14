@@ -19,10 +19,7 @@ namespace DDP
             return "<fn " + declaration.name.lexeme + ">";
         }
 
-        public int Arity()
-        {
-            return declaration.param.Count;
-        }
+        public int Arity => declaration.param.Count;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {

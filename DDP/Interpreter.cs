@@ -18,6 +18,8 @@ namespace DDP
             environment = globals;
 
             globals.Define("clock", new Clock());
+            globals.Define("schreibe", new Schreibe());
+            globals.Define("lese", new Lese());
         }
 
 
@@ -99,13 +101,6 @@ namespace DDP
             {
                 Execute(stmt.elseBranch);
             }
-            return null;
-        }
-
-        public object VisitPrintStmt(Statement.Print stmt)
-        {
-            object value = Evaluate(stmt.expression);
-            Console.WriteLine(Stringify(value));
             return null;
         }
 
@@ -305,9 +300,9 @@ namespace DDP
             }
 
             ICallable function = (ICallable)callee;
-            if (arguments.Count != function.Arity())
+            if (arguments.Count != function.Arity)
             {
-                throw new RuntimeError(expr.paren, $"Expected {function.Arity()} arguments but got {arguments.Count}.");
+                throw new RuntimeError(expr.paren, $"Expected {function.Arity} arguments but got {arguments.Count}.");
             }
 
             return function.Call(this, arguments);

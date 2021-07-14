@@ -90,9 +90,7 @@ namespace DDP
             { "gib", GIB },
             { "zurück", ZURÜCK },
             { "vom", VOM },
-            { "Typ", TYP },
-
-            { "schreibe", PRINT }
+            { "Typ", TYP }
         };
 
         private bool IsAtEnd => current >= source.Length;

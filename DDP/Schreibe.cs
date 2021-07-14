@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DDP
 {
-    class Clock : ICallable
+    class Schreibe : ICallable
     {
-        public int Arity => 0;
+        public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            return (DateTime.UtcNow - Process.GetCurrentProcess().StartTime.ToUniversalTime()).TotalMilliseconds / 1000.0;
+            Console.WriteLine(arguments[0]);
+            return null;
         }
 
         public override string ToString() => "<native fn>";

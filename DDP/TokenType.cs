@@ -38,9 +38,6 @@
         // funktionen
         FUNKTION, GIB, MACHT, ZURÜCK, VOM, TYP,
 
-        // Amon Gus
-        PRINT,
-
         // Konstante
         PI, E, TAU, 
 

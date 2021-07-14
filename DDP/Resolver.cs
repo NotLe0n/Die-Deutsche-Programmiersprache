@@ -87,12 +87,6 @@ namespace DDP
             return null;
         }
 
-        public object VisitPrintStmt(Statement.Print stmt)
-        {
-            Resolve(stmt.expression);
-            return null;
-        }
-
         public object VisitReturnStmt(Statement.Return stmt)
         {
             if (currentFunction == FunctionType.NONE)
