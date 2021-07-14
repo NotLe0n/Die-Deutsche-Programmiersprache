@@ -38,6 +38,7 @@ namespace DDP
             { "hoch", HOCH },
             { "wurzel", WURZEL },
             { "ln", LOG },
+            { "Betrag", BETRAG }, // oder Absolutwert (wir haben uns um den namen gestritten)
 
             // bool'sche vergleichs operatoren
             { "gleich", GLEICH },
@@ -140,7 +141,6 @@ namespace DDP
                         while (Peek() != '\n' && !IsAtEnd) Advance();
                     }
                     break;
-                case '|': AddToken(STRICH); break;
 
                 // tabs have special meaning
                 case '\t': AddToken(TAB); break;

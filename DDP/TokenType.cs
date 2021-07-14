@@ -3,7 +3,7 @@
     public enum TokenType
     {
         // Einzelne Charaktere
-        L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT, TAB, STRICH,
+        L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT, TAB,
 
         // Artikel
         DER, DIE, DAS,
@@ -15,7 +15,7 @@
         IDENTIFIER, INT, FLOAT, STRING, CHAR, WAHR, FALSCH,
 
         // Mathematische operatoren
-        IST, PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, 
+        IST, PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, BETRAG,
 
         // Bitweise operatoren
         LOGISCH, KONTRA, UM, BIT, NACH, LINKS, RECHTS, VERSCHOBEN,

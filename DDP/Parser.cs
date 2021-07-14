@@ -508,12 +508,19 @@ namespace DDP
                 return new Expression.Unary(op, right);
             }
 
-            if (Match(STRICH))
+            if (Match(DER))
             {
-                Token op = Previous();
-                Expression right = Unary();
-                Consume(STRICH, "wo strich :(");
-                return new Expression.Unary(op, right);
+                if (Match(BETRAG))
+                {
+                    Token op = Previous();
+                    Consume(VON, "da fehlt von");
+                    Expression right = Unary();
+                    return new Expression.Unary(op, right);
+                }
+                else
+                {
+                    current--;
+                }
             }
 
             if (Match(NICHT, BANG_MINUS))

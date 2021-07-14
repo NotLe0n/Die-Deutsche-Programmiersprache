@@ -12,7 +12,6 @@ namespace DDP
 
         private readonly Dictionary<Expression, int> locals = new();
 
-
         public Interpreter()
         {
             environment = globals;
@@ -23,7 +22,6 @@ namespace DDP
             globals.Define("lese", new Lese());
             globals.Define("leseZeile", new LeseZeile());
         }
-
 
         public void Interpret(List<Statement> statements)
         {
@@ -381,7 +379,7 @@ namespace DDP
                     if (right is int)
                         return -(int)right;
                     break;
-                case STRICH:
+                case BETRAG:
                     CheckNumberOperand(expr.op, right);
                     if (right is double)
                         return Math.Abs((double)right);
