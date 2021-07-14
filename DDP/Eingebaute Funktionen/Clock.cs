@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace DDP
+namespace DDP.Eingebaute_Funktionen
 {
     class Clock : ICallable
     {

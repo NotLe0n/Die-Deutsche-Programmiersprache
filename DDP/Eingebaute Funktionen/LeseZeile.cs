@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDP
+namespace DDP.Eingebaute_Funktionen
 {
     class LeseZeile : ICallable
     {

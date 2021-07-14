@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDP
+namespace DDP.Eingebaute_Funktionen
 {
-    class Lese : ICallable
+    class SchreibeZeile : ICallable
     {
-        public int Arity => 0;
+        public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            return Console.Read();
+            Console.WriteLine(arguments[0]);
+            return null;
         }
 
         public override string ToString() => "<native fn>";
