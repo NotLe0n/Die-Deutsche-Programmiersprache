@@ -219,16 +219,37 @@ namespace DDP
 
                 case GRÖßER:
                     CheckNumberOperands(expr.op, left, right);
-                    return (double)left > (double)right;
+                    if (left is double && right is double)
+                        return (double)left > (double)right;
+
+                    if (left is int && right is int)
+                        return (int)left > (int)right;
+
+                    break;
                 case GRÖßER_GLEICH:
                     CheckNumberOperands(expr.op, left, right);
-                    return (double)left >= (double)right;
+                    if (left is double && right is double)
+                        return (double)left >= (double)right;
+
+                    if (left is int && right is int)
+                        return (int)left >= (int)right;
+                    break;
                 case KLEINER:
                     CheckNumberOperands(expr.op, left, right);
-                    return (double)left < (double)right;
+                    if (left is double && right is double)
+                        return (double)left < (double)right;
+
+                    if (left is int && right is int)
+                        return (int)left < (int)right;
+                    break;
                 case KLEINER_GLEICH:
                     CheckNumberOperands(expr.op, left, right);
-                    return (double)left <= (double)right;
+                    if (left is double && right is double)
+                        return (double)left <= (double)right;
+
+                    if (left is int && right is int)
+                        return (int)left <= (int)right;
+                    break;
                 case MODULO:
                     CheckNumberOperands(expr.op, left, right);
                     return (int)left % (int)right;
