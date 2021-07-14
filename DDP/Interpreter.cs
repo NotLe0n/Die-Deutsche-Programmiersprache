@@ -19,6 +19,7 @@ namespace DDP
 
             globals.Define("clock", new Clock());
             globals.Define("schreibe", new Schreibe());
+            globals.Define("schreibeZeile", new SchreibeZeile());
             globals.Define("lese", new Lese());
         }
 

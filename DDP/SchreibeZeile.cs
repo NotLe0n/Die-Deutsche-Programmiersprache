@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace DDP
 {
-    class Schreibe : ICallable
+    class SchreibeZeile : ICallable
     {
         public int Arity => 1;
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            Console.Write(arguments[0]);
+            Console.WriteLine(arguments[0]);
             return null;
         }
 
