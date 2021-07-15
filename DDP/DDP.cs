@@ -22,10 +22,8 @@ namespace DDP
             {
                 RunFile(args[0]);
             }
-            else
-            {
-                RunPrompt();
-            }
+
+            RunPrompt();
         }
 
         private static void RunFile(string path)
@@ -41,7 +39,7 @@ namespace DDP
         {
             for (; ; )
             {
-                Console.Write("> ");
+                Console.Write("\n> ");
                 string line = Console.ReadLine();
 
                 if (line == null) break;
