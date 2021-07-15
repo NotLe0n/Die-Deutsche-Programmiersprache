@@ -81,18 +81,18 @@ namespace DDP
         {
             if (token.type == TokenType.EOF)
             {
-                Report(token.line, token.position, " at end", message);
+                Report(token.line, token.position, "at end", message);
             }
             else
             {
-                Report(token.line, token.position, " at '" + token.lexeme + "'", message);
+                Report(token.line, token.position, "at '" + token.lexeme + "'", message);
             }
         }
 
         public static void RuntimeError(RuntimeError error)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[at: {error.token.line}, {error.token.position}] Runtime Error at '{error.token.lexeme}' : {error.Message}");
+            Console.Error.WriteLine($"[at: {error.token.line}, {error.token.position}] Runtime Error at '{error.token.lexeme}' : {error.Message}");
             Console.ResetColor();
             hadRuntimeError = true;
         }
@@ -100,7 +100,7 @@ namespace DDP
         private static void Report(int line, int position, string where, string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[at: {line}, {position}] Error {where} : {message}");
+            Console.Error.WriteLine($"[at: {line}, {position}] Error {where} : {message}");
             Console.ResetColor();
             hadError = true;
         }

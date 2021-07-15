@@ -36,7 +36,35 @@ namespace DDP
             }
             catch (Return returnValue)
             {
-                return returnValue.value;
+                System.Type returntype;
+                switch (declaration.type.type)
+                {
+                    case TokenType.ZAHL:
+                        returntype = typeof(int);
+                        break;
+                    case TokenType.FLIEßKOMMAZAHL:
+                        returntype = typeof(double);
+                        break;
+                    case TokenType.ZEICHENKETTE:
+                        returntype = typeof(string);
+                        break;
+                    case TokenType.ZEICHEN:
+                        returntype = typeof(char);
+                        break;
+                    case TokenType.BOOLEAN:
+                        returntype = typeof(bool);
+                        break;
+                    default:
+                        throw new RuntimeError(declaration.name, "invalid type");
+                }
+                if (returnValue.value.GetType() == returntype)
+                {
+                    return returnValue.value;
+                }
+                else
+                {
+                    throw new RuntimeError(declaration.name, "wrong return type");
+                }
             }
 
             return null;

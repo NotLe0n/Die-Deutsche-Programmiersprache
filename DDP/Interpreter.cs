@@ -94,13 +94,21 @@ namespace DDP
 
         public object VisitIfStmt(Statement.If stmt)
         {
-            if (IsTruthy(Evaluate(stmt.condition)))
+            object value = Evaluate(stmt.condition);
+            if (value is bool)
             {
-                Execute(stmt.thenBranch);
+                if (value.Equals(true))
+                {
+                    Execute(stmt.thenBranch);
+                }
+                else if (stmt.elseBranch != null)
+                {
+                    Execute(stmt.elseBranch);
+                }
             }
-            else if (stmt.elseBranch != null)
+            else
             {
-                Execute(stmt.elseBranch);
+                throw new RuntimeError(stmt.token, "wenn anweisung braucht boolean");
             }
             return null;
         }
@@ -125,19 +133,23 @@ namespace DDP
             {
                 case ZAHL:
                     if (value is not int)
-                        throw new RuntimeError(stmt.name, "THIS IS NOT A INT EWWWWWW");
+                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Zahl zugewiesen werden.");
                     break;
                 case FLIEßKOMMAZAHL:
                     if (value is not double)
-                        throw new RuntimeError(stmt.name, "THIS IS NOT A DOUBLE EWWWWWW");
+                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Fließkommazahl zugewiesen werden.");
                     break;
                 case ZEICHENKETTE:
                     if (value is not string)
-                        throw new RuntimeError(stmt.name, "THIS IS NOT A STRING EWWWWWW");
+                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Zeichenkette zugewiesen werden.");
                     break;
                 case ZEICHEN:
                     if (value is not char)
-                        throw new RuntimeError(stmt.name, "THIS IS NOT A CHAR EWWWWWW");
+                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einem Zeichen zugewiesen werden.");
+                    break;
+                case BOOLEAN:
+                    if (value is not bool)
+                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einem Boolean zugewiesen werden.");
                     break;
             }
 
@@ -147,46 +159,63 @@ namespace DDP
 
         public object VisitWhileStmt(Statement.While stmt)
         {
-            while (IsTruthy(Evaluate(stmt.condition)))
+            object value = Evaluate(stmt.condition);
+            if (value is bool)
             {
-                Execute(stmt.body);
+                while (value.Equals(true))
+                {
+                    Execute(stmt.body);
+                }
+            }
+            else
+            {
+                throw new RuntimeError(stmt.token, "solange anweisung braucht boolean");
             }
             return null;
         }
 
         public object VisitDoWhileStmt(Statement.DoWhile stmt)
         {
-            do
+            object value = Evaluate(stmt.condition);
+            if (value is bool)
             {
-                Execute(stmt.body);
+                do
+                {
+                    Execute(stmt.body);
+                }
+                while (value.Equals(true));
             }
-            while (IsTruthy(Evaluate(stmt.condition)));
+            else
+            {
+                throw new RuntimeError(stmt.token, "solange anweisung braucht boolean");
+            }
             return null;
         }
 
         public object VisitForStmt(Statement.For stmt)
         {
-            object _min = Evaluate(stmt.min);
-            object _max = Evaluate(stmt.max);
-            object _inc = Evaluate(stmt.inc);
+            dynamic min = Evaluate(stmt.min);
+            dynamic max = Evaluate(stmt.max);
+            dynamic inc = Evaluate(stmt.inc);
 
-            if (_min is int min && _max is int max && _inc is int inc)
+            if (min is not int && max is not int && inc is not int && min is not double &&  max is not double && inc is not double)
+                throw new RuntimeError(stmt.initializer.name, "wrong type in for loop");
+
+            if (min < max)
             {
-                if (min < max)
+                for (dynamic i = min; i <= max; i += inc)
                 {
-                    for (int i = min; i <= max; i += inc)
-                    {
-                        Execute(stmt.body);
-                    }
-                }
-                else
-                {
-                    for (int i = min; i >= max; i += inc)
-                    {
-                        Execute(stmt.body);
-                    }
+                    Execute(stmt.body);
                 }
             }
+            else
+            {
+                for (dynamic i = min; i >= max; i += inc)
+                {
+                    Execute(stmt.body);
+                }
+            }
+            
             return null;
         }
 
@@ -211,95 +240,78 @@ namespace DDP
             object left = Evaluate(expr.left);
             object right = Evaluate(expr.right);
 
+            Type type = CheckOperandTypes(expr.op, left, right);
+
+            left = Convert.ChangeType(left, type);
+            right = Convert.ChangeType(right, type);
+
             switch (expr.op.type)
             {
-                case UNGLEICH: return !IsEqual(left, right);
-                case GLEICH: return IsEqual(left, right);
-
+                case UNGLEICH:
+                    if (type == typeof(bool)) return !left.Equals(right);
+                    throw new RuntimeError(expr.op, "Operanden können nur Booleans sein.");
+                case GLEICH:
+                    if (type == typeof(bool)) return left.Equals(right);
+                    throw new RuntimeError(expr.op, "Operanden können nur Booleans sein.");
                 case GRÖßER:
-                    CheckNumberOperands(expr.op, left, right);
-                    if (left is double && right is double)
-                        return (double)left > (double)right;
-
-                    if (left is int && right is int)
-                        return (int)left > (int)right;
-
-                    break;
+                    if (type == typeof(double)) return (double)left > (double)right;
+                    if (type == typeof(int)) return (int)left > (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case GRÖßER_GLEICH:
-                    CheckNumberOperands(expr.op, left, right);
-                    if (left is double && right is double)
-                        return (double)left >= (double)right;
-
-                    if (left is int && right is int)
-                        return (int)left >= (int)right;
-                    break;
+                    if (type == typeof(double)) return (double)left >= (double)right;
+                    if (type == typeof(int)) return (int)left >= (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case KLEINER:
-                    CheckNumberOperands(expr.op, left, right);
-                    if (left is double && right is double)
-                        return (double)left < (double)right;
-
-                    if (left is int && right is int)
-                        return (int)left < (int)right;
-                    break;
+                    if (type == typeof(double)) return (double)left < (double)right;
+                    if (type == typeof(int)) return (int)left < (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case KLEINER_GLEICH:
-                    CheckNumberOperands(expr.op, left, right);
-                    if (left is double && right is double)
-                        return (double)left <= (double)right;
-
-                    if (left is int && right is int)
-                        return (int)left <= (int)right;
-                    break;
+                    if (type == typeof(double)) return (double)left <= (double)right;
+                    if (type == typeof(int)) return (int)left <= (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case MODULO:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left % (int)right;
+                    if (type == typeof(int)) return (int)left % (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur integrale zahlen sein.");
                 case MINUS:
-                    CheckNumberOperands(expr.op, left, right);
-                    if (left is double && right is double)
-                        return (double)left - (double)right;
-
-                    if (left is int && right is int)
-                        return (int)left - (int)right;
-                    break;
+                    if (type == typeof(double)) return (double)left - (double)right;
+                    if (type == typeof(int)) return (int)left - (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case PLUS:
-                    if (left is double dlval && right is double drval)
-                        return dlval + drval;
-
-                    if (left is int ilval && right is int irval)
-                        return ilval + irval;
-
-                    if (left is string lstr && right is string rstr)
-                    {
-                        return lstr + rstr;
-                    }
-
+                    if (type == typeof(double)) return (double)left + (double)right;
+                    if (type == typeof(int)) return (int)left + (int)right;
+                    if (left is string || right is string) return Stringify(left) + Stringify(right);
                     throw new RuntimeError(expr.op, "Operands must be two numbers or two strings.");
                 case DURCH:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (double)left / (double)right;
+                    if (type == typeof(double)) return (double)left / (double)right;
+                    if (type == typeof(int)) return (int)left / (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case MAL:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (double)left * (double)right;
+                    if (type == typeof(double)) return (double)left * (double)right;
+                    if (type == typeof(int)) return (int)left * (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case HOCH:
-                    CheckNumberOperands(expr.op, left, right);
-                    return Math.Pow((double)left, (double)right);
+                    if (type == typeof(double)) return Math.Pow((double)left, (double)right);
+                    if (type == typeof(int)) return Math.Pow((int)left, (int)right);
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case WURZEL:
-                    CheckNumberOperands(expr.op, left, right);
-                    return Math.Pow((double)left, 1 / (double)right);
+                    if (type == typeof(double)) return Math.Pow((double)left, 1 / (double)right);
+                    if (type == typeof(int)) return Math.Pow((int)left, 1.0 / (int)right);
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case UND:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left & (int)right;
+                    if (type == typeof(int)) return (int)left & (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case ODER:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left | (int)right;
+                    if (type == typeof(int)) return (int)left | (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case KONTRA:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left ^ (int)right;
+                    if (type == typeof(int)) return (int)left ^ (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case LINKS:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left << (int)right;
+                    if (type == typeof(int)) return (int)left << (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
                 case RECHTS:
-                    CheckNumberOperands(expr.op, left, right);
-                    return (int)left >> (int)right;
+                    if (type == typeof(int)) return (int)left >> (int)right;
+                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
             }
 
             // Unreachable.
@@ -311,11 +323,11 @@ namespace DDP
             object callee = Evaluate(expr.callee);
 
             List<object> arguments = new();
+
             foreach (Expression argument in expr.arguments)
             {
                 arguments.Add(Evaluate(argument));
             }
-
             if (!(callee is ICallable))
             {
                 throw new RuntimeError(expr.paren, "Can only call functions and classes.");
@@ -328,6 +340,7 @@ namespace DDP
             }
 
             return function.Call(this, arguments);
+
         }
 
         public object VisitGroupingExpr(Expression.Grouping expr)
@@ -346,11 +359,11 @@ namespace DDP
 
             if (expr.op.type == ODER)
             {
-                if (IsTruthy(left)) return left;
+                if (left.Equals(true)) return left;
             }
             else
             {
-                if (!IsTruthy(left)) return left;
+                if (left.Equals(false)) return left;
             }
 
             return Evaluate(expr.right);
@@ -360,40 +373,27 @@ namespace DDP
         {
             object right = Evaluate(expr.right);
 
+            Type type = CheckOperandTypes(expr.op, expr.right);
+            right = Convert.ChangeType(right, type);
+
             switch (expr.op.type)
             {
                 case NICHT:
-                    if (right is bool)
-                    {
-                        return !IsTruthy(right);
-                    }
-                    else if (right is int)
-                    {
-                        return ~(int)right;
-                    }
-                    break;
+                    if (type == typeof(bool)) return right.Equals(false);
+                    if (type == typeof(int)) return ~(int)right;
+                    throw new RuntimeError(expr.op, "nicht operator nimmt nur Boolean oder Zahl.");
                 case BANG_MINUS:
-                    CheckNumberOperand(expr.op, right);
-
-                    if (right is double)
-                        return -(double)right;
-                    if (right is int)
-                        return -(int)right;
-                    break;
+                    if (type == typeof(double)) return -(double)right;
+                    if (type == typeof(int)) return -(int)right;
+                    throw new RuntimeError(expr.op, "- operator nimmt Zahlen.");
                 case BETRAG:
-                    CheckNumberOperand(expr.op, right);
-                    if (right is double)
-                        return Math.Abs((double)right);
-                    if (right is int)
-                        return Math.Abs((int)right);
-                    break;
+                    if (type == typeof(double)) return Math.Abs((double)right);
+                    if (type == typeof(int)) return Math.Abs((int)right);
+                    throw new RuntimeError(expr.op, "betrag operator nimmt Zahlen.");
                 case LOG:
-                    CheckNumberOperand(expr.op, right);
-                    if (right is double)
-                        return Math.Log((double)right);
-                    if (right is int)
-                        return Math.Log((int)right);
-                    break;
+                    if (type == typeof(double)) return Math.Log((double)right);
+                    if (type == typeof(int)) return Math.Log((int)right);
+                    throw new RuntimeError(expr.op, "ln operator nimmt Zahlen.");
             }
 
             // Unreachable.
@@ -417,47 +417,41 @@ namespace DDP
             }
         }
 
-        private void CheckNumberOperand(Token op, object operand)
+        private Type CheckOperandTypes(Token op, object operand)
         {
-            if (operand is double || operand is int) return;
-            throw new RuntimeError(op, "Operand must be a number.");
+            if (operand is double) return typeof(double);
+            if (operand is int) return typeof(int);
+            if (operand is bool) return typeof(bool);
+            if (operand is string) return typeof(string);
+            if (operand is char) return typeof(char);
+
+            throw new RuntimeError(op, "Ungültiger Operanden Typ");
         }
 
-        private void CheckNumberOperands(Token op, object left, object right)
+        private Type CheckOperandTypes(Token op, object left, object right)
         {
-            if ((left is double && right is double) || (left is int && right is int)) return;
 
-            throw new RuntimeError(op, "Operands must be numbers.");
-        }
+            if ((left is double && right is int) || (left is int && right is double) || (left is double && right is double))
+                return typeof(double);
 
-        private static bool IsTruthy(object obj)
-        {
-            if (obj == null) return false;
-            if (obj is bool boolean) return boolean;
-            return true;
-        }
+            if (left is int && right is int)
+                return typeof(int);
 
-        private static bool IsEqual(object a, object b)
-        {
-            if (a == null && b == null) return true;
-            if (a == null) return false;
+            if (left is bool && right is bool)
+                return typeof(bool);
 
-            return a.Equals(b);
+            if (left is string && right is string)
+                return typeof(string);
+
+            if (left is char && right is char)
+                return typeof(char);
+
+            throw new RuntimeError(op, "Ungültiger Operanden Typ");
         }
 
         private static string Stringify(object obj)
         {
-            if (obj == null) return "nil";
-
-            if (obj is double)
-            {
-                string text = obj.ToString();
-                if (text.EndsWith(".0"))
-                {
-                    text = text.Substring(0, text.Length - (text.Length - 2));
-                }
-                return text;
-            }
+            if (obj == null) return "nix";
 
             if (obj is bool boolean)
             {

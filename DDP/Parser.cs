@@ -125,6 +125,8 @@ namespace DDP
 
         private Statement IfStatement()
         {
+            var token = Previous();
+
             Expression condition = Expression();
             Consume(KOMMA, "Expect , after if condition.");
             Consume(DANN, "Expect dann after if condition.");
@@ -141,7 +143,9 @@ namespace DDP
                 elseBranch = Statement();
             }
 
-            return new Statement.If(condition, thenBranch, elseBranch);
+            var stmt = new Statement.If(condition, thenBranch, elseBranch);
+            stmt.token = token;
+            return stmt;
         }
 
         private Statement VarDeclaration(TokenType artikel)
@@ -189,25 +193,30 @@ namespace DDP
 
         private Statement WhileStatement()
         {
+            var token = Previous();
+
             Expression condition = Expression();
-            Consume(IST, "Da fehlt \"ist\"");
             Consume(KOMMA, "Da fehlt \",\"");
             Consume(MACHE, "Da fehlt \"mache\"");
             Statement body = Statement();
 
-            return new Statement.While(condition, body);
+            var stmt = new Statement.While(condition, body);
+            stmt.token = token;
+            return stmt;
         }
 
         private Statement DoWhileStatement()
         {
-            Statement body = Statement();
+            var token = Previous();
 
+            Statement body = Statement();
             Consume(SOLANGE, "Da fehlt \"While\"");
             Expression condition = Expression();
-            Consume(IST, "Da fehlt \"ist\"");
             Consume(PUNKT, "Da fehlt \".\"");
 
-            return new Statement.DoWhile(condition, body);
+            var stmt = new Statement.DoWhile(condition, body);
+            stmt.token = token;
+            return stmt;
         }
 
         private Statement.Function Function()
@@ -260,13 +269,13 @@ namespace DDP
                 {
                     if (stmt is Statement.Return)
                     {
-                        return new Statement.Function(name, parameters, body);
+                        return new Statement.Function(name, parameters, typ, body);
                     }
                 }
                 Error(name, "da fehlt ein return");
             }
 
-            return new Statement.Function(name, parameters, body);
+            return new Statement.Function(name, parameters, typ, body);
         }
 
         private Statement ReturnStatement()

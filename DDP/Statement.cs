@@ -74,10 +74,11 @@ namespace DDP
 
         public class Function : Statement
         {
-            public Function(Token name, List<Token> param, List<Statement> body)
+            public Function(Token name, List<Token> param, Token type, List<Statement> body)
             {
                 this.name = name;
                 this.param = param;
+                this.type = type;
                 this.body = body;
             }
 
@@ -88,6 +89,7 @@ namespace DDP
 
             public readonly Token name;
             public readonly List<Token> param;
+            public readonly Token type;
             public readonly List<Statement> body;
         }
 
@@ -108,6 +110,7 @@ namespace DDP
             public readonly global::DDP.Expression condition;
             public readonly Statement thenBranch;
             public readonly Statement elseBranch;
+            public Token token;
         }
 
         public class Return : Statement
@@ -161,6 +164,7 @@ namespace DDP
 
             public readonly global::DDP.Expression condition;
             public readonly Statement body;
+            public Token token;
         }
 
         public class For : Statement
@@ -201,6 +205,7 @@ namespace DDP
 
             public readonly global::DDP.Expression condition;
             public readonly Statement body;
+            public Token token;
         }
     }
 }
