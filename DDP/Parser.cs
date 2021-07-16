@@ -394,10 +394,12 @@ namespace DDP
                     if (op.type == GRÖßER)
                         op.type = GRÖßER_GLEICH;
                     else if (op.type == KLEINER)
-                        op.type = GRÖßER_GLEICH;
+                        op.type = KLEINER_GLEICH;
                 }
 
                 Expression right = Bitweise();
+
+                Consume(IST, "da fehlt ist");
                 expr = new Expression.Binary(expr, op, right);
             }
 
@@ -645,10 +647,17 @@ namespace DDP
         /// <returns>true if one of the TokenTypes have been matched <paramref name="repeat"/> times</returns>
         private bool Match(int repeat, params TokenType[] types)
         {
+            if (repeat == 0) return false;
+
             for (int i = 0; i < repeat; i++)
             {
                 if (!Match(types))
                 {
+                    while (i > 0)
+                    {
+                        i--;
+                        current--;
+                    }
                     return false;
                 }
             }

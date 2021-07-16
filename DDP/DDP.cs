@@ -24,6 +24,7 @@ namespace DDP
             }
 
             RunPrompt();
+            Console.Read();
         }
 
         private static void RunFile(string path)
@@ -31,8 +32,8 @@ namespace DDP
             string str = File.ReadAllText(path);
             Run(str);
 
-            if (hadError) System.Environment.Exit(65);
-            if (hadRuntimeError) System.Environment.Exit(70);
+            if (hadError) return;
+            if (hadRuntimeError) return;
         }
 
         private static void RunPrompt()

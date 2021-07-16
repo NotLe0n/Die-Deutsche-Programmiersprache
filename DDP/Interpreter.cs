@@ -237,22 +237,22 @@ namespace DDP
 
         public object VisitBinaryExpr(Expression.Binary expr)
         {
-            object left = Evaluate(expr.left);
-            object right = Evaluate(expr.right);
+            object _left = Evaluate(expr.left);
+            object _right = Evaluate(expr.right);
 
-            Type type = CheckOperandTypes(expr.op, left, right);
+            Type type = CheckOperandTypes(expr.op, _left, _right);
 
-            left = Convert.ChangeType(left, type);
-            right = Convert.ChangeType(right, type);
+            object left = Convert.ChangeType(_left, type);
+            object right = Convert.ChangeType(_right, type);
 
             switch (expr.op.type)
             {
                 case UNGLEICH:
-                    if (type == typeof(bool)) return !left.Equals(right);
-                    throw new RuntimeError(expr.op, "Operanden können nur Booleans sein.");
+                    if (_left.GetType() == _right.GetType()) return !left.Equals(right);
+                    throw new RuntimeError(expr.op, "Operanden müssen den gleichen Typ besitzten.");
                 case GLEICH:
-                    if (type == typeof(bool)) return left.Equals(right);
-                    throw new RuntimeError(expr.op, "Operanden können nur Booleans sein.");
+                    if (_left.GetType() == _right.GetType()) return left.Equals(right);
+                    throw new RuntimeError(expr.op, "Operanden müssen den gleichen Typ besitzten.");
                 case GRÖßER:
                     if (type == typeof(double)) return (double)left > (double)right;
                     if (type == typeof(int)) return (int)left > (int)right;
@@ -440,7 +440,7 @@ namespace DDP
             if (left is bool && right is bool)
                 return typeof(bool);
 
-            if (left is string && right is string)
+            if (left is string || right is string)
                 return typeof(string);
 
             if (left is char && right is char)

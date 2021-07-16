@@ -86,7 +86,7 @@ namespace DDP
             { "mit", MIT },
 
             // funktionen
-            { "funktion", FUNKTION },
+            { "Funktion", FUNKTION },
             { "macht", MACHT },
             { "gib", GIB },
             { "zurück", ZURÜCK },
