@@ -22,6 +22,11 @@ namespace DDP
             globals.Define("schreibeZeile", new SchreibeZeile());
             globals.Define("lese", new Lese());
             globals.Define("leseZeile", new LeseZeile());
+            globals.Define("zuZahl", new Umwandeln.Zahl());
+            globals.Define("zuFließkommazahl", new Umwandeln.Fließkommazahl());
+            globals.Define("zuZeichen", new Umwandeln.Zeichen());
+            globals.Define("zuZeichenkette", new Umwandeln.Zeichenkette());
+            globals.Define("zuBoolean", new Umwandeln.Boolean());
         }
 
         public void Interpret(List<Statement> statements)
