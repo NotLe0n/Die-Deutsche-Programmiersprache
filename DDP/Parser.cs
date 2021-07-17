@@ -62,7 +62,7 @@ namespace DDP
         private Statement ExpressionStatement()
         {
             Expression expr = Expression();
-            Consume(PUNKT, "Satzzeichen beachten! Ein Punkt muss nach einer Anweisung folgen!");
+            Consume(PUNKT, ErrorMessages.dotAfterExpression);
             return new Statement.Expression(expr);
         }
 
@@ -73,27 +73,27 @@ namespace DDP
 
         private Statement ForStatement()
         {
-            Consume(JEDE, "da fehlt jede");
+            Consume(JEDE, ErrorMessages.tokenMissing("einer für anweisung", "'jede'"));
 
             Statement.Var initializer;
             Expression min;
             if (Match(out Token matched, ZAHL, FLIEßKOMMAZAHL, ZEICHENKETTE, ZEICHEN))
             {
-                Token name = Consume(IDENTIFIER, "Expect variable name.");
-                Consume(VON, "da fehlt von");
+                Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
+                Consume(VON, ErrorMessages.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
                 min = Expression();
 
                 initializer = new Statement.Var(matched, name, min);
             }
-            else throw Error(Previous(), "keine variablen deklaration");
+            else throw Error(Previous(), ErrorMessages.forNoVar);
 
-            Consume(BIS, "da fehlt bis");
+            Consume(BIS, ErrorMessages.tokenMissing("dem minimum in einer für anweisung", "'bis'"));
             Expression max = Expression();
 
             Expression schrittgröße = new Expression.Literal(1);
             if (Match(MIT))
             {
-                Consume(SCHRITTGRÖßE, "da fehlt schrittgröße");
+                Consume(SCHRITTGRÖßE, ErrorMessages.tokenMissing("'mit' in einer für anweisung", "'schrittgröße'"));
 
                 schrittgröße = Expression();
             }
@@ -128,8 +128,8 @@ namespace DDP
             var token = Previous();
 
             Expression condition = Expression();
-            Consume(KOMMA, "Expect , after if condition.");
-            Consume(DANN, "Expect dann after if condition.");
+            Consume(KOMMA, ErrorMessages.ifKommaMissing);
+            Consume(DANN, ErrorMessages.ifDannMissing);
 
             Statement thenBranch = Statement();
             Statement elseBranch = null;
@@ -151,7 +151,7 @@ namespace DDP
         private Statement VarDeclaration(TokenType artikel)
         {
             Token type = CheckArtikel(artikel);
-            Token name = Consume(IDENTIFIER, "Expect variable name.");
+            Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
 
             Expression initializer = null;
             if (Match(IST))
@@ -159,7 +159,7 @@ namespace DDP
                 initializer = Expression();
             }
 
-            Consume(PUNKT, "Satzzeichen beachten! Ein Punkt muss nach einer Variablen Deklaration folgen!");
+            Consume(PUNKT, ErrorMessages.dotAfterVarDeclaration);
             return new Statement.Var(type, name, initializer);
         }
 
@@ -169,7 +169,7 @@ namespace DDP
             switch (artikel)
             {
                 case DER:
-                    type = Consume(BOOLEAN, "der artikel passt nicht.");
+                    type = Consume(BOOLEAN, ErrorMessages.wrongArtikel("'der'", "zum Typ Boolean"));
                     break;
                 case DIE:
                     if (Match(out var matched, ZAHL, FLIEßKOMMAZAHL, ZEICHENKETTE))
@@ -178,14 +178,14 @@ namespace DDP
                     }
                     else
                     {
-                        throw Error(Previous(), "der artikel passt nicht.");
+                        throw Error(Previous(), ErrorMessages.wrongArtikel("'die'", "zu den Typen Zahl, Fließkommazahl, oder Zeichenkette"));
                     }
                     break;
                 case DAS:
-                    type = Consume(ZEICHEN, "der artikel passt nicht.");
+                    type = Consume(ZEICHEN, ErrorMessages.wrongArtikel("'das'", "zum Typ Zeichen"));
                     break;
                 default:
-                    throw Error(Previous(), "da fehlt ein artikel");
+                    throw Error(Previous(), ErrorMessages.noArtikel);
             }
 
             return type;
@@ -210,7 +210,7 @@ namespace DDP
             var token = Previous();
 
             Statement body = Statement();
-            Consume(SOLANGE, "Da fehlt \"While\"");
+            Consume(SOLANGE, "Da fehlt \"solange\"");
             Expression condition = Expression();
             Consume(PUNKT, "Da fehlt \".\"");
 
@@ -221,7 +221,7 @@ namespace DDP
 
         private Statement.Function Function()
         {
-            Token name = Consume(IDENTIFIER, "funktion braucht name bruh");
+            Token name = Consume(IDENTIFIER, ErrorMessages.funcNameExpected);
             Token typ = null;
             List<Token> parameters = new();
 
@@ -232,12 +232,12 @@ namespace DDP
             {
                 if (parameters.Count >= 255)
                 {
-                    Error(Peek(), "Can't have more than 255 parameters.");
+                    Error(Peek(), ErrorMessages.tooManyParameters);
                 }
 
                 if (Match(ZAHL, FLIEßKOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
-                    parameters.Add(Consume(IDENTIFIER, "Expect parameter name."));
+                    parameters.Add(Consume(IDENTIFIER, ErrorMessages.parameterNameExpected));
                 }
             } while (Match(KOMMA));
 
@@ -287,8 +287,8 @@ namespace DDP
                 value = Expression();
             }
 
-            Consume(ZURÜCK, "fehlt zurück");
-            Consume(PUNKT, "Expect '.' after return value.");
+            Consume(ZURÜCK, ErrorMessages.tokenMissing("einem Rückgabe-Wert", "'zurück'"));
+            Consume(PUNKT, ErrorMessages.tokenMissing("einer Rückgabe-Anweisung", "ein punkt"));
             return new Statement.Return(keyword, value);
         }
 
@@ -322,7 +322,7 @@ namespace DDP
                     return new Expression.Assign(name, value);
                 }
 
-                Error(equals, "Invalid assignment target.");
+                Error(equals, ErrorMessages.varInvalidAssignment);
             }
 
             return expr;
@@ -366,7 +366,7 @@ namespace DDP
                 Expression right = Comparison();
                 expr = new Expression.Binary(expr, op, right);
 
-                Consume(IST, "da fehlt ist");
+                Consume(IST, ErrorMessages.tokenMissing("einem Vergleich", "'ist'"));
             }
 
             return expr;
@@ -381,7 +381,7 @@ namespace DDP
                 // Check if ALS is present
                 if (!Check(ALS))
                 {
-                    Error(Previous(), "Da fehlt ein \"als\"");
+                    Error(Previous(), ErrorMessages.tokenMissing("einem größer/kleiner operator", "'als'"));
                     continue;
                 }
 
@@ -399,7 +399,7 @@ namespace DDP
 
                 Expression right = Bitweise();
 
-                Consume(IST, "da fehlt ist");
+                Consume(IST, ErrorMessages.tokenMissing("einem Vergleich", "'ist'"));
                 expr = new Expression.Binary(expr, op, right);
             }
 
@@ -421,10 +421,10 @@ namespace DDP
             while (Match(UM))
             {
                 Expression right = Term();
-                Consume(BIT, "fehlt bit");
-                Consume(NACH, "fehlt nach");
+                Consume(BIT, ErrorMessages.tokenMissing("dem verschiebungswert", "'bit'"));
+                Consume(NACH, "'nach' wird erwartet");
                 Token op = Advance();
-                Consume(VERSCHOBEN, "fehlt verschoben");
+                Consume(VERSCHOBEN, "eine bitverschiebung wird mit einem 'verschoben' beendet");
 
                 expr = new Expression.Binary(expr, op, right);
             }
@@ -469,13 +469,13 @@ namespace DDP
                 if (Match(WURZEL))
                 {
                     Token op = Previous();
-                    Consume(VON, "fehlt von");
+                    Consume(VON, ErrorMessages.tokenMissing("dem Wurzel operator", "'von'"));
                     Expression right = Potenz();
                     expr = new Expression.Binary(right, op, expr);
                 }
                 else
                 {
-                    current--; // eine anweisung wie: "print 2,0." Matched PUNKT, aber nicht Wurzel wird, aber trotzdem Consumed.
+                    current--; // eine anweisung wie: "print 2,0." Matched PUNKT, aber nicht Wurzel wird aber trotzdem Consumed.
                 }
             }
 
@@ -524,7 +524,7 @@ namespace DDP
                 if (Match(BETRAG))
                 {
                     Token op = Previous();
-                    Consume(VON, "da fehlt von");
+                    Consume(VON, ErrorMessages.tokenMissing("dem Betrag operator", "'von'"));
                     Expression right = Unary();
                     return new Expression.Unary(op, right);
                 }
@@ -557,13 +557,13 @@ namespace DDP
                     {
                         if (arguments.Count >= 255)
                         {
-                            Error(Peek(), "Can't have more than 255 arguments.");
+                            Error(Peek(), ErrorMessages.tooManyParameters);
                         }
                         arguments.Add(Expression());
                     } while (Match(KOMMA));
                 }
 
-                Token paren = Consume(R_KLAMMER, "Expect ')' after arguments.");
+                Token paren = Consume(R_KLAMMER, ErrorMessages.parameterParenMissing);
 
                 expr = new Expression.Call(expr, paren, arguments);
             }
@@ -592,11 +592,11 @@ namespace DDP
             if (Match(L_KLAMMER))
             {
                 Expression expr = Expression();
-                Consume(R_KLAMMER, "Expect ')' after expression.");
+                Consume(R_KLAMMER, ErrorMessages.groupingParenMissing);
                 return new Expression.Grouping(expr);
             }
 
-            throw Error(Peek(), "Expect expression.");
+            throw Error(Peek(), ErrorMessages.expressionMissing);
         }
 
         /// <summary>

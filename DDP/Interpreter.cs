@@ -113,7 +113,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, "wenn anweisung braucht boolean");
+                throw new RuntimeError(stmt.token, ErrorMessages.ifConditionNotBool);
             }
             return null;
         }
@@ -138,23 +138,23 @@ namespace DDP
             {
                 case ZAHL:
                     if (value is not int)
-                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Zahl zugewiesen werden.");
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Zahl"));
                     break;
                 case FLIEßKOMMAZAHL:
                     if (value is not double)
-                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Fließkommazahl zugewiesen werden.");
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Fließkommazahl"));
                     break;
                 case ZEICHENKETTE:
                     if (value is not string)
-                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einer Zeichenkette zugewiesen werden.");
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
                     break;
                 case ZEICHEN:
                     if (value is not char)
-                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einem Zeichen zugewiesen werden.");
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einem Zeichen"));
                     break;
                 case BOOLEAN:
                     if (value is not bool)
-                        throw new RuntimeError(stmt.name, $"Die variable {stmt.name.lexeme} kann nur einem Boolean zugewiesen werden.");
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einem Boolean"));
                     break;
             }
 
@@ -174,7 +174,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, "solange anweisung braucht boolean");
+                throw new RuntimeError(stmt.token, ErrorMessages.whileConditionNotBool);
             }
             return null;
         }
@@ -192,7 +192,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, "solange anweisung braucht boolean");
+                throw new RuntimeError(stmt.token, ErrorMessages.whileConditionNotBool);
             }
             return null;
         }
@@ -204,7 +204,7 @@ namespace DDP
             dynamic inc = Evaluate(stmt.inc);
 
             if (min is not int && max is not int && inc is not int && min is not double &&  max is not double && inc is not double)
-                throw new RuntimeError(stmt.initializer.name, "wrong type in for loop");
+                throw new RuntimeError(stmt.initializer.name, ErrorMessages.forWrongType);
 
             if (min < max)
             {
@@ -254,69 +254,69 @@ namespace DDP
             {
                 case UNGLEICH:
                     if (_left.GetType() == _right.GetType()) return !left.Equals(right);
-                    throw new RuntimeError(expr.op, "Operanden müssen den gleichen Typ besitzten.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opSameType);
                 case GLEICH:
                     if (_left.GetType() == _right.GetType()) return left.Equals(right);
-                    throw new RuntimeError(expr.op, "Operanden müssen den gleichen Typ besitzten.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opSameType);
                 case GRÖßER:
                     if (type == typeof(double)) return (double)left > (double)right;
                     if (type == typeof(int)) return (int)left > (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case GRÖßER_GLEICH:
                     if (type == typeof(double)) return (double)left >= (double)right;
                     if (type == typeof(int)) return (int)left >= (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case KLEINER:
                     if (type == typeof(double)) return (double)left < (double)right;
                     if (type == typeof(int)) return (int)left < (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case KLEINER_GLEICH:
                     if (type == typeof(double)) return (double)left <= (double)right;
                     if (type == typeof(int)) return (int)left <= (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case MODULO:
                     if (type == typeof(int)) return (int)left % (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur integrale zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyInt);
                 case MINUS:
                     if (type == typeof(double)) return (double)left - (double)right;
                     if (type == typeof(int)) return (int)left - (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case PLUS:
                     if (type == typeof(double)) return (double)left + (double)right;
                     if (type == typeof(int)) return (int)left + (int)right;
                     if (left is string || right is string) return Stringify(left) + Stringify(right);
-                    throw new RuntimeError(expr.op, "Operands must be two numbers or two strings.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNumOrString);
                 case DURCH:
                     if (type == typeof(double)) return (double)left / (double)right;
                     if (type == typeof(int)) return (int)left / (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case MAL:
                     if (type == typeof(double)) return (double)left * (double)right;
                     if (type == typeof(int)) return (int)left * (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case HOCH:
                     if (type == typeof(double)) return Math.Pow((double)left, (double)right);
                     if (type == typeof(int)) return Math.Pow((int)left, (int)right);
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case WURZEL:
                     if (type == typeof(double)) return Math.Pow((double)left, 1 / (double)right);
                     if (type == typeof(int)) return Math.Pow((int)left, 1.0 / (int)right);
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case UND:
                     if (type == typeof(int)) return (int)left & (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case ODER:
                     if (type == typeof(int)) return (int)left | (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case KONTRA:
                     if (type == typeof(int)) return (int)left ^ (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case LINKS:
                     if (type == typeof(int)) return (int)left << (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
                 case RECHTS:
                     if (type == typeof(int)) return (int)left >> (int)right;
-                    throw new RuntimeError(expr.op, "Operanden können nur zahlen sein.");
+                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
             }
 
             // Unreachable.
@@ -335,13 +335,13 @@ namespace DDP
             }
             if (!(callee is ICallable))
             {
-                throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+                throw new RuntimeError(expr.paren, ErrorMessages.onlyCallFunc);
             }
 
             ICallable function = (ICallable)callee;
             if (arguments.Count != function.Arity)
             {
-                throw new RuntimeError(expr.paren, $"Expected {function.Arity} arguments but got {arguments.Count}.");
+                throw new RuntimeError(expr.paren, ErrorMessages.wrongParamCount(function.Arity, arguments.Count));
             }
 
             return function.Call(this, arguments);
@@ -390,7 +390,7 @@ namespace DDP
                 case BANG_MINUS:
                     if (type == typeof(double)) return -(double)right;
                     if (type == typeof(int)) return -(int)right;
-                    throw new RuntimeError(expr.op, "- operator nimmt Zahlen.");
+                    throw new RuntimeError(expr.op, "minus operator nimmt Zahlen.");
                 case BETRAG:
                     if (type == typeof(double)) return Math.Abs((double)right);
                     if (type == typeof(int)) return Math.Abs((int)right);
@@ -430,7 +430,7 @@ namespace DDP
             if (operand is string) return typeof(string);
             if (operand is char) return typeof(char);
 
-            throw new RuntimeError(op, "Ungültiger Operanden Typ");
+            throw new RuntimeError(op, ErrorMessages.opInvalid);
         }
 
         private Type CheckOperandTypes(Token op, object left, object right)
@@ -451,7 +451,7 @@ namespace DDP
             if (left is char && right is char)
                 return typeof(char);
 
-            throw new RuntimeError(op, "Ungültiger Operanden Typ");
+            throw new RuntimeError(op, ErrorMessages.opInvalid);
         }
 
         public static string Stringify(object obj)

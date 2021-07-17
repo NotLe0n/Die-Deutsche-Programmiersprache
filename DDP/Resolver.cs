@@ -91,7 +91,7 @@ namespace DDP
         {
             if (currentFunction == FunctionType.NONE)
             {
-                DDP.Error(stmt.keyword, "Can't return from top-level code.");
+                DDP.Error(stmt.keyword, ErrorMessages.returnNotInFunc);
             }
 
             if (stmt.value != null)
@@ -189,7 +189,7 @@ namespace DDP
         {
             if (IsDeclaredExact(expr.name.lexeme, false) == true)
             {
-                DDP.Error(expr.name, "Can't read local variable in its own initializer.");
+                DDP.Error(expr.name, ErrorMessages.varDefineInInit);
             }
 
             ResolveLocal(expr, expr.name);
@@ -230,7 +230,7 @@ namespace DDP
 
             if (scope.ContainsKey(name.lexeme))
             {
-                DDP.Error(name, "Already a variable with this name in this scope.");
+                DDP.Error(name, ErrorMessages.varAlreadyExists);
             }
 
             scope.Put(name.lexeme, false);

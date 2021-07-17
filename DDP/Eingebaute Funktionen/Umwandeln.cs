@@ -22,7 +22,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, "man kann '" + arguments[0].ToString() + "' nicht in eine Zahl umwandeln");
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Zahl"));
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, "man kann '" + arguments[0].ToString() + "' nicht in eine Fließkommazahl umwandeln");
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Fließkommazahl"));
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, "man kann '" + arguments[0].ToString() + "' nicht in einen Zeichen umwandeln");
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "einen Zeichen"));
                 }
             }
         }
@@ -78,7 +78,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, "man kann '" + arguments[0].ToString() + "' nicht in eine Zeichenkette umwandeln");
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Zeichenkette"));
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, "man kann '" + arguments[0].ToString() + "' nicht in einen Boolean umwandeln");
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "einen Boolean"));
                 }
             }
         }

@@ -99,6 +99,7 @@ namespace DDP
         private int start = 0;
         private int current = 0;
         private int line = 1;
+        private int linepos = 0;
         private int consecutiveSpaceCount = 0;
 
         public Scanner(string source)
@@ -159,6 +160,7 @@ namespace DDP
 
                 case '\n':
                     line++;
+                    linepos = current;
                     break;
 
                 case '"': StringLiteral(); break;
@@ -175,7 +177,7 @@ namespace DDP
                     }
                     else
                     {
-                        DDP.Error(line, "Unexpected character: " + c + "/" + (int)c);
+                        DDP.Error(line, "Unerwarteter character: " + c + " / " + (int)c);
                     }
                     break;
             }
@@ -204,7 +206,7 @@ namespace DDP
         private void AddToken(TokenType type, object literal)
         {
             string text = source[start..current];
-            tokens.Add(new Token(type, text, literal, line, current));
+            tokens.Add(new Token(type, text, literal, line, current - linepos));
         }
 
         /// <summary>
@@ -244,7 +246,7 @@ namespace DDP
 
             if (IsAtEnd)
             {
-                DDP.Error(line, "Unterminated string.");
+                DDP.Error(line, ErrorMessages.stringUnterminated);
                 return;
             }
 
@@ -265,14 +267,14 @@ namespace DDP
 
             if (IsAtEnd)
             {
-                DDP.Error(line, "Unterminated char.");
+                DDP.Error(line, ErrorMessages.charUnterminated);
                 return;
             }
 
             // The closing ".
             if (Advance() != '\'')
             {
-                DDP.Error(line, "Ein Zeichen kann nur einen zeichen groß sein! Benutzte eine Zeichenkette wenn du mehr willst.");
+                DDP.Error(line, ErrorMessages.charTooLong);
             }
 
             // Trim the surrounding quotes.

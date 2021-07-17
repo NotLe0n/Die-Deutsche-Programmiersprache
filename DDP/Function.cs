@@ -55,7 +55,7 @@ namespace DDP
                         returntype = typeof(bool);
                         break;
                     default:
-                        throw new RuntimeError(declaration.name, "invalid type");
+                        throw new RuntimeError(declaration.name, ErrorMessages.returnTypeInvalid);
                 }
                 if (returnValue.value.GetType() == returntype)
                 {
@@ -63,7 +63,7 @@ namespace DDP
                 }
                 else
                 {
-                    throw new RuntimeError(declaration.name, "wrong return type");
+                    throw new RuntimeError(declaration.name, ErrorMessages.returnTypeWrong);
                 }
             }
 

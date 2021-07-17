@@ -15,7 +15,7 @@ namespace DDP
         {
             if (args.Length > 1)
             {
-                Console.WriteLine("Usage: DDP [script]");
+                Console.WriteLine("Verwendung: DDP [script]");
                 System.Environment.Exit(64);
             }
             else if (args.Length == 1)
@@ -40,14 +40,16 @@ namespace DDP
         {
             for (; ; )
             {
+                hadError = false;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("\n> ");
+                Console.ResetColor();
                 string line = Console.ReadLine();
 
                 if (line == null) break;
 
                 Run(line);
-
-                hadError = false;
             }
         }
 
@@ -80,18 +82,27 @@ namespace DDP
         {
             if (token.type == TokenType.EOF)
             {
-                Report(token.line, token.position, "at end", message);
+                Report(token.line, token.position, "am ende", message);
             }
             else
             {
-                Report(token.line, token.position, "at '" + token.lexeme + "'", message);
+                Report(token.line, token.position, "bei '" + token.lexeme + "'", message);
             }
         }
 
         public static void RuntimeError(RuntimeError error)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine($"[at: {error.token.line}, {error.token.position}] Runtime Error at '{error.token.lexeme}' : {error.Message}");
+
+            if (error.token == null)
+            {
+                Console.Error.WriteLine($"Laufzeitfehler: {error.Message}");
+            }
+            else
+            {
+                Console.Error.WriteLine($"[{error.token.line}, {error.token.position}] Laufzeitfehler bei '{error.token.lexeme}' : {error.Message}");
+            }
+
             Console.ResetColor();
             hadRuntimeError = true;
         }
@@ -99,7 +110,7 @@ namespace DDP
         private static void Report(int line, int position, string where, string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine($"[at: {line}, {position}] Error {where} : {message}");
+            Console.Error.WriteLine($"[{line}, {position}] Fehler {where} : {message}");
             Console.ResetColor();
             hadError = true;
         }
