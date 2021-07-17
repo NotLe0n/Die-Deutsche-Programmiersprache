@@ -41,5 +41,17 @@ namespace DDP
                 return null;
             }
         }
+
+        public static string Stringify(object obj)
+        {
+            if (obj == null) return "nix";
+
+            if (obj is bool boolean)
+            {
+                return boolean ? "wahr" : "falsch";
+            }
+
+            return obj.ToString();
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Zahl"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Zahl"));
                 }
             }
         }
@@ -44,7 +44,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Fließkommazahl"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Fließkommazahl"));
                 }
             }
         }
@@ -61,7 +61,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "einen Zeichen"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "einen Zeichen"));
                 }
             }
         }
@@ -78,7 +78,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "eine Zeichenkette"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Zeichenkette"));
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Interpreter.Stringify(arguments[0]), "einen Boolean"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "einen Boolean"));
                 }
             }
         }

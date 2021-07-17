@@ -284,7 +284,7 @@ namespace DDP
                 case PLUS:
                     if (type == typeof(double)) return (double)left + (double)right;
                     if (type == typeof(int)) return (int)left + (int)right;
-                    if (left is string || right is string) return Stringify(left) + Stringify(right);
+                    if (left is string || right is string) return Extentions.Stringify(left) + Extentions.Stringify(right);
                     throw new RuntimeError(expr.op, ErrorMessages.opOnlyNumOrString);
                 case DURCH:
                     if (type == typeof(double)) return (double)left / (double)right;
@@ -452,18 +452,6 @@ namespace DDP
                 return typeof(char);
 
             throw new RuntimeError(op, ErrorMessages.opInvalid);
-        }
-
-        public static string Stringify(object obj)
-        {
-            if (obj == null) return "nix";
-
-            if (obj is bool boolean)
-            {
-                return boolean ? "wahr" : "falsch";
-            }
-
-            return obj.ToString();
         }
     }
 }
