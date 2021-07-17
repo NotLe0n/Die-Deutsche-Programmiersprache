@@ -11,7 +11,7 @@ namespace DDP.Eingebaute_Funktionen
         {
             if (arguments[0] != null)
             {
-                Console.WriteLine(arguments[0]);
+                Console.WriteLine(Interpreter.Stringify(arguments[0]));
             }
             return null;
         }

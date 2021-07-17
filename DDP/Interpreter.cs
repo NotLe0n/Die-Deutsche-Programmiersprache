@@ -454,7 +454,7 @@ namespace DDP
             throw new RuntimeError(op, "Ungültiger Operanden Typ");
         }
 
-        private static string Stringify(object obj)
+        public static string Stringify(object obj)
         {
             if (obj == null) return "nix";
 
