@@ -9,7 +9,10 @@ namespace DDP.Eingebaute_Funktionen
 
         public object Call(Interpreter interpreter, List<object> arguments)
         {
-            Console.WriteLine(arguments[0]);
+            if (arguments[0] != null)
+            {
+                Console.WriteLine(arguments[0]);
+            }
             return null;
         }
 
