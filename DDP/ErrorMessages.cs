@@ -17,12 +17,15 @@ namespace DDP
         public const string varNameExpected = "Es wurde einen Variablen-name erwartet!";
         public const string varInvalidAssignment = "Ungültiger Zuweisungsziel!";
         public const string varAlreadyExists = "Eine Variable mit dem selben Namen existiert schon!";
+        public const string varDefineInInit = "Eine variable kann nicht in seinem eigenen initialisierer gelesen werden";
         public const string funcNameExpected = "Funktions Name erwartet!";
         public const string parameterNameExpected = "Argumentname erwartet!";
         public const string parameterParenMissing = "Es wurde eine ')' nach einem Funktions Aufruf erwartet!";
         public const string tooManyParameters = "Eine Funktion kann nicht mehr als 255 argumente haben!";
         public const string returnTypeInvalid = "Ungültiger Rückgabetyp!";
         public const string returnTypeWrong = "Falscher Rückgabetyp!";
+        public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";
+        public const string returnMissing = "Eine Funktion mit einem Rückgabe typ braucht eine Rückgabe Anweisung!";
         public const string expressionMissing = "Ausdruck erwartet!";
         public const string charTooLong = "Ein Zeichen kann nur einen zeichen groß sein! Benutzte eine Zeichenkette wenn du mehr willst!";
         public const string charUnterminated = "Unterminierter Zeichen!";
@@ -32,10 +35,7 @@ namespace DDP
         public const string ifDannMissing = "Komma nach after wenn bedingung erwartet!";
         public const string ifConditionNotBool = "Die Bedingung einer wenn Anweisung muss ein Boolean sein!";
         public const string whileConditionNotBool = "Die Bedingung einer solange Anweisung muss ein Boolean sein!";
-        public const string varDefineInInit = "Eine variable kann nicht in seinem eigenen initialisierer gelesen werden";
-        public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";
         public const string noArtikel = "Es wird ein Artikel vor einem Variablen Typ erwartet!";
-        public const string returnMissing = "Eine Funktion mit einem Rückgabe typ braucht eine Rückgabe Anweisung!";
 
         public static Func<string, string, string> unaryOpWrongType = (string op, string typ) => $"Der {op} operator nimmt nur {typ}!";
         public static Func<string, string, string> varWrongType = (string name, string typ) => $"Der variable {name} kann nur {typ} zugewiesen werden!";
