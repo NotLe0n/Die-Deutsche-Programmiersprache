@@ -386,19 +386,19 @@ namespace DDP
                 case NICHT:
                     if (type == typeof(bool)) return right.Equals(false);
                     if (type == typeof(int)) return ~(int)right;
-                    throw new RuntimeError(expr.op, "nicht operator nimmt nur Boolean oder Zahl.");
+                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("nicht", "Boolean oder Zahlen"));
                 case BANG_MINUS:
                     if (type == typeof(double)) return -(double)right;
                     if (type == typeof(int)) return -(int)right;
-                    throw new RuntimeError(expr.op, "minus operator nimmt Zahlen.");
+                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("unäre minus", "Zahlen"));
                 case BETRAG:
                     if (type == typeof(double)) return Math.Abs((double)right);
                     if (type == typeof(int)) return Math.Abs((int)right);
-                    throw new RuntimeError(expr.op, "betrag operator nimmt Zahlen.");
+                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("betrag", "Zahlen"));
                 case LOG:
                     if (type == typeof(double)) return Math.Log((double)right);
                     if (type == typeof(int)) return Math.Log((int)right);
-                    throw new RuntimeError(expr.op, "ln operator nimmt Zahlen.");
+                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("ln", "Zahlen"));
             }
 
             // Unreachable.

@@ -35,10 +35,13 @@ namespace DDP
         public const string varDefineInInit = "Eine variable kann nicht in seinem eigenen initialisierer gelesen werden";
         public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";
         public const string noArtikel = "Es wird ein Artikel vor einem Variablen Typ erwartet!";
+        public const string returnMissing = "Eine Funktion mit einem Rückgabe typ braucht eine Rückgabe Anweisung!";
 
+        public static Func<string, string, string> unaryOpWrongType = (string op, string typ) => $"Der {op} operator nimmt nur {typ}!";
         public static Func<string, string, string> varWrongType = (string name, string typ) => $"Der variable {name} kann nur {typ} zugewiesen werden!";
         public static Func<string, string> varNotDefined = (string name) => $"Die Variable {name} wurde noch nicht definiert!";
         public static Func<int, int, string> wrongParamCount = (int expected, int count) => $"Es wurden {expected} argumente erwartet, aber {count} argumente gegeben!";
+        public static Func<string, string, string> tokenMissingAtEnd = (string anweisung, string token) => $"am Ende {anweisung} wird ein {token} erwartet!";
         public static Func<string, string, string> tokenMissing = (string anweisung, string token) => $"Nach {anweisung} wird {token} erwartet!";
         public static Func<string, string, string> wrongArtikel = (string artikel, string typen) => $"der Artikel {artikel} passt nur {typen}!";
         public static Func<string, string, string> castInvalid = (string val, string typ) => $"man kann '{val}' nicht in {typ} umwandeln!";

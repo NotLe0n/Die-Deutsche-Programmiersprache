@@ -98,8 +98,8 @@ namespace DDP
                 schrittgröße = Expression();
             }
 
-            Consume(KOMMA, "da fehlt komma");
-            Consume(MACHE, "da fehlt mache");
+            Consume(KOMMA, "Es wird ein komma erwartet!");
+            Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer für Anweisung", "ein 'mache'"));
 
             Statement body = Statement();
 
@@ -196,8 +196,8 @@ namespace DDP
             var token = Previous();
 
             Expression condition = Expression();
-            Consume(KOMMA, "Da fehlt \",\"");
-            Consume(MACHE, "Da fehlt \"mache\"");
+            Consume(KOMMA, ErrorMessages.tokenMissing("der Bedingung einer solange-Anweisung", "ein komma"));
+            Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer solange Anweisung", "ein 'mache'"));
             Statement body = Statement();
 
             var stmt = new Statement.While(condition, body);
@@ -210,9 +210,9 @@ namespace DDP
             var token = Previous();
 
             Statement body = Statement();
-            Consume(SOLANGE, "Da fehlt \"solange\"");
+            Consume(SOLANGE, ErrorMessages.tokenMissing("einem mache-block", "'solange'"));
             Expression condition = Expression();
-            Consume(PUNKT, "Da fehlt \".\"");
+            Consume(PUNKT, ErrorMessages.dotAfterExpression);
 
             var stmt = new Statement.DoWhile(condition, body);
             stmt.token = token;
@@ -226,7 +226,7 @@ namespace DDP
             List<Token> parameters = new();
 
             // handle parameters
-            Consume(L_KLAMMER, "da fehlt linke klammer");
+            Consume(L_KLAMMER, ErrorMessages.tokenMissing("dem Funktionsname", "eine Klammer auf"));
 
             do
             {
@@ -241,24 +241,24 @@ namespace DDP
                 }
             } while (Match(KOMMA));
 
-            Consume(R_KLAMMER, "fehlt rechte klammer");
+            Consume(R_KLAMMER, ErrorMessages.tokenMissing("den Argumenten", "eine Klammer zu"));
 
             // return type
             if (Match(VOM))
             {
-                Consume(TYP, "da fehlt typ");
+                Consume(TYP, ErrorMessages.tokenMissing("einer vom Anweisung", "ein Typ"));
                 if (Match(out Token match, ZAHL, FLIEßKOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
                     typ = match;
                 }
                 else
                 {
-                    Error(Peek(), "da fehlt ein typ");
+                    Error(Peek(), ErrorMessages.returnTypeInvalid);
                 }
             }
 
-            Consume(MACHT, "fehlt macht");
-            Consume(DOPPELPUNKT, "fehlt doppelpunkt");
+            Consume(MACHT, ErrorMessages.tokenMissingAtEnd("variablen deklaration", "ein 'macht'"));
+            Consume(DOPPELPUNKT, ErrorMessages.tokenMissing("einer macht anweisung", "ein doppelpunkt"));
 
             List<Statement> body = Block();
 
@@ -272,7 +272,7 @@ namespace DDP
                         return new Statement.Function(name, parameters, typ, body);
                     }
                 }
-                Error(name, "da fehlt ein return");
+                Error(name, ErrorMessages.returnMissing);
             }
 
             return new Statement.Function(name, parameters, typ, body);
@@ -422,9 +422,9 @@ namespace DDP
             {
                 Expression right = Term();
                 Consume(BIT, ErrorMessages.tokenMissing("dem verschiebungswert", "'bit'"));
-                Consume(NACH, "'nach' wird erwartet");
+                Consume(NACH, ErrorMessages.tokenMissing("einer bit Anweisung", "ein 'nach'"));
                 Token op = Advance();
-                Consume(VERSCHOBEN, "eine bitverschiebung wird mit einem 'verschoben' beendet");
+                Consume(VERSCHOBEN, ErrorMessages.tokenMissingAtEnd("einer Bitverschiebungsanweisung", "ein 'verschoben'"));
 
                 expr = new Expression.Binary(expr, op, right);
             }
