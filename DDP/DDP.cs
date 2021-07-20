@@ -22,9 +22,10 @@ namespace DDP
             {
                 RunFile(args[0]);
             }
-
-            RunPrompt();
-            Console.Read();
+            else
+            {
+                RunPrompt();
+            }
         }
 
         private static void RunFile(string path)
