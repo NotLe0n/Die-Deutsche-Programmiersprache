@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace DDP.Eingebaute_Funktionen
 {
@@ -13,10 +14,10 @@ namespace DDP.Eingebaute_Funktionen
             {
                 try
                 {
-                    if (arguments[0] is string || arguments[0] is char)
+                    if (arguments[0] is string)
                     {
-                        if (int.TryParse(arguments[0].ToString(), out int result))
-                            return result;
+                        if (double.TryParse(Extentions.Stringify(arguments[0]), NumberStyles.Integer, new CultureInfo("de-DE"),  out double result))
+                            return (int)result;
                     }
                     return Convert.ToInt32(arguments[0]);
                 }
@@ -27,7 +28,7 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Fließkommazahl : ICallable
+        public class Kommazahl : ICallable
         {
             public int Arity => 1;
 
@@ -35,16 +36,16 @@ namespace DDP.Eingebaute_Funktionen
             {
                 try
                 {
-                    if (arguments[0] is string || arguments[0] is char)
+                    if (arguments[0] is string)
                     {
-                        if (double.TryParse(arguments[0].ToString(), out double result))
+                        if (double.TryParse(Extentions.Stringify(arguments[0]), out double result))
                             return result;
                     }
                     return (double)Convert.ToDouble(arguments[0]);
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Fließkommazahl"));
+                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Kommazahl"));
                 }
             }
         }
@@ -57,6 +58,17 @@ namespace DDP.Eingebaute_Funktionen
             {
                 try
                 {
+                    // fick dich hendrik
+                    if (arguments[0] is bool)
+                    {
+                        return (bool)arguments[0] ? 'w' : 'f';
+                    }
+
+                    if (arguments[0] is string)
+                    {
+                        return (arguments[0] as string)[0];
+                    }
+
                     return Convert.ToChar(arguments[0]);
                 }
                 catch
@@ -74,7 +86,7 @@ namespace DDP.Eingebaute_Funktionen
             {
                 try
                 {
-                    return arguments[0].ToString();
+                    return Extentions.Stringify(arguments[0]);
                 }
                 catch
                 {
@@ -93,8 +105,14 @@ namespace DDP.Eingebaute_Funktionen
                 {
                     if (arguments[0] is string)
                     {
-                        if (bool.TryParse(arguments[0].ToString(), out bool result))
-                            return result;
+                        if (Extentions.Stringify(arguments[0]) == "wahr")
+                        {
+                            return true;
+                        }
+                        else if (Extentions.Stringify(arguments[0]) == "falsch")
+                        {
+                            return false;
+                        }
                     }
                     return Convert.ToBoolean(arguments[0]);
                 }

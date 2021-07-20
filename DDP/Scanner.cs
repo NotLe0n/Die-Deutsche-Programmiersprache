@@ -19,7 +19,7 @@ namespace DDP
 
             // Typen
             { "Zahl", ZAHL },
-            { "Fließkommazahl", FLIEßKOMMAZAHL },
+            { "Kommazahl", KOMMAZAHL },
             { "Boolean", BOOLEAN },
             { "Zeichenkette", ZEICHENKETTE },
             { "Zeichen", ZEICHEN },
@@ -260,9 +260,10 @@ namespace DDP
 
         private void CharLiteral()
         {
+            char? value = null;
             if (Peek() != '\'' && !IsAtEnd)
             {
-                Advance();
+                value = Advance();
             }
 
             if (IsAtEnd)
@@ -277,8 +278,12 @@ namespace DDP
                 DDP.Error(line, ErrorMessages.charTooLong);
             }
 
+            if (value == null)
+            {
+                DDP.Error(line, "leerer zeichen");
+            }
+
             // Trim the surrounding quotes.
-            char value = source[current - 2];
             AddToken(CHAR, value);
         }
 

@@ -42,7 +42,7 @@ namespace DDP
                     case TokenType.ZAHL:
                         returntype = typeof(int);
                         break;
-                    case TokenType.FLIEßKOMMAZAHL:
+                    case TokenType.KOMMAZAHL:
                         returntype = typeof(double);
                         break;
                     case TokenType.ZEICHENKETTE:

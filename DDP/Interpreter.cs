@@ -23,7 +23,7 @@ namespace DDP
             globals.Define("lese", new Lese());
             globals.Define("leseZeile", new LeseZeile());
             globals.Define("zuZahl", new Umwandeln.Zahl());
-            globals.Define("zuFließkommazahl", new Umwandeln.Fließkommazahl());
+            globals.Define("zuKommazahl", new Umwandeln.Kommazahl());
             globals.Define("zuZeichen", new Umwandeln.Zeichen());
             globals.Define("zuZeichenkette", new Umwandeln.Zeichenkette());
             globals.Define("zuBoolean", new Umwandeln.Boolean());
@@ -140,9 +140,9 @@ namespace DDP
                     if (value is not int)
                         throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Zahl"));
                     break;
-                case FLIEßKOMMAZAHL:
+                case KOMMAZAHL:
                     if (value is not double)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Fließkommazahl"));
+                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Kommazahl"));
                     break;
                 case ZEICHENKETTE:
                     if (value is not string)

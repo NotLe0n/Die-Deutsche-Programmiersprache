@@ -77,7 +77,7 @@ namespace DDP
 
             Statement.Var initializer;
             Expression min;
-            if (Match(out Token matched, ZAHL, FLIEßKOMMAZAHL, ZEICHENKETTE, ZEICHEN))
+            if (Match(out Token matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZEICHEN))
             {
                 Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
                 Consume(VON, ErrorMessages.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
@@ -172,13 +172,13 @@ namespace DDP
                     type = Consume(BOOLEAN, ErrorMessages.wrongArtikel("'der'", "zum Typ Boolean"));
                     break;
                 case DIE:
-                    if (Match(out var matched, ZAHL, FLIEßKOMMAZAHL, ZEICHENKETTE))
+                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE))
                     {
                         type = matched;
                     }
                     else
                     {
-                        throw Error(Previous(), ErrorMessages.wrongArtikel("'die'", "zu den Typen Zahl, Fließkommazahl, oder Zeichenkette"));
+                        throw Error(Previous(), ErrorMessages.wrongArtikel("'die'", "zu den Typen Zahl, Kommazahl, oder Zeichenkette"));
                     }
                     break;
                 case DAS:
@@ -235,7 +235,7 @@ namespace DDP
                     Error(Peek(), ErrorMessages.tooManyParameters);
                 }
 
-                if (Match(ZAHL, FLIEßKOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
+                if (Match(ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
                     parameters.Add(Consume(IDENTIFIER, ErrorMessages.parameterNameExpected));
                 }
@@ -247,7 +247,7 @@ namespace DDP
             if (Match(VOM))
             {
                 Consume(TYP, ErrorMessages.tokenMissing("einer vom Anweisung", "ein Typ"));
-                if (Match(out Token match, ZAHL, FLIEßKOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
+                if (Match(out Token match, ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
                     typ = match;
                 }
