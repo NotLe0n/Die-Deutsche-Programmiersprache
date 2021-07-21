@@ -36,6 +36,9 @@ namespace DDP
             }
             catch (Return returnValue)
             {
+                if (returnValue == null)
+                    throw new RuntimeError(declaration.name, ErrorMessages.returnTypeWrong);
+
                 System.Type returntype;
                 switch (declaration.type.type)
                 {

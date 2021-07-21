@@ -273,9 +273,7 @@ namespace DDP
                 foreach (var stmt in body)
                 {
                     if (stmt is Statement.Return)
-                    {
                         return new Statement.Function(name, parameters, typ, body);
-                    }
                 }
                 Error(name, ErrorMessages.returnMissing);
             }
@@ -394,7 +392,7 @@ namespace DDP
                 Advance(); // current: ALS
 
                 // handle "größer/kleiner als, oder gleich"
-                if (Match(KOMMA) && Match(ODER) && Match(GLEICH))
+                if (Match(KOMMA) && Match(ODER))
                 {
                     if (op.type == GRÖßER)
                         op.type = GRÖßER_GLEICH;

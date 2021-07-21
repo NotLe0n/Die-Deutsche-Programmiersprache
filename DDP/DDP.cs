@@ -26,6 +26,9 @@ namespace DDP
             {
                 RunPrompt();
             }
+
+            if (hadError || hadRuntimeError)
+                Console.Read();
         }
 
         private static void RunFile(string path)
