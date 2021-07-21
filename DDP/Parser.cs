@@ -132,10 +132,15 @@ namespace DDP
             Consume(DANN, ErrorMessages.ifDannMissing);
 
             Statement thenBranch = Statement();
+            Match(depth, TAB); // consume all tabs (workaround to block issue)
             Statement elseBranch = null;
-            if (Match(WENN) && Match(ABER))
+            if (Match(WENN))
             {
-                elseBranch = IfStatement();
+                if (Match(ABER))
+                {
+                    elseBranch = IfStatement();
+                }
+                else current--;
             }
 
             if (Match(SONST))
