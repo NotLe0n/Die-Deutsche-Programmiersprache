@@ -161,7 +161,25 @@ namespace DDP
             Expression initializer = null;
             if (Match(IST))
             {
+                bool negate = false;
+                if (type.type == BOOLEAN)
+                {
+                    if (Match(out Token matched, WAHR, FALSCH))
+                    {
+                        Consume(WENN, "fehlt wenn");
+                        if(matched.type == FALSCH)
+                        {
+                            negate = true;
+                        }
+                    }
+                    else Error(Peek(), "fehlt wahr/falsch wenn");
+                }
                 initializer = Expression();
+
+                if (negate)
+                {
+                    initializer = new Expression.Unary(new Token(NICHT, "nicht", null, name.line, name.position), initializer);
+                }
             }
 
             Consume(PUNKT, ErrorMessages.dotAfterVarDeclaration);
