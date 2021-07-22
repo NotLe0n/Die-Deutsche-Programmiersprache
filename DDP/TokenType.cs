@@ -17,6 +17,9 @@
         // Mathematische operatoren
         IST, PLUS, MINUS, MAL, DURCH, MODULO, HOCH, WURZEL, LOG, BETRAG,
 
+        // Trigonometrische Funktionen
+        SINUS, KOSINUS, TANGENS, ARKUSSINUS, ARKUSKOSINUS, ARKUSTANGENS, HYPERBELSINUS, HYPERBELKOSINUS, HYPERBELTANGENS,
+
         // Bitweise operatoren
         LOGISCH, KONTRA, UM, BIT, NACH, LINKS, RECHTS, VERSCHOBEN,
 

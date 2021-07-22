@@ -388,21 +388,40 @@ namespace DDP
                     if (type == typeof(int)) return ~(int)right;
                     throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("nicht", "Boolean oder Zahlen"));
                 case BANG_MINUS:
-                    if (type == typeof(double)) return -(double)right;
-                    if (type == typeof(int)) return -(int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("unäre minus", "Zahlen"));
+                    return NumberUnary(x => -x);
                 case BETRAG:
-                    if (type == typeof(double)) return Math.Abs((double)right);
-                    if (type == typeof(int)) return Math.Abs((int)right);
-                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("betrag", "Zahlen"));
+                    return NumberUnary(x => Math.Abs(x));
                 case LOG:
-                    if (type == typeof(double)) return Math.Log((double)right);
-                    if (type == typeof(int)) return Math.Log((int)right);
-                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("ln", "Zahlen"));
+                    return NumberUnary(x => Math.Log(x));
+                case SINUS:
+                    return NumberUnary(x => Math.Sin(x));
+                case KOSINUS:
+                    return NumberUnary(x => Math.Cos(x));
+                case TANGENS:
+                    return NumberUnary(x => Math.Tan(x));
+                case ARKUSSINUS:
+                    return NumberUnary(x => Math.Asin(x));
+                case ARKUSKOSINUS:
+                    return NumberUnary(x => Math.Acos(x));
+                case ARKUSTANGENS:
+                    return NumberUnary(x => Math.Atan(x));
+                case HYPERBELSINUS:
+                    return NumberUnary(x => Math.Sinh(x));
+                case HYPERBELKOSINUS:
+                    return NumberUnary(x => Math.Cosh(x));
+                case HYPERBELTANGENS:
+                    return NumberUnary(x => Math.Tanh(x));
             }
 
             // Unreachable.
             return null;
+
+            object NumberUnary(Func<double, object> function)
+            {
+                if (type == typeof(double)) return function((double)right);
+                if (type == typeof(int)) return function((int)right);
+                throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("ln", "Zahlen"));
+            }
         }
 
         public object VisitVariableExpr(Expression.Variable expr)

@@ -64,6 +64,17 @@ namespace DDP
             { "e", E },
             { "Tau", TAU },
 
+            // trigonometrische funktionen
+            { "Sinus", SINUS },
+            { "Kosinus", KOSINUS },
+            { "Tangens", TANGENS },
+            { "Arkussinus", ARKUSSINUS },
+            { "Arkuskosinus", ARKUSKOSINUS },
+            { "Arkustangens", ARKUSTANGENS },
+            { "Hyperbelsinus", HYPERBELSINUS },
+            { "Hyperbelkosinus", HYPERBELKOSINUS },
+            { "Hyperbeltangens", HYPERBELTANGENS },
+
             // logische operatoren
             { "und", UND },
             { "oder", ODER },

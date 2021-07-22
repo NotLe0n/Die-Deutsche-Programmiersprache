@@ -455,16 +455,29 @@ namespace DDP
 
         private Expression Term()
         {
-            Expression expr = Factor();
+            Expression expr = Trigo();
 
             while (Match(MINUS, PLUS))
             {
                 Token op = Previous();
-                Expression right = Factor();
+                Expression right = Trigo();
                 expr = new Expression.Binary(expr, op, right);
             }
 
             return expr;
+        }
+
+        private Expression Trigo()
+        {
+            while (Match(SINUS, KOSINUS, TANGENS, ARKUSSINUS, ARKUSKOSINUS, ARKUSTANGENS, HYPERBELSINUS, HYPERBELKOSINUS, HYPERBELTANGENS))
+            {
+                Token op = Previous();
+                Consume(VON, "fehlt von");
+                Expression right = Factor();
+                return new Expression.Unary(op, right);
+            }
+
+            return Factor();
         }
 
         private Expression Factor()
