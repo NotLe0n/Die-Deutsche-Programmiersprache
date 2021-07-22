@@ -378,7 +378,7 @@ namespace DDP
         {
             object right = Evaluate(expr.right);
 
-            Type type = CheckOperandTypes(expr.op, expr.right);
+            Type type = CheckOperandTypes(expr.op, right);
             right = Convert.ChangeType(right, type);
 
             switch (expr.op.type)
