@@ -60,9 +60,9 @@ namespace DDP
             { "verschoben", VERSCHOBEN },
 
             // konstante
-            { "Pi", PI },
+            { "pi", PI },
             { "e", E },
-            { "Tau", TAU },
+            { "tau", TAU },
 
             // trigonometrische funktionen
             { "Sinus", SINUS },
