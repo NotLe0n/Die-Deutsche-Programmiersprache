@@ -63,6 +63,7 @@ namespace DDP
             { "pi", PI },
             { "e", E },
             { "tau", TAU },
+            { "phi", PHI },
 
             // trigonometrische funktionen
             { "Sinus", SINUS },

@@ -646,6 +646,7 @@ namespace DDP
             if (Match(PI)) return new Ausdruck.Wert(System.Math.PI);
             if (Match(TAU)) return new Ausdruck.Wert(System.Math.Tau);
             if (Match(E)) return new Ausdruck.Wert(System.Math.E);
+            if (Match(PHI)) return new Ausdruck.Wert(1.6180339887);
 
             if (Match(INT, FLOAT, STRING, CHAR))
             {
