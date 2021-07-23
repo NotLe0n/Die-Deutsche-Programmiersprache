@@ -19,9 +19,9 @@ namespace DDP
         public const string varAlreadyExists = "Eine Variable mit dem selben Namen existiert schon!";
         public const string varDefineInInit = "Eine variable kann nicht in seinem eigenen initialisierer gelesen werden";
         public const string funcNameExpected = "Funktions Name erwartet!";
-        public const string parameterNameExpected = "Argumentname erwartet!";
+        public const string argumentNameExpected = "Argumentname erwartet!";
         public const string parameterParenMissing = "Es wurde eine ')' nach einem Funktions Aufruf erwartet!";
-        public const string tooManyParameters = "Eine Funktion kann nicht mehr als 255 argumente haben!";
+        public const string tooManyArguments = "Eine Funktion kann nicht mehr als 255 argumente haben!";
         public const string returnTypeInvalid = "Ungültiger Rückgabetyp!";
         public const string returnTypeWrong = "Falscher Rückgabetyp!";
         public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";

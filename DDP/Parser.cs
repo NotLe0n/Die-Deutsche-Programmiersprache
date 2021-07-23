@@ -22,22 +22,22 @@ namespace DDP
             List<Statement> statements = new();
             while (!IsAtEnd)
             {
-                statements.Add(Declaration());
+                statements.Add(Deklaration());
             }
 
             return statements;
         }
 
-        private Statement Declaration()
+        private Statement Deklaration()
         {
             try
             {
                 if (Match(DER)) return VarDeclaration(DER);
-                if (Match(DIE)) return Match(FUNKTION) ? Function() : VarDeclaration(DIE);
+                if (Match(DIE)) return Match(FUNKTION) ? Funktion() : VarDeclaration(DIE);
 
                 if (Match(DAS)) return VarDeclaration(DAS);
 
-                return Statement();
+                return Anweisung();
             }
             catch (ParseError error)
             {
@@ -47,62 +47,65 @@ namespace DDP
             }
         }
 
-        private Statement Statement()
+        private Statement Anweisung()
         {
-            if (Match(FÜR)) return ForStatement();
-            if (Match(WENN)) return IfStatement();
-            if (Match(GIB)) return ReturnStatement();
-            if (Match(SOLANGE)) return WhileStatement();
-            if (Match(MACHE)) return DoWhileStatement();
+            if (Match(FÜR)) return FürAnweisung();
+            if (Match(WENN)) return WennAnweisung();
+            if (Match(GIB)) return RückgabeAnweisung();
+            if (Match(SOLANGE)) return SolangeAnweisung();
+            if (Match(MACHE)) return MacheSolangeAnweisung();
             if (Match(DOPPELPUNKT)) return new Statement.Block(Block());
 
-            return ExpressionStatement();
+            return AusdruckAnweisung();
         }
 
-        private Statement ExpressionStatement()
+        private Statement AusdruckAnweisung()
         {
-            Expression expr = Expression();
+            Expression expr = Ausdruck();
             Consume(PUNKT, ErrorMessages.dotAfterExpression);
             return new Statement.Expression(expr);
         }
 
-        private Expression Expression()
+        private Expression Ausdruck()
         {
-            return Assignment();
+            return Zuweisung();
         }
 
-        private Statement ForStatement()
+        private Statement FürAnweisung()
         {
             Consume(JEDE, ErrorMessages.tokenMissing("einer für anweisung", "'jede'"));
 
+            // "Typ von n bis n" syntax
             Statement.Var initializer;
             Expression min;
             if (Match(out Token matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZEICHEN))
             {
                 Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
                 Consume(VON, ErrorMessages.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
-                min = Expression();
+                min = Ausdruck();
 
                 initializer = new Statement.Var(matched, name, min);
             }
             else throw Error(Previous(), ErrorMessages.forNoVar);
 
             Consume(BIS, ErrorMessages.tokenMissing("dem minimum in einer für anweisung", "'bis'"));
-            Expression max = Expression();
+            Expression max = Ausdruck();
 
+            // Schrittgröße syntax
             Expression schrittgröße = new Expression.Literal(1);
             if (Match(MIT))
             {
                 Consume(SCHRITTGRÖßE, ErrorMessages.tokenMissing("'mit' in einer für anweisung", "'schrittgröße'"));
 
-                schrittgröße = Expression();
+                schrittgröße = Ausdruck();
             }
 
             Consume(KOMMA, "Es wird ein komma erwartet!");
             Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer für Anweisung", "ein 'mache'"));
 
-            Statement body = Statement();
+            Statement body = Anweisung();
 
+            // Schrittgröße hinzufügen
             body = new Statement.Block(new List<Statement>
             {
                 body,
@@ -123,29 +126,33 @@ namespace DDP
             return body;
         }
 
-        private Statement IfStatement()
+        private Statement WennAnweisung()
         {
             var token = Previous();
 
-            Expression condition = Expression();
+            // Bedingung
+            Expression condition = Ausdruck();
             Consume(KOMMA, ErrorMessages.ifKommaMissing);
             Consume(DANN, ErrorMessages.ifDannMissing);
 
-            Statement thenBranch = Statement();
+            Statement thenBranch = Anweisung();
             Match(depth, TAB); // consume all tabs (workaround to block issue)
+
+            // wenn aber
             Statement elseBranch = null;
             if (Match(WENN))
             {
                 if (Match(ABER))
                 {
-                    elseBranch = IfStatement();
+                    elseBranch = WennAnweisung();
                 }
                 else current--;
             }
 
+            // sonst
             if (Match(SONST))
             {
-                elseBranch = Statement();
+                elseBranch = Anweisung();
             }
 
             var stmt = new Statement.If(condition, thenBranch, elseBranch);
@@ -155,12 +162,15 @@ namespace DDP
 
         private Statement VarDeclaration(TokenType artikel)
         {
+            // der Boolean/die Zahl/die Kommazahl/die Zeichenkette/das Zeichen x ist (wahr wenn) y.
+
             Token type = CheckArtikel(artikel);
             Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
 
             Expression initializer = null;
             if (Match(IST))
             {
+                // falls zu einem Boolean zugewiesen wird, braucht der Syntax: "wahr/falsch wenn"
                 bool negate = false;
                 if (type.type == BOOLEAN)
                 {
@@ -174,8 +184,10 @@ namespace DDP
                     }
                     else Error(Peek(), "fehlt wahr/falsch wenn");
                 }
-                initializer = Expression();
 
+                initializer = Ausdruck();
+
+                // falls "der Boolean x ist falsch wenn y" wird y negiert
                 if (negate)
                 {
                     initializer = new Expression.Unary(new Token(NICHT, "nicht", null, name.line, name.position), initializer);
@@ -214,27 +226,29 @@ namespace DDP
             return type;
         }
 
-        private Statement WhileStatement()
+        private Statement SolangeAnweisung()
         {
             var token = Previous();
 
-            Expression condition = Expression();
+            // solange x:{\n\t}y
+            Expression condition = Ausdruck();
             Consume(KOMMA, ErrorMessages.tokenMissing("der Bedingung einer solange-Anweisung", "ein komma"));
             Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer solange Anweisung", "ein 'mache'"));
-            Statement body = Statement();
+            Statement body = Anweisung();
 
             var stmt = new Statement.While(condition, body);
             stmt.token = token;
             return stmt;
         }
 
-        private Statement DoWhileStatement()
+        private Statement MacheSolangeAnweisung()
         {
             var token = Previous();
 
-            Statement body = Statement();
+            // mache:{\n\t}x{\n}solange y.
+            Statement body = Anweisung();
             Consume(SOLANGE, ErrorMessages.tokenMissing("einem mache-block", "'solange'"));
-            Expression condition = Expression();
+            Expression condition = Ausdruck();
             Consume(PUNKT, ErrorMessages.dotAfterExpression);
 
             var stmt = new Statement.DoWhile(condition, body);
@@ -242,31 +256,31 @@ namespace DDP
             return stmt;
         }
 
-        private Statement.Function Function()
+        private Statement.Function Funktion()
         {
             Token name = Consume(IDENTIFIER, ErrorMessages.funcNameExpected);
             Token typ = null;
             List<Token> parameters = new();
 
-            // handle parameters
+            // Argumente
             Consume(L_KLAMMER, ErrorMessages.tokenMissing("dem Funktionsname", "eine Klammer auf"));
 
             do
             {
                 if (parameters.Count >= 255)
                 {
-                    Error(Peek(), ErrorMessages.tooManyParameters);
+                    Error(Peek(), ErrorMessages.tooManyArguments);
                 }
 
                 if (Match(ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
-                    parameters.Add(Consume(IDENTIFIER, ErrorMessages.parameterNameExpected));
+                    parameters.Add(Consume(IDENTIFIER, ErrorMessages.argumentNameExpected));
                 }
             } while (Match(KOMMA));
 
             Consume(R_KLAMMER, ErrorMessages.tokenMissing("den Argumenten", "eine Klammer zu"));
 
-            // return type
+            // rückgabe Typ
             if (Match(VOM))
             {
                 Consume(TYP, ErrorMessages.tokenMissing("einer vom Anweisung", "ein Typ"));
@@ -280,12 +294,13 @@ namespace DDP
                 }
             }
 
+            // Funktionskörper
             Consume(MACHT, ErrorMessages.tokenMissingAtEnd("variablen deklaration", "ein 'macht'"));
             Consume(DOPPELPUNKT, ErrorMessages.tokenMissing("einer macht anweisung", "ein doppelpunkt"));
 
             List<Statement> body = Block();
 
-            // require return statement if return type is present
+            // Funktion braucht eine Rückgabe-Anweisung wenn es einen Rückgabe-Typ besitzt.
             if (typ != null)
             {
                 foreach (var stmt in body)
@@ -299,13 +314,15 @@ namespace DDP
             return new Statement.Function(name, parameters, typ, body);
         }
 
-        private Statement ReturnStatement()
+        private Statement RückgabeAnweisung()
         {
+            // "gib 2 zurück."
+
             Token keyword = Previous();
             Expression value = null;
             if (!Match(PUNKT))
             {
-                value = Expression();
+                value = Ausdruck();
             }
 
             Consume(ZURÜCK, ErrorMessages.tokenMissing("einem Rückgabe-Wert", "'zurück'"));
@@ -320,7 +337,7 @@ namespace DDP
 
             while (Match(depth, TAB) && !IsAtEnd)
             {
-                statements.Add(Declaration());
+                statements.Add(Deklaration());
             }
 
             depth--;
@@ -328,14 +345,15 @@ namespace DDP
             return statements;
         }
 
-        private Expression Assignment()
+        private Expression Zuweisung()
         {
-            Expression expr = Or();
+            Expression expr = Oder();
 
+            // "x ist y"
             if (Match(IST))
             {
                 Token equals = Previous();
-                Expression value = Assignment();
+                Expression value = Zuweisung();
 
                 if (expr is Expression.Variable variable)
                 {
@@ -349,42 +367,45 @@ namespace DDP
             return expr;
         }
 
-        private Expression Or()
+        private Expression Oder()
         {
-            Expression expr = And();
+            Expression expr = Und();
 
+            // "x oder y"
             while (Match(ODER))
             {
                 Token op = Previous();
-                Expression right = And();
+                Expression right = Und();
                 expr = new Expression.Logical(expr, op, right);
             }
 
             return expr;
         }
 
-        private Expression And()
+        private Expression Und()
         {
-            Expression expr = Equality();
+            Expression expr = Gleichheit();
 
+            // "x und y"
             while (Match(UND))
             {
                 Token op = Previous();
-                Expression right = Equality();
+                Expression right = Gleichheit();
                 expr = new Expression.Logical(expr, op, right);
             }
 
             return expr;
         }
 
-        private Expression Equality()
+        private Expression Gleichheit()
         {
-            Expression expr = Comparison();
+            Expression expr = Vergleich();
 
+            // "x un-/gleich y"
             while (Match(UNGLEICH, GLEICH))
             {
                 Token op = Previous();
-                Expression right = Comparison();
+                Expression right = Vergleich();
                 expr = new Expression.Binary(expr, op, right);
 
                 Consume(IST, ErrorMessages.tokenMissing("einem Vergleich", "'ist'"));
@@ -393,13 +414,14 @@ namespace DDP
             return expr;
         }
 
-        private Expression Comparison()
+        private Expression Vergleich()
         {
             Expression expr = Bitweise();
 
+            // "x größer/kleiner als(, oder) y ist"
             while (Match(GRÖßER, KLEINER))
             {
-                // Check if ALS is present
+                // Schaue ob ein "als" vorhanden ist.
                 if (!Check(ALS))
                 {
                     Error(Previous(), ErrorMessages.tokenMissing("einem größer/kleiner operator", "'als'"));
@@ -407,9 +429,9 @@ namespace DDP
                 }
 
                 Token op = Previous();
-                Advance(); // current: ALS
+                Advance(); // ALS
 
-                // handle "größer/kleiner als, oder gleich"
+                // "x größer/kleiner als, oder y ist"
                 if (Match(KOMMA) && Match(ODER))
                 {
                     if (op.type == GRÖßER)
@@ -429,6 +451,7 @@ namespace DDP
 
         private Expression Bitweise()
         {
+            // "x logisch oder/und y"
             while (Match(LOGISCH))
             {
                 Expression _expr = Term();
@@ -439,6 +462,7 @@ namespace DDP
 
             Expression expr = Term();
 
+            // "x um y bit nach links/rechts verschoben"
             while (Match(UM))
             {
                 Expression right = Term();
@@ -457,6 +481,7 @@ namespace DDP
         {
             Expression expr = Trigo();
 
+            // "x plus/minus y"
             while (Match(MINUS, PLUS))
             {
                 Token op = Previous();
@@ -469,21 +494,23 @@ namespace DDP
 
         private Expression Trigo()
         {
+            // "Sinus/Kosinus/Tangens/Arkussinus/Arkuskosinus/Arkustangens/Hyperbeksinus/Hyperbelkosinus/Hyperbeltangens von x"
             while (Match(SINUS, KOSINUS, TANGENS, ARKUSSINUS, ARKUSKOSINUS, ARKUSTANGENS, HYPERBELSINUS, HYPERBELKOSINUS, HYPERBELTANGENS))
             {
                 Token op = Previous();
                 Consume(VON, "fehlt von");
-                Expression right = Factor();
+                Expression right = Faktor();
                 return new Expression.Unary(op, right);
             }
 
-            return Factor();
+            return Faktor();
         }
 
-        private Expression Factor()
+        private Expression Faktor()
         {
             Expression expr = Wurzel();
 
+            // "x durch/mal/modulo y"
             while (Match(DURCH, MAL, MODULO))
             {
                 Token op = Previous();
@@ -498,6 +525,7 @@ namespace DDP
         {
             Expression expr = Potenz();
 
+            // "x. wurzel von y"
             if (Match(PUNKT))
             {
                 if (Match(WURZEL))
@@ -518,26 +546,28 @@ namespace DDP
 
         private Expression Potenz()
         {
-            Expression expr = Unary();
+            Expression expr = Unär();
 
+            // "x hoch y"
             while (Match(HOCH))
             {
                 Token op = Previous();
-                Expression right = Unary();
+                Expression right = Unär();
                 expr = new Expression.Binary(expr, op, right);
             }
 
             return expr;
         }
 
-        private Expression Unary()
+        private Expression Unär()
         {
+            // "logisch nicht x"
             if (Match(LOGISCH))
             {
                 if (Match(NICHT))
                 {
                     Token op = Previous();
-                    Expression right = Unary();
+                    Expression right = Unär();
                     return new Expression.Unary(op, right);
                 }
                 else
@@ -546,20 +576,22 @@ namespace DDP
                 }
             }
 
+            // "ln x"
             if (Match(LOG))
             {
                 Token op = Previous();
-                Expression right = Unary();
+                Expression right = Unär();
                 return new Expression.Unary(op, right);
             }
 
+            // "der Betrag von x"
             if (Match(DER))
             {
                 if (Match(BETRAG))
                 {
                     Token op = Previous();
                     Consume(VON, ErrorMessages.tokenMissing("dem Betrag operator", "'von'"));
-                    Expression right = Unary();
+                    Expression right = Unär();
                     return new Expression.Unary(op, right);
                 }
                 else
@@ -568,20 +600,22 @@ namespace DDP
                 }
             }
 
+            // "nicht/- x"
             if (Match(NICHT, BANG_MINUS))
             {
                 Token op = Previous();
-                Expression right = Unary();
+                Expression right = Unär();
                 return new Expression.Unary(op, right);
             }
 
-            return Call();
+            return Aufruf();
         }
 
-        private Expression Call()
+        private Expression Aufruf()
         {
-            Expression expr = Primary();
+            Expression expr = Primär();
 
+            // "x(y, z)"
             if (Match(L_KLAMMER))
             {
                 List<Expression> arguments = new();
@@ -591,9 +625,9 @@ namespace DDP
                     {
                         if (arguments.Count >= 255)
                         {
-                            Error(Peek(), ErrorMessages.tooManyParameters);
+                            Error(Peek(), ErrorMessages.tooManyArguments);
                         }
-                        arguments.Add(Expression());
+                        arguments.Add(Ausdruck());
                     } while (Match(KOMMA));
                 }
 
@@ -605,7 +639,7 @@ namespace DDP
             return expr;
         }
 
-        private Expression Primary()
+        private Expression Primär()
         {
             if (Match(FALSCH)) return new Expression.Literal(false);
             if (Match(WAHR)) return new Expression.Literal(true);
@@ -625,7 +659,7 @@ namespace DDP
 
             if (Match(L_KLAMMER))
             {
-                Expression expr = Expression();
+                Expression expr = Ausdruck();
                 Consume(R_KLAMMER, ErrorMessages.groupingParenMissing);
                 return new Expression.Grouping(expr);
             }
