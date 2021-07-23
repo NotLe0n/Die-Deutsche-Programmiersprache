@@ -416,7 +416,7 @@ namespace DDP
             // Unreachable.
             return null;
 
-            object NumberUnary(Func<double, object> function)
+            object NumberUnary(Func<dynamic, object> function)
             {
                 if (type == typeof(double)) return function((double)right);
                 if (type == typeof(int)) return function((int)right);
