@@ -6,11 +6,11 @@ namespace DDP.Eingebaute_Funktionen
 {
     class Umwandeln
     {
-        public class Zahl : ICallable
+        public class Zahl : IAufrufbar
         {
             public int Arity => 1;
 
-            public object Call(Interpreter interpreter, List<object> arguments)
+            public object Aufrufen(Interpreter interpreter, List<object> arguments)
             {
                 try
                 {
@@ -28,11 +28,11 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Kommazahl : ICallable
+        public class Kommazahl : IAufrufbar
         {
             public int Arity => 1;
 
-            public object Call(Interpreter interpreter, List<object> arguments)
+            public object Aufrufen(Interpreter interpreter, List<object> arguments)
             {
                 try
                 {
@@ -50,23 +50,23 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Zeichen : ICallable
+        public class Zeichen : IAufrufbar
         {
             public int Arity => 1;
 
-            public object Call(Interpreter interpreter, List<object> arguments)
+            public object Aufrufen(Interpreter interpreter, List<object> arguments)
             {
                 try
                 {
                     // fick dich hendrik
-                    if (arguments[0] is bool)
+                    if (arguments[0] is bool boolean)
                     {
-                        return (bool)arguments[0] ? 'w' : 'f';
+                        return boolean ? 'w' : 'f';
                     }
 
-                    if (arguments[0] is string)
+                    if (arguments[0] is string str)
                     {
-                        return (arguments[0] as string)[0];
+                        return str[0];
                     }
 
                     return Convert.ToChar(arguments[0]);
@@ -78,11 +78,11 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Zeichenkette : ICallable
+        public class Zeichenkette : IAufrufbar
         {
             public int Arity => 1;
 
-            public object Call(Interpreter interpreter, List<object> arguments)
+            public object Aufrufen(Interpreter interpreter, List<object> arguments)
             {
                 try
                 {
@@ -95,11 +95,11 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Boolean : ICallable
+        public class Boolean : IAufrufbar
         {
             public int Arity => 1;
 
-            public object Call(Interpreter interpreter, List<object> arguments)
+            public object Aufrufen(Interpreter interpreter, List<object> arguments)
             {
                 try
                 {

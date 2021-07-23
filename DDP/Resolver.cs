@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    class Resolver : Expression.IVisitor<object>, Statement.IVisitor<object>
+    class Resolver : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
     {
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, bool>> scopes = new();
@@ -20,56 +20,56 @@ namespace DDP
             FUNCTION
         }
 
-        public void Resolve(List<Statement> statements)
+        public void Resolve(List<Anweisung> statements)
         {
-            foreach (Statement statement in statements)
+            foreach (Anweisung statement in statements)
             {
                 Resolve(statement);
             }
         }
 
-        private void Resolve(Statement stmt)
+        private void Resolve(Anweisung stmt)
         {
             stmt.Accept(this);
         }
 
-        private void Resolve(Expression expr)
+        private void Resolve(Ausdruck expr)
         {
             expr.Accept(this);
         }
 
-        private void ResolveFunction(Statement.Function function, FunctionType type)
+        private void ResolveFunction(Anweisung.Funktion function, FunctionType type)
         {
             FunctionType enclosingFunction = currentFunction;
             currentFunction = type;
 
             BeginScope();
-            foreach (Token param in function.param)
+            foreach (Symbol param in function.argumente)
             {
                 Declare(param);
                 Define(param);
             }
-            Resolve(function.body);
+            Resolve(function.körper);
             EndScope();
 
             currentFunction = enclosingFunction;
         }
 
-        public object VisitBlockStmt(Statement.Block stmt)
+        public object VisitBlockStmt(Anweisung.Block stmt)
         {
             BeginScope();
-            Resolve(stmt.statements);
+            Resolve(stmt.anweisungen);
             EndScope();
             return null;
         }
 
-        public object VisitExpressionStmt(Statement.Expression stmt)
+        public object VisitExpressionStmt(Anweisung.Ausdruck stmt)
         {
-            Resolve(stmt.expression);
+            Resolve(stmt.ausdruck);
             return null;
         }
 
-        public object VisitFunctionStmt(Statement.Function stmt)
+        public object VisitFunctionStmt(Anweisung.Funktion stmt)
         {
             Declare(stmt.name);
             Define(stmt.name);
@@ -79,81 +79,81 @@ namespace DDP
             return null;
         }
 
-        public object VisitIfStmt(Statement.If stmt)
+        public object VisitIfStmt(Anweisung.Wenn stmt)
         {
-            Resolve(stmt.condition);
-            Resolve(stmt.thenBranch);
-            if (stmt.elseBranch != null) Resolve(stmt.elseBranch);
+            Resolve(stmt.bedingung);
+            Resolve(stmt.dannZweig);
+            if (stmt.sonstZweig != null) Resolve(stmt.sonstZweig);
             return null;
         }
 
-        public object VisitReturnStmt(Statement.Return stmt)
+        public object VisitReturnStmt(Anweisung.Rückgabe stmt)
         {
             if (currentFunction == FunctionType.NONE)
             {
-                DDP.Fehler(stmt.keyword, Fehlermeldungen.returnNotInFunc);
+                DDP.Fehler(stmt.schlüsselwort, Fehlermeldungen.returnNotInFunc);
             }
 
-            if (stmt.value != null)
+            if (stmt.wert != null)
             {
-                Resolve(stmt.value);
+                Resolve(stmt.wert);
             }
 
             return null;
         }
 
-        public object VisitVarStmt(Statement.Var stmt)
+        public object VisitVarStmt(Anweisung.Var stmt)
         {
             Declare(stmt.name);
-            if (stmt.initializer != null)
+            if (stmt.initializierer != null)
             {
-                Resolve(stmt.initializer);
+                Resolve(stmt.initializierer);
             }
             Define(stmt.name);
             return null;
         }
 
-        public object VisitWhileStmt(Statement.While stmt)
+        public object VisitWhileStmt(Anweisung.Solange stmt)
         {
-            Resolve(stmt.condition);
-            Resolve(stmt.body);
+            Resolve(stmt.bedingung);
+            Resolve(stmt.körper);
             return null;
         }
 
-        public object VisitDoWhileStmt(Statement.DoWhile stmt)
+        public object VisitDoWhileStmt(Anweisung.MacheSolange stmt)
         {
-            Resolve(stmt.body);
-            Resolve(stmt.condition);
+            Resolve(stmt.körper);
+            Resolve(stmt.bedingung);
             return null;
         }
 
-        public object VisitForStmt(Statement.For stmt)
+        public object VisitForStmt(Anweisung.Für stmt)
         {
             Resolve(stmt.min);
             Resolve(stmt.max);
-            Resolve(stmt.body);
+            Resolve(stmt.körper);
             return null;
         }
 
-        public object VisitAssignExpr(Expression.Assign expr)
+        public object VisitAssignExpr(Ausdruck.Zuweisung expr)
         {
-            Resolve(expr.value);
+            Resolve(expr.wert);
             ResolveLocal(expr, expr.name);
             return null;
         }
 
-        public object VisitBinaryExpr(Expression.Binary expr)
+        public object VisitBinaryExpr(Ausdruck.Binär expr)
         {
-            Resolve(expr.left);
-            Resolve(expr.right);
+            Resolve(expr.links);
+            Resolve(expr.rechts);
             return null;
         }
 
-        public object VisitCallExpr(Expression.Call expr)
+        public object VisitCallExpr(Ausdruck.Aufruf expr)
         {
-            Resolve(expr.callee);
+            Resolve(expr.aufrufer);
 
-            foreach (Expression argument in expr.arguments)
+            foreach (Ausdruck argument in expr.argumente)
             {
                 Resolve(argument);
             }
@@ -161,31 +161,31 @@ namespace DDP
             return null;
         }
 
-        public object VisitGroupingExpr(Expression.Grouping expr)
+        public object VisitGroupingExpr(Ausdruck.Gruppierung expr)
         {
-            Resolve(expr.expression);
+            Resolve(expr.ausdruck);
             return null;
         }
 
-        public object VisitLiteralExpr(Expression.Literal expr)
+        public object VisitLiteralExpr(Ausdruck.Wert expr)
         {
             return null;
         }
 
-        public object VisitLogicalExpr(Expression.Logical expr)
+        public object VisitLogicalExpr(Ausdruck.Logisch expr)
         {
-            Resolve(expr.left);
-            Resolve(expr.right);
+            Resolve(expr.links);
+            Resolve(expr.rechts);
             return null;
         }
 
-        public object VisitUnaryExpr(Expression.Unary expr)
+        public object VisitUnaryExpr(Ausdruck.Unär expr)
         {
-            Resolve(expr.right);
+            Resolve(expr.rechts);
             return null;
         }
 
-        public object VisitVariableExpr(Expression.Variable expr)
+        public object VisitVariableExpr(Ausdruck.Variable expr)
         {
             if (IsDeclaredExact(expr.name.lexeme, false) == true)
             {
@@ -222,7 +222,7 @@ namespace DDP
             scopes.Pop();
         }
 
-        private void Declare(Token name)
+        private void Declare(Symbol name)
         {
             if (scopes.Count == 0) return;
 
@@ -236,13 +236,13 @@ namespace DDP
             scope[name.lexeme] = false;
         }
 
-        private void Define(Token name)
+        private void Define(Symbol name)
         {
             if (scopes.Count == 0) return;
             scopes.Peek()[name.lexeme] = true;
         }
 
-        private void ResolveLocal(Expression expr, Token name)
+        private void ResolveLocal(Ausdruck expr, Symbol name)
         {
             // Stack.ToArray returns a reversed array. The first pushed item will be the last in the array.
             var _scopes = scopes.ToArray();

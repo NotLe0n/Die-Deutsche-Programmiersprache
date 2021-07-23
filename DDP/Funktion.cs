@@ -2,12 +2,12 @@
 
 namespace DDP
 {
-    class Function : ICallable
+    class Funktion : IAufrufbar
     {
-        private readonly Statement.Function declaration;
+        private readonly Anweisung.Funktion declaration;
         private readonly Environment closure;
 
-        public Function(Statement.Function declaration, Environment closure)
+        public Funktion(Anweisung.Funktion declaration, Environment closure)
         {
             this.closure = closure;
 
@@ -19,20 +19,20 @@ namespace DDP
             return "<fn " + declaration.name.lexeme + ">";
         }
 
-        public int Arity => declaration.param.Count;
-
-        public object Call(Interpreter interpreter, List<object> arguments)
+        public int Arity => declaration.argumente.Count;
+        
+        public object Aufrufen(Interpreter interpreter, List<object> arguments)
         {
             Environment environment = new Environment(closure);
 
-            for (int i = 0; i < declaration.param.Count; i++)
+            for (int i = 0; i < declaration.argumente.Count; i++)
             {
-                environment.Define(declaration.param[i].lexeme, arguments[i]);
+                environment.Define(declaration.argumente[i].lexeme, arguments[i]);
             }
 
             try
             {
-                interpreter.ExecuteBlock(declaration.body, environment);
+                interpreter.ExecuteBlock(declaration.körper, environment);
             }
             catch (Rückgabe returnValue)
             {
@@ -40,21 +40,21 @@ namespace DDP
                     throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeWrong);
 
                 System.Type returntype;
-                switch (declaration.type.type)
+                switch (declaration.typ.typ)
                 {
-                    case TokenType.ZAHL:
+                    case SymbolTyp.ZAHL:
                         returntype = typeof(int);
                         break;
-                    case TokenType.KOMMAZAHL:
+                    case SymbolTyp.KOMMAZAHL:
                         returntype = typeof(double);
                         break;
-                    case TokenType.ZEICHENKETTE:
+                    case SymbolTyp.ZEICHENKETTE:
                         returntype = typeof(string);
                         break;
-                    case TokenType.ZEICHEN:
+                    case SymbolTyp.ZEICHEN:
                         returntype = typeof(char);
                         break;
-                    case TokenType.BOOLEAN:
+                    case SymbolTyp.BOOLEAN:
                         returntype = typeof(bool);
                         break;
                     default:

@@ -2,16 +2,16 @@
 using System;
 using System.Collections.Generic;
 
-using static DDP.TokenType;
+using static DDP.SymbolTyp;
 
 namespace DDP
 {
-    class Interpreter : Expression.IVisitor<object>, Statement.IVisitor<object>
+    class Interpreter : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
     {
         public readonly Environment globals = new();
         private Environment environment;
 
-        private readonly Dictionary<Expression, int> locals = new();
+        private readonly Dictionary<Ausdruck, int> locals = new();
 
         public Interpreter()
         {
@@ -29,11 +29,11 @@ namespace DDP
             globals.Define("zuBoolean", new Umwandeln.Boolean());
         }
 
-        public void Interpret(List<Statement> statements)
+        public void Interpret(List<Anweisung> statements)
         {
             try
             {
-                foreach (Statement statement in statements)
+                foreach (Anweisung statement in statements)
                 {
                     Execute(statement);
                 }
@@ -44,35 +44,35 @@ namespace DDP
             }
         }
 
-        private object Evaluate(Expression expr)
+        private object Evaluate(Ausdruck expr)
         {
             return expr.Accept(this);
         }
 
-        private void Execute(Statement stmt)
+        private void Execute(Anweisung stmt)
         {
             stmt.Accept(this);
         }
 
-        public void Resolve(Expression expr, int depth)
+        public void Resolve(Ausdruck expr, int depth)
         {
             locals[expr] = depth;
         }
 
-        public object VisitBlockStmt(Statement.Block stmt)
+        public object VisitBlockStmt(Anweisung.Block stmt)
         {
-            ExecuteBlock(stmt.statements, new Environment(environment));
+            ExecuteBlock(stmt.anweisungen, new Environment(environment));
             return null;
         }
 
-        public void ExecuteBlock(List<Statement> statements, Environment environment)
+        public void ExecuteBlock(List<Anweisung> statements, Environment environment)
         {
             Environment previous = this.environment;
             try
             {
                 this.environment = environment;
 
-                foreach (Statement statement in statements)
+                foreach (Anweisung statement in statements)
                 {
                     Execute(statement);
                 }
@@ -83,32 +83,32 @@ namespace DDP
             }
         }
 
-        public object VisitExpressionStmt(Statement.Expression stmt)
+        public object VisitExpressionStmt(Anweisung.Ausdruck stmt)
         {
-            Evaluate(stmt.expression);
+            Evaluate(stmt.ausdruck);
             return null;
         }
 
-        public object VisitFunctionStmt(Statement.Function stmt)
+        public object VisitFunctionStmt(Anweisung.Funktion stmt)
         {
-            Function function = new Function(stmt, environment);
+            var funktion = new Funktion(stmt, environment);
 
-            environment.Define(stmt.name.lexeme, function);
+            environment.Define(stmt.name.lexeme, funktion);
             return null;
         }
 
-        public object VisitIfStmt(Statement.If stmt)
+        public object VisitIfStmt(Anweisung.Wenn stmt)
         {
-            object value = Evaluate(stmt.condition);
+            object value = Evaluate(stmt.bedingung);
             if (value is bool)
             {
                 if (value.Equals(true))
                 {
-                    Execute(stmt.thenBranch);
+                    Execute(stmt.dannZweig);
                 }
-                else if (stmt.elseBranch != null)
+                else if (stmt.sonstZweig != null)
                 {
-                    Execute(stmt.elseBranch);
+                    Execute(stmt.sonstZweig);
                 }
             }
             else
@@ -118,139 +118,141 @@ namespace DDP
             return null;
         }
 
-        public object VisitReturnStmt(Statement.Return stmt)
+        public object VisitReturnStmt(Anweisung.Rückgabe stmt)
         {
-            object value = null;
-            if (stmt.value != null) value = Evaluate(stmt.value);
+            object wert = null;
+            if (stmt.wert != null) wert = Evaluate(stmt.wert);
 
-            throw new Rückgabe(value);
+            throw new Rückgabe(wert);
         }
 
-        public object VisitVarStmt(Statement.Var stmt)
+        public object VisitVarStmt(Anweisung.Var stmt)
         {
-            object value = null;
-            if (stmt.initializer != null)
+            object wert = null;
+            if (stmt.initializierer != null)
             {
-                value = Evaluate(stmt.initializer);
+                wert = Evaluate(stmt.initializierer);
             }
 
-            switch (stmt.type.type)
+            switch (stmt.typ.typ)
             {
                 case ZAHL:
-                    if (value is not int)
+                    if (wert is not int)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zahl"));
                     break;
                 case KOMMAZAHL:
-                    if (value is not double)
+                    if (wert is not double)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Kommazahl"));
                     break;
                 case ZEICHENKETTE:
-                    if (value is not string)
+                    if (wert is not string)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
                     break;
                 case ZEICHEN:
-                    if (value is not char)
+                    if (wert is not char)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Zeichen"));
                     break;
                 case BOOLEAN:
-                    if (value is not bool)
+                    if (wert is not bool)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Boolean"));
                     break;
             }
 
-            environment.Define(stmt.name.lexeme, value);
+            environment.Define(stmt.name.lexeme, wert);
             return null;
         }
 
-        public object VisitWhileStmt(Statement.While stmt)
+        public object VisitWhileStmt(Anweisung.Solange stmt)
         {
-            object value = Evaluate(stmt.condition);
-            if (value is bool)
+            object wert = Evaluate(stmt.bedingung);
+
+            if (wert is bool)
             {
-                while (value.Equals(true))
+                while (wert.Equals(true))
                 {
-                    Execute(stmt.body);
+                    Execute(stmt.körper);
                 }
             }
             else
             {
-                throw new Laufzeitfehler(stmt.token, Fehlermeldungen.whileConditionNotBool);
+                throw new Laufzeitfehler(stmt.symbol, Fehlermeldungen.whileConditionNotBool);
             }
             return null;
         }
 
-        public object VisitDoWhileStmt(Statement.DoWhile stmt)
+        public object VisitDoWhileStmt(Anweisung.MacheSolange stmt)
         {
-            object value = Evaluate(stmt.condition);
-            if (value is bool)
+            object wert = Evaluate(stmt.bedingung);
+
+            if (wert is bool)
             {
                 do
                 {
-                    Execute(stmt.body);
+                    Execute(stmt.körper);
                 }
-                while (value.Equals(true));
+                while (wert.Equals(true));
             }
             else
             {
-                throw new Laufzeitfehler(stmt.token, Fehlermeldungen.whileConditionNotBool);
+                throw new Laufzeitfehler(stmt.symbol, Fehlermeldungen.whileConditionNotBool);
             }
             return null;
         }
 
-        public object VisitForStmt(Statement.For stmt)
+        public object VisitForStmt(Anweisung.Für stmt)
         {
             dynamic min = Evaluate(stmt.min);
             dynamic max = Evaluate(stmt.max);
             dynamic inc = Evaluate(stmt.inc);
 
             if (min is not int && max is not int && inc is not int && min is not double &&  max is not double && inc is not double)
-                throw new Laufzeitfehler(stmt.initializer.name, Fehlermeldungen.forWrongType);
+                throw new Laufzeitfehler(stmt.initializierer.name, Fehlermeldungen.forWrongType);
 
             if (min < max)
             {
                 for (dynamic i = min; i <= max; i += inc)
                 {
-                    Execute(stmt.body);
+                    Execute(stmt.körper);
                 }
             }
             else
             {
                 for (dynamic i = min; i >= max; i += inc)
                 {
-                    Execute(stmt.body);
+                    Execute(stmt.körper);
                 }
             }
             
             return null;
         }
 
-        public object VisitAssignExpr(Expression.Assign expr)
+        public object VisitAssignExpr(Ausdruck.Zuweisung expr)
         {
-            var value = Evaluate(expr.value);
+            var wert = Evaluate(expr.wert);
 
             if (locals.TryGetValue(expr, out var distance))
             {
-                environment.AssignAt(distance, expr.name, value);
+                environment.AssignAt(distance, expr.name, wert);
             }
             else
             {
-                globals.Assign(expr.name, value);
+                globals.Assign(expr.name, wert);
             }
 
-            return value;
+            return wert;
         }
 
-        public object VisitBinaryExpr(Expression.Binary expr)
+        public object VisitBinaryExpr(Ausdruck.Binär expr)
         {
-            object _left = Evaluate(expr.left);
-            object _right = Evaluate(expr.right);
+            object _left = Evaluate(expr.links);
+            object _right = Evaluate(expr.rechts);
 
-            Type type = CheckOperandTypes(expr.op, _left, _right);
+            Type typ = CheckOperandTypes(expr.op, _left, _right);
 
-            object left = Convert.ChangeType(_left, type);
-            object right = Convert.ChangeType(_right, type);
+            object left = Convert.ChangeType(_left, typ);
+            object right = Convert.ChangeType(_right, typ);
 
-            switch (expr.op.type)
+            switch (expr.op.typ)
             {
                 case UNGLEICH:
                     if (_left.GetType() == _right.GetType()) return !left.Equals(right);
@@ -259,63 +261,63 @@ namespace DDP
                     if (_left.GetType() == _right.GetType()) return left.Equals(right);
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opSameType);
                 case GRÖßER:
-                    if (type == typeof(double)) return (double)left > (double)right;
-                    if (type == typeof(int)) return (int)left > (int)right;
+                    if (typ == typeof(double)) return (double)left > (double)right;
+                    if (typ == typeof(int)) return (int)left > (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case GRÖßER_GLEICH:
-                    if (type == typeof(double)) return (double)left >= (double)right;
-                    if (type == typeof(int)) return (int)left >= (int)right;
+                    if (typ == typeof(double)) return (double)left >= (double)right;
+                    if (typ == typeof(int)) return (int)left >= (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KLEINER:
-                    if (type == typeof(double)) return (double)left < (double)right;
-                    if (type == typeof(int)) return (int)left < (int)right;
+                    if (typ == typeof(double)) return (double)left < (double)right;
+                    if (typ == typeof(int)) return (int)left < (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KLEINER_GLEICH:
-                    if (type == typeof(double)) return (double)left <= (double)right;
-                    if (type == typeof(int)) return (int)left <= (int)right;
+                    if (typ == typeof(double)) return (double)left <= (double)right;
+                    if (typ == typeof(int)) return (int)left <= (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case MODULO:
-                    if (type == typeof(int)) return (int)left % (int)right;
+                    if (typ == typeof(int)) return (int)left % (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyInt);
                 case MINUS:
-                    if (type == typeof(double)) return (double)left - (double)right;
-                    if (type == typeof(int)) return (int)left - (int)right;
+                    if (typ == typeof(double)) return (double)left - (double)right;
+                    if (typ == typeof(int)) return (int)left - (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case PLUS:
-                    if (type == typeof(double)) return (double)left + (double)right;
-                    if (type == typeof(int)) return (int)left + (int)right;
+                    if (typ == typeof(double)) return (double)left + (double)right;
+                    if (typ == typeof(int)) return (int)left + (int)right;
                     if (left is string || right is string) return Erweiterungen.Stringify(left) + Erweiterungen.Stringify(right);
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNumOrString);
                 case DURCH:
-                    if (type == typeof(double)) return (double)left / (double)right;
-                    if (type == typeof(int)) return (int)left / (int)right;
+                    if (typ == typeof(double)) return (double)left / (double)right;
+                    if (typ == typeof(int)) return (int)left / (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case MAL:
-                    if (type == typeof(double)) return (double)left * (double)right;
-                    if (type == typeof(int)) return (int)left * (int)right;
+                    if (typ == typeof(double)) return (double)left * (double)right;
+                    if (typ == typeof(int)) return (int)left * (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case HOCH:
-                    if (type == typeof(double)) return Math.Pow((double)left, (double)right);
-                    if (type == typeof(int)) return Math.Pow((int)left, (int)right);
+                    if (typ == typeof(double)) return Math.Pow((double)left, (double)right);
+                    if (typ == typeof(int)) return Math.Pow((int)left, (int)right);
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case WURZEL:
-                    if (type == typeof(double)) return Math.Pow((double)left, 1 / (double)right);
-                    if (type == typeof(int)) return Math.Pow((int)left, 1.0 / (int)right);
+                    if (typ == typeof(double)) return Math.Pow((double)left, 1 / (double)right);
+                    if (typ == typeof(int)) return Math.Pow((int)left, 1.0 / (int)right);
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case UND:
-                    if (type == typeof(int)) return (int)left & (int)right;
+                    if (typ == typeof(int)) return (int)left & (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case ODER:
-                    if (type == typeof(int)) return (int)left | (int)right;
+                    if (typ == typeof(int)) return (int)left | (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KONTRA:
-                    if (type == typeof(int)) return (int)left ^ (int)right;
+                    if (typ == typeof(int)) return (int)left ^ (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case LINKS:
-                    if (type == typeof(int)) return (int)left << (int)right;
+                    if (typ == typeof(int)) return (int)left << (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case RECHTS:
-                    if (type == typeof(int)) return (int)left >> (int)right;
+                    if (typ == typeof(int)) return (int)left >> (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
             }
 
@@ -323,46 +325,46 @@ namespace DDP
             return null;
         }
 
-        public object VisitCallExpr(Expression.Call expr)
+        public object VisitCallExpr(Ausdruck.Aufruf expr)
         {
-            object callee = Evaluate(expr.callee);
+            object callee = Evaluate(expr.aufrufer);
 
             List<object> arguments = new();
 
-            foreach (Expression argument in expr.arguments)
+            foreach (Ausdruck argument in expr.argumente)
             {
                 arguments.Add(Evaluate(argument));
             }
-            if (!(callee is ICallable))
+            if (!(callee is IAufrufbar))
             {
-                throw new Laufzeitfehler(expr.paren, Fehlermeldungen.onlyCallFunc);
+                throw new Laufzeitfehler(expr.klammer, Fehlermeldungen.onlyCallFunc);
             }
 
-            ICallable function = (ICallable)callee;
+            IAufrufbar function = (IAufrufbar)callee;
             if (arguments.Count != function.Arity)
             {
-                throw new Laufzeitfehler(expr.paren, Fehlermeldungen.wrongParamCount(function.Arity, arguments.Count));
+                throw new Laufzeitfehler(expr.klammer, Fehlermeldungen.wrongParamCount(function.Arity, arguments.Count));
             }
 
-            return function.Call(this, arguments);
+            return function.Aufrufen(this, arguments);
 
         }
 
-        public object VisitGroupingExpr(Expression.Grouping expr)
+        public object VisitGroupingExpr(Ausdruck.Gruppierung expr)
         {
-            return Evaluate(expr.expression);
+            return Evaluate(expr.ausdruck);
         }
 
-        public object VisitLiteralExpr(Expression.Literal expr)
+        public object VisitLiteralExpr(Ausdruck.Wert expr)
         {
-            return expr.value;
+            return expr.wert;
         }
 
-        public object VisitLogicalExpr(Expression.Logical expr)
+        public object VisitLogicalExpr(Ausdruck.Logisch expr)
         {
-            object left = Evaluate(expr.left);
+            object left = Evaluate(expr.links);
 
-            if (expr.op.type == ODER)
+            if (expr.op.typ == ODER)
             {
                 if (left.Equals(true)) return left;
             }
@@ -371,21 +373,21 @@ namespace DDP
                 if (left.Equals(false)) return left;
             }
 
-            return Evaluate(expr.right);
+            return Evaluate(expr.rechts);
         }
 
-        public object VisitUnaryExpr(Expression.Unary expr)
+        public object VisitUnaryExpr(Ausdruck.Unär expr)
         {
-            object right = Evaluate(expr.right);
+            object rechts = Evaluate(expr.rechts);
 
-            Type type = CheckOperandTypes(expr.op, right);
-            right = Convert.ChangeType(right, type);
+            Type typ = CheckOperandTypes(expr.op, rechts);
+            rechts = Convert.ChangeType(rechts, typ);
 
-            switch (expr.op.type)
+            switch (expr.op.typ)
             {
                 case NICHT:
-                    if (type == typeof(bool)) return right.Equals(false);
-                    if (type == typeof(int)) return ~(int)right;
+                    if (typ == typeof(bool)) return rechts.Equals(false);
+                    if (typ == typeof(int)) return ~(int)rechts;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.unaryOpWrongType("nicht", "Boolean oder Zahlen"));
                 case BANG_MINUS:
                     return NumberUnary(x => -x);
@@ -416,20 +418,20 @@ namespace DDP
             // Unreachable.
             return null;
 
-            object NumberUnary(Func<dynamic, object> function)
+            object NumberUnary(Func<dynamic, object> func)
             {
-                if (type == typeof(double)) return function((double)right);
-                if (type == typeof(int)) return function((int)right);
+                if (typ == typeof(double)) return func((double)rechts);
+                if (typ == typeof(int)) return func((int)rechts);
                 throw new Laufzeitfehler(expr.op, Fehlermeldungen.unaryOpWrongType("ln", "Zahlen"));
             }
         }
 
-        public object VisitVariableExpr(Expression.Variable expr)
+        public object VisitVariableExpr(Ausdruck.Variable expr)
         {
             return LookUpVariable(expr.name, expr);
         }
 
-        private object LookUpVariable(Token name, Expression expr)
+        private object LookUpVariable(Symbol name, Ausdruck expr)
         {
             if (locals.TryGetValue(expr, out var distance))
             {
@@ -441,7 +443,7 @@ namespace DDP
             }
         }
 
-        private Type CheckOperandTypes(Token op, object operand)
+        private Type CheckOperandTypes(Symbol op, object operand)
         {
             if (operand is double) return typeof(double);
             if (operand is int) return typeof(int);
@@ -452,7 +454,7 @@ namespace DDP
             throw new Laufzeitfehler(op, Fehlermeldungen.opInvalid);
         }
 
-        private Type CheckOperandTypes(Token op, object left, object right)
+        private Type CheckOperandTypes(Symbol op, object left, object right)
         {
 
             if ((left is double && right is int) || (left is int && right is double) || (left is double && right is double))

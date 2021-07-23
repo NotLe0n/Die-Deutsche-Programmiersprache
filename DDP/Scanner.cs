@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 
-using static DDP.TokenType;
+using static DDP.SymbolTyp;
 
 namespace DDP
 {
     class Scanner
     {
         private readonly string quelle;
-        private readonly List<Token> tokens = new();
+        private readonly List<Symbol> symbole = new();
 
-        private readonly Dictionary<string, TokenType> schlüsselwörter = new()
+        private readonly Dictionary<string, SymbolTyp> schlüsselwörter = new()
         {
             // Artikel
             { "der", DER },
@@ -118,7 +118,7 @@ namespace DDP
             this.quelle = quelle;
         }
 
-        public List<Token> ScanTokens()
+        public List<Symbol> ScanTokens()
         {
             while (!AmEnde)
             {
@@ -127,8 +127,8 @@ namespace DDP
                 ScanToken();
             }
 
-            tokens.Add(new Token(EOF, "", null, zeile, current));
-            return tokens;
+            symbole.Add(new Symbol(EOF, "", null, zeile, current));
+            return symbole;
         }
 
         private void ScanToken()
@@ -282,7 +282,7 @@ namespace DDP
         {
             while (Peek().IsAlphaNumeric()) Advance();
 
-            TokenType typ;
+            SymbolTyp typ;
             string text = quelle[start..current];
             if (schlüsselwörter.ContainsKey(text))
             {
@@ -308,7 +308,7 @@ namespace DDP
         /// <summary>
         /// creates a new token for the given type
         /// </summary>
-        private void AddToken(TokenType typ)
+        private void AddToken(SymbolTyp typ)
         {
             AddToken(typ, null);
         }
@@ -316,10 +316,10 @@ namespace DDP
         /// <summary>
         ///  grabs the text of the current lexeme and creates a new token for it
         /// </summary>
-        private void AddToken(TokenType typ, object literal)
+        private void AddToken(SymbolTyp typ, object literal)
         {
             string text = quelle[start..current];
-            tokens.Add(new Token(typ, text, literal, zeile, current - zeilenposition));
+            symbole.Add(new Symbol(typ, text, literal, zeile, current - zeilenposition));
         }
 
         /// <summary>

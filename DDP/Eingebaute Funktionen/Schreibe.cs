@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace DDP.Eingebaute_Funktionen
 {
-    class Schreibe : ICallable
+    class Schreibe : IAufrufbar
     {
         public int Arity => 1;
 
-        public object Call(Interpreter interpreter, List<object> arguments)
+        public object Aufrufen(Interpreter interpreter, List<object> arguments)
         {
             Console.Write(arguments[0]);
             return null;

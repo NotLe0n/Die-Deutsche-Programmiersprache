@@ -61,10 +61,10 @@ namespace DDP
         private static void Ausführen(string quelle)
         {
             Scanner scanner = new Scanner(quelle);
-            List<Token> tokens = scanner.ScanTokens();
+            List<Symbol> tokens = scanner.ScanTokens();
 
             Parser parser = new Parser(tokens);
-            List<Statement> statements = parser.Parse();
+            List<Anweisung> statements = parser.Parse();
 
             // Aufhören wenn es einen Fehler gab
             if (hatteFehler) return;
@@ -83,15 +83,15 @@ namespace DDP
             FehlerMelden(zeile, 0, "", nachricht);
         }
 
-        public static void Fehler(Token token, string nachricht)
+        public static void Fehler(Symbol token, string nachricht)
         {
-            if (token.type == TokenType.EOF)
+            if (token.typ == SymbolTyp.EOF)
             {
-                FehlerMelden(token.line, token.position, "am ende", nachricht);
+                FehlerMelden(token.zeile, token.position, "am ende", nachricht);
             }
             else
             {
-                FehlerMelden(token.line, token.position, "bei '" + token.lexeme + "'", nachricht);
+                FehlerMelden(token.zeile, token.position, "bei '" + token.lexeme + "'", nachricht);
             }
         }
 
@@ -99,13 +99,13 @@ namespace DDP
         {
             Console.ForegroundColor = ConsoleColor.Red;
 
-            if (fehler.token == null)
+            if (fehler.symbol == null)
             {
                 Console.Error.WriteLine($"Laufzeitfehler: {fehler.Message}");
             }
             else
             {
-                Console.Error.WriteLine($"[{fehler.token.line}, {fehler.token.position}] Laufzeitfehler bei '{fehler.token.lexeme}' : {fehler.Message}");
+                Console.Error.WriteLine($"[{fehler.symbol.zeile}, {fehler.symbol.position}] Laufzeitfehler bei '{fehler.symbol.lexeme}' : {fehler.Message}");
             }
 
             Console.ResetColor();

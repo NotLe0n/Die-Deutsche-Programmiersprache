@@ -2,32 +2,32 @@
 
 namespace DDP
 {
-    public abstract class Expression
+    public abstract class Ausdruck
     {
         public abstract R Accept<R>(IVisitor<R> visitor);
 
         public interface IVisitor<R>
         {
-            R VisitAssignExpr(Assign expr);
-            R VisitBinaryExpr(Binary expr);
-            R VisitCallExpr(Call expr);
+            R VisitAssignExpr(Zuweisung expr);
+            R VisitBinaryExpr(Binär expr);
+            R VisitCallExpr(Aufruf expr);
             //R visitGetExpr(Get expr);
-            R VisitGroupingExpr(Grouping expr);
-            R VisitLiteralExpr(Literal expr);
-            R VisitLogicalExpr(Logical expr);
+            R VisitGroupingExpr(Gruppierung expr);
+            R VisitLiteralExpr(Wert expr);
+            R VisitLogicalExpr(Logisch expr);
             //R visitSetExpr(Set expr);
             //R visitSuperExpr(Super expr);
             //R visitThisExpr(This expr);
-            R VisitUnaryExpr(Unary expr);
+            R VisitUnaryExpr(Unär expr);
             R VisitVariableExpr(Variable expr);
         }
 
-        public class Assign : Expression
+        public class Zuweisung : Ausdruck
         {
-            public Assign(Token name, Expression value)
+            public Zuweisung(Symbol name, Ausdruck wert)
             {
                 this.name = name;
-                this.value = value;
+                this.wert = wert;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -35,17 +35,17 @@ namespace DDP
                 return visitor.VisitAssignExpr(this);
             }
 
-            public readonly Token name;
-            public readonly Expression value;
+            public readonly Symbol name;
+            public readonly Ausdruck wert;
         }
 
-        public class Binary : Expression
+        public class Binär : Ausdruck
         {
-            public Binary(Expression left, Token op, Expression right)
+            public Binär(Ausdruck links, Symbol op, Ausdruck rechts)
             {
-                this.left = left;
+                this.links = links;
                 this.op = op;
-                this.right = right;
+                this.rechts = rechts;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -53,18 +53,18 @@ namespace DDP
                 return visitor.VisitBinaryExpr(this);
             }
 
-            public readonly Expression left;
-            public readonly Token op;
-            public readonly Expression right;
+            public readonly Ausdruck links;
+            public readonly Symbol op;
+            public readonly Ausdruck rechts;
         }
 
-        public class Call : Expression
+        public class Aufruf : Ausdruck
         {
-            public Call(Expression callee, Token paren, List<Expression> arguments)
+            public Aufruf(Ausdruck aufrufer, Symbol klammer, List<Ausdruck> argumente)
             {
-                this.callee = callee;
-                this.paren = paren;
-                this.arguments = arguments;
+                this.aufrufer = aufrufer;
+                this.klammer = klammer;
+                this.argumente = argumente;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -72,9 +72,9 @@ namespace DDP
                 return visitor.VisitCallExpr(this);
             }
 
-            public readonly Expression callee;
-            public readonly Token paren;
-            public readonly List<Expression> arguments;
+            public readonly Ausdruck aufrufer;
+            public readonly Symbol klammer;
+            public readonly List<Ausdruck> argumente;
         }
 
         /*public class Get : Expr
@@ -94,11 +94,11 @@ namespace DDP
             public readonly Token name;
         }*/
 
-        public class Grouping : Expression
+        public class Gruppierung : Ausdruck
         {
-            public Grouping(Expression expression)
+            public Gruppierung(Ausdruck ausdruck)
             {
-                this.expression = expression;
+                this.ausdruck = ausdruck;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -106,14 +106,14 @@ namespace DDP
                 return visitor.VisitGroupingExpr(this);
             }
 
-            public readonly Expression expression;
+            public readonly Ausdruck ausdruck;
         }
 
-        public class Literal : Expression
+        public class Wert : Ausdruck
         {
-            public Literal(object value)
+            public Wert(object wert)
             {
-                this.value = value;
+                this.wert = wert;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -121,16 +121,16 @@ namespace DDP
                 return visitor.VisitLiteralExpr(this);
             }
 
-            public readonly object value;
+            public readonly object wert;
         }
 
-        public class Logical : Expression
+        public class Logisch : Ausdruck
         {
-            public Logical(Expression left, Token op, Expression right)
+            public Logisch(Ausdruck links, Symbol op, Ausdruck rechts)
             {
-                this.left = left;
+                this.links = links;
                 this.op = op;
-                this.right = right;
+                this.rechts = rechts;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -138,9 +138,9 @@ namespace DDP
                 return visitor.VisitLogicalExpr(this);
             }
 
-            public readonly Expression left;
-            public readonly Token op;
-            public readonly Expression right;
+            public readonly Ausdruck links;
+            public readonly Symbol op;
+            public readonly Ausdruck rechts;
         }
 
         /*public class Set : Expr
@@ -194,12 +194,12 @@ namespace DDP
             public readonly Token keyword;
         }*/
 
-        public class Unary : Expression
+        public class Unär : Ausdruck
         {
-            public Unary(Token op, Expression right)
+            public Unär(Symbol op, Ausdruck rechts)
             {
                 this.op = op;
-                this.right = right;
+                this.rechts = rechts;
             }
 
             public override R Accept<R>(IVisitor<R> visitor)
@@ -207,13 +207,13 @@ namespace DDP
                 return visitor.VisitUnaryExpr(this);
             }
 
-            public readonly Token op;
-            public readonly Expression right;
+            public readonly Symbol op;
+            public readonly Ausdruck rechts;
         }
 
-        public class Variable : Expression
+        public class Variable : Ausdruck
         {
-            public Variable(Token name)
+            public Variable(Symbol name)
             {
                 this.name = name;
             }
@@ -223,7 +223,7 @@ namespace DDP
                 return visitor.VisitVariableExpr(this);
             }
 
-            public readonly Token name;
+            public readonly Symbol name;
         }
     }
 }

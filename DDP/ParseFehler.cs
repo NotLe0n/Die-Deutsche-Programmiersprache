@@ -2,11 +2,11 @@
 
 namespace DDP
 {
-    public class Laufzeitfehler : Exception
+    class ParseFehler : Exception
     {
         public readonly Symbol symbol;
 
-        public Laufzeitfehler(Symbol symbol, string nachricht) : base(nachricht)
+        public ParseFehler(Symbol symbol, string message) : base(message)
         {
             this.symbol = symbol;
         }

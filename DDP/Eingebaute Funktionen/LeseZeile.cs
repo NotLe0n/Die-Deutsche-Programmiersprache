@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace DDP.Eingebaute_Funktionen
 {
-    class LeseZeile : ICallable
+    class LeseZeile : IAufrufbar
     {
         public int Arity => 0;
 
-        public object Call(Interpreter interpreter, List<object> arguments)
+        public object Aufrufen(Interpreter interpreter, List<object> arguments)
         {
             return Console.ReadLine();
         }
