@@ -62,7 +62,7 @@ namespace DDP
         private Statement AusdruckAnweisung()
         {
             Expression expr = Ausdruck();
-            Consume(PUNKT, ErrorMessages.dotAfterExpression);
+            Consume(PUNKT, Fehlermeldungen.dotAfterExpression);
             return new Statement.Expression(expr);
         }
 
@@ -73,35 +73,35 @@ namespace DDP
 
         private Statement FürAnweisung()
         {
-            Consume(JEDE, ErrorMessages.tokenMissing("einer für anweisung", "'jede'"));
+            Consume(JEDE, Fehlermeldungen.tokenMissing("einer für anweisung", "'jede'"));
 
             // "Typ von n bis n" syntax
             Statement.Var initializer;
             Expression min;
             if (Match(out Token matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZEICHEN))
             {
-                Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
-                Consume(VON, ErrorMessages.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
+                Token name = Consume(IDENTIFIER, Fehlermeldungen.varNameExpected);
+                Consume(VON, Fehlermeldungen.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
                 min = Ausdruck();
 
                 initializer = new Statement.Var(matched, name, min);
             }
-            else throw Error(Previous(), ErrorMessages.forNoVar);
+            else throw Error(Previous(), Fehlermeldungen.forNoVar);
 
-            Consume(BIS, ErrorMessages.tokenMissing("dem minimum in einer für anweisung", "'bis'"));
+            Consume(BIS, Fehlermeldungen.tokenMissing("dem minimum in einer für anweisung", "'bis'"));
             Expression max = Ausdruck();
 
             // Schrittgröße syntax
             Expression schrittgröße = new Expression.Literal(1);
             if (Match(MIT))
             {
-                Consume(SCHRITTGRÖßE, ErrorMessages.tokenMissing("'mit' in einer für anweisung", "'schrittgröße'"));
+                Consume(SCHRITTGRÖßE, Fehlermeldungen.tokenMissing("'mit' in einer für anweisung", "'schrittgröße'"));
 
                 schrittgröße = Ausdruck();
             }
 
             Consume(KOMMA, "Es wird ein komma erwartet!");
-            Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer für Anweisung", "ein 'mache'"));
+            Consume(MACHE, Fehlermeldungen.tokenMissingAtEnd("einer für Anweisung", "ein 'mache'"));
 
             Statement body = Anweisung();
 
@@ -132,8 +132,8 @@ namespace DDP
 
             // Bedingung
             Expression condition = Ausdruck();
-            Consume(KOMMA, ErrorMessages.ifKommaMissing);
-            Consume(DANN, ErrorMessages.ifDannMissing);
+            Consume(KOMMA, Fehlermeldungen.ifKommaMissing);
+            Consume(DANN, Fehlermeldungen.ifDannMissing);
 
             Statement thenBranch = Anweisung();
             Match(depth, TAB); // consume all tabs (workaround to block issue)
@@ -165,7 +165,7 @@ namespace DDP
             // der Boolean/die Zahl/die Kommazahl/die Zeichenkette/das Zeichen x ist (wahr wenn) y.
 
             Token type = CheckArtikel(artikel);
-            Token name = Consume(IDENTIFIER, ErrorMessages.varNameExpected);
+            Token name = Consume(IDENTIFIER, Fehlermeldungen.varNameExpected);
 
             Expression initializer = null;
             if (Match(IST))
@@ -194,7 +194,7 @@ namespace DDP
                 }
             }
 
-            Consume(PUNKT, ErrorMessages.dotAfterVarDeclaration);
+            Consume(PUNKT, Fehlermeldungen.dotAfterVarDeclaration);
             return new Statement.Var(type, name, initializer);
         }
 
@@ -204,7 +204,7 @@ namespace DDP
             switch (artikel)
             {
                 case DER:
-                    type = Consume(BOOLEAN, ErrorMessages.wrongArtikel("'der'", "zum Typ Boolean"));
+                    type = Consume(BOOLEAN, Fehlermeldungen.wrongArtikel("'der'", "zum Typ Boolean"));
                     break;
                 case DIE:
                     if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE))
@@ -213,14 +213,14 @@ namespace DDP
                     }
                     else
                     {
-                        throw Error(Previous(), ErrorMessages.wrongArtikel("'die'", "zu den Typen Zahl, Kommazahl, oder Zeichenkette"));
+                        throw Error(Previous(), Fehlermeldungen.wrongArtikel("'die'", "zu den Typen Zahl, Kommazahl, oder Zeichenkette"));
                     }
                     break;
                 case DAS:
-                    type = Consume(ZEICHEN, ErrorMessages.wrongArtikel("'das'", "zum Typ Zeichen"));
+                    type = Consume(ZEICHEN, Fehlermeldungen.wrongArtikel("'das'", "zum Typ Zeichen"));
                     break;
                 default:
-                    throw Error(Previous(), ErrorMessages.noArtikel);
+                    throw Error(Previous(), Fehlermeldungen.noArtikel);
             }
 
             return type;
@@ -232,8 +232,8 @@ namespace DDP
 
             // solange x:{\n\t}y
             Expression condition = Ausdruck();
-            Consume(KOMMA, ErrorMessages.tokenMissing("der Bedingung einer solange-Anweisung", "ein komma"));
-            Consume(MACHE, ErrorMessages.tokenMissingAtEnd("einer solange Anweisung", "ein 'mache'"));
+            Consume(KOMMA, Fehlermeldungen.tokenMissing("der Bedingung einer solange-Anweisung", "ein komma"));
+            Consume(MACHE, Fehlermeldungen.tokenMissingAtEnd("einer solange Anweisung", "ein 'mache'"));
             Statement body = Anweisung();
 
             var stmt = new Statement.While(condition, body);
@@ -247,9 +247,9 @@ namespace DDP
 
             // mache:{\n\t}x{\n}solange y.
             Statement body = Anweisung();
-            Consume(SOLANGE, ErrorMessages.tokenMissing("einem mache-block", "'solange'"));
+            Consume(SOLANGE, Fehlermeldungen.tokenMissing("einem mache-block", "'solange'"));
             Expression condition = Ausdruck();
-            Consume(PUNKT, ErrorMessages.dotAfterExpression);
+            Consume(PUNKT, Fehlermeldungen.dotAfterExpression);
 
             var stmt = new Statement.DoWhile(condition, body);
             stmt.token = token;
@@ -258,45 +258,45 @@ namespace DDP
 
         private Statement.Function Funktion()
         {
-            Token name = Consume(IDENTIFIER, ErrorMessages.funcNameExpected);
+            Token name = Consume(IDENTIFIER, Fehlermeldungen.funcNameExpected);
             Token typ = null;
             List<Token> parameters = new();
 
             // Argumente
-            Consume(L_KLAMMER, ErrorMessages.tokenMissing("dem Funktionsname", "eine Klammer auf"));
+            Consume(L_KLAMMER, Fehlermeldungen.tokenMissing("dem Funktionsname", "eine Klammer auf"));
 
             do
             {
                 if (parameters.Count >= 255)
                 {
-                    Error(Peek(), ErrorMessages.tooManyArguments);
+                    Error(Peek(), Fehlermeldungen.tooManyArguments);
                 }
 
                 if (Match(ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
-                    parameters.Add(Consume(IDENTIFIER, ErrorMessages.argumentNameExpected));
+                    parameters.Add(Consume(IDENTIFIER, Fehlermeldungen.argumentNameExpected));
                 }
             } while (Match(KOMMA));
 
-            Consume(R_KLAMMER, ErrorMessages.tokenMissing("den Argumenten", "eine Klammer zu"));
+            Consume(R_KLAMMER, Fehlermeldungen.tokenMissing("den Argumenten", "eine Klammer zu"));
 
             // rückgabe Typ
             if (Match(VOM))
             {
-                Consume(TYP, ErrorMessages.tokenMissing("einer vom Anweisung", "ein Typ"));
+                Consume(TYP, Fehlermeldungen.tokenMissing("einer vom Anweisung", "ein Typ"));
                 if (Match(out Token match, ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
                 {
                     typ = match;
                 }
                 else
                 {
-                    Error(Peek(), ErrorMessages.returnTypeInvalid);
+                    Error(Peek(), Fehlermeldungen.returnTypeInvalid);
                 }
             }
 
             // Funktionskörper
-            Consume(MACHT, ErrorMessages.tokenMissingAtEnd("variablen deklaration", "ein 'macht'"));
-            Consume(DOPPELPUNKT, ErrorMessages.tokenMissing("einer macht anweisung", "ein doppelpunkt"));
+            Consume(MACHT, Fehlermeldungen.tokenMissingAtEnd("variablen deklaration", "ein 'macht'"));
+            Consume(DOPPELPUNKT, Fehlermeldungen.tokenMissing("einer macht anweisung", "ein doppelpunkt"));
 
             List<Statement> body = Block();
 
@@ -308,7 +308,7 @@ namespace DDP
                     if (stmt is Statement.Return)
                         return new Statement.Function(name, parameters, typ, body);
                 }
-                Error(name, ErrorMessages.returnMissing);
+                Error(name, Fehlermeldungen.returnMissing);
             }
 
             return new Statement.Function(name, parameters, typ, body);
@@ -325,8 +325,8 @@ namespace DDP
                 value = Ausdruck();
             }
 
-            Consume(ZURÜCK, ErrorMessages.tokenMissing("einem Rückgabe-Wert", "'zurück'"));
-            Consume(PUNKT, ErrorMessages.tokenMissing("einer Rückgabe-Anweisung", "ein punkt"));
+            Consume(ZURÜCK, Fehlermeldungen.tokenMissing("einem Rückgabe-Wert", "'zurück'"));
+            Consume(PUNKT, Fehlermeldungen.tokenMissing("einer Rückgabe-Anweisung", "ein punkt"));
             return new Statement.Return(keyword, value);
         }
 
@@ -361,7 +361,7 @@ namespace DDP
                     return new Expression.Assign(name, value);
                 }
 
-                Error(equals, ErrorMessages.varInvalidAssignment);
+                Error(equals, Fehlermeldungen.varInvalidAssignment);
             }
 
             return expr;
@@ -408,7 +408,7 @@ namespace DDP
                 Expression right = Vergleich();
                 expr = new Expression.Binary(expr, op, right);
 
-                Consume(IST, ErrorMessages.tokenMissing("einem Vergleich", "'ist'"));
+                Consume(IST, Fehlermeldungen.tokenMissing("einem Vergleich", "'ist'"));
             }
 
             return expr;
@@ -424,7 +424,7 @@ namespace DDP
                 // Schaue ob ein "als" vorhanden ist.
                 if (!Check(ALS))
                 {
-                    Error(Previous(), ErrorMessages.tokenMissing("einem größer/kleiner operator", "'als'"));
+                    Error(Previous(), Fehlermeldungen.tokenMissing("einem größer/kleiner operator", "'als'"));
                     continue;
                 }
 
@@ -442,7 +442,7 @@ namespace DDP
 
                 Expression right = Bitweise();
 
-                Consume(IST, ErrorMessages.tokenMissing("einem Vergleich", "'ist'"));
+                Consume(IST, Fehlermeldungen.tokenMissing("einem Vergleich", "'ist'"));
                 expr = new Expression.Binary(expr, op, right);
             }
 
@@ -466,10 +466,10 @@ namespace DDP
             while (Match(UM))
             {
                 Expression right = Term();
-                Consume(BIT, ErrorMessages.tokenMissing("dem verschiebungswert", "'bit'"));
-                Consume(NACH, ErrorMessages.tokenMissing("einer bit Anweisung", "ein 'nach'"));
+                Consume(BIT, Fehlermeldungen.tokenMissing("dem verschiebungswert", "'bit'"));
+                Consume(NACH, Fehlermeldungen.tokenMissing("einer bit Anweisung", "ein 'nach'"));
                 Token op = Advance();
-                Consume(VERSCHOBEN, ErrorMessages.tokenMissingAtEnd("einer Bitverschiebungsanweisung", "ein 'verschoben'"));
+                Consume(VERSCHOBEN, Fehlermeldungen.tokenMissingAtEnd("einer Bitverschiebungsanweisung", "ein 'verschoben'"));
 
                 expr = new Expression.Binary(expr, op, right);
             }
@@ -531,7 +531,7 @@ namespace DDP
                 if (Match(WURZEL))
                 {
                     Token op = Previous();
-                    Consume(VON, ErrorMessages.tokenMissing("dem Wurzel operator", "'von'"));
+                    Consume(VON, Fehlermeldungen.tokenMissing("dem Wurzel operator", "'von'"));
                     Expression right = Potenz();
                     expr = new Expression.Binary(right, op, expr);
                 }
@@ -590,7 +590,7 @@ namespace DDP
                 if (Match(BETRAG))
                 {
                     Token op = Previous();
-                    Consume(VON, ErrorMessages.tokenMissing("dem Betrag operator", "'von'"));
+                    Consume(VON, Fehlermeldungen.tokenMissing("dem Betrag operator", "'von'"));
                     Expression right = Unär();
                     return new Expression.Unary(op, right);
                 }
@@ -625,13 +625,13 @@ namespace DDP
                     {
                         if (arguments.Count >= 255)
                         {
-                            Error(Peek(), ErrorMessages.tooManyArguments);
+                            Error(Peek(), Fehlermeldungen.tooManyArguments);
                         }
                         arguments.Add(Ausdruck());
                     } while (Match(KOMMA));
                 }
 
-                Token paren = Consume(R_KLAMMER, ErrorMessages.parameterParenMissing);
+                Token paren = Consume(R_KLAMMER, Fehlermeldungen.parameterParenMissing);
 
                 expr = new Expression.Call(expr, paren, arguments);
             }
@@ -660,11 +660,11 @@ namespace DDP
             if (Match(L_KLAMMER))
             {
                 Expression expr = Ausdruck();
-                Consume(R_KLAMMER, ErrorMessages.groupingParenMissing);
+                Consume(R_KLAMMER, Fehlermeldungen.groupingParenMissing);
                 return new Expression.Grouping(expr);
             }
 
-            throw Error(Peek(), ErrorMessages.expressionMissing);
+            throw Error(Peek(), Fehlermeldungen.expressionMissing);
         }
 
         /// <summary>
@@ -780,7 +780,7 @@ namespace DDP
 
         private static ParseError Error(Token token, string message)
         {
-            DDP.Error(token, message);
+            DDP.Fehler(token, message);
             return new ParseError(token, message);
         }
 

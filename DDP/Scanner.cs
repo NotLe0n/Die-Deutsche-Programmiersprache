@@ -7,10 +7,10 @@ namespace DDP
 {
     class Scanner
     {
-        private readonly string source;
+        private readonly string quelle;
         private readonly List<Token> tokens = new();
 
-        private readonly Dictionary<string, TokenType> keywords = new()
+        private readonly Dictionary<string, TokenType> schlüsselwörter = new()
         {
             // Artikel
             { "der", DER },
@@ -105,36 +105,36 @@ namespace DDP
             { "Typ", TYP }
         };
 
-        private bool IsAtEnd => current >= source.Length;
+        private bool AmEnde => current >= quelle.Length;
 
         private int start = 0;
         private int current = 0;
-        private int line = 1;
-        private int linepos = 0;
-        private int consecutiveSpaceCount = 0;
+        private int zeile = 1;
+        private int zeilenposition = 0;
+        private int aufeinanderfolgendeLeerzeichen = 0;
 
-        public Scanner(string source)
+        public Scanner(string quelle)
         {
-            this.source = source;
+            this.quelle = quelle;
         }
 
         public List<Token> ScanTokens()
         {
-            while (!IsAtEnd)
+            while (!AmEnde)
             {
                 // We are at the beginning of the next lexeme.
                 start = current;
                 ScanToken();
             }
 
-            tokens.Add(new Token(EOF, "", null, line, current));
+            tokens.Add(new Token(EOF, "", null, zeile, current));
             return tokens;
         }
 
         private void ScanToken()
         {
             char c = Advance();
-            consecutiveSpaceCount = c == ' ' ? consecutiveSpaceCount + 1 : 0;
+            aufeinanderfolgendeLeerzeichen = c == ' ' ? aufeinanderfolgendeLeerzeichen + 1 : 0;
 
             switch (c)
             {
@@ -150,7 +150,7 @@ namespace DDP
                     if (Match('/'))
                     {
                         // A comment goes until the end of the line.
-                        while (Peek() != '\n' && !IsAtEnd) Advance();
+                        while (Peek() != '\n' && !AmEnde) Advance();
                     }
                     break;
 
@@ -158,20 +158,21 @@ namespace DDP
                 case '\t': AddToken(TAB); break;
 
                 case ' ':
-                    if (consecutiveSpaceCount == 4)
+                    // wenn 4 leerzeichen hintereinander auftreten, füge einen tab hinzu
+                    if (aufeinanderfolgendeLeerzeichen == 4)
                     {
                         AddToken(TAB);
-                        consecutiveSpaceCount = 0;
+                        aufeinanderfolgendeLeerzeichen = 0;
                     }
                     break;
 
                 case '\r':
-                    // Ignore whitespace.
+                    // ignorieren
                     break;
 
                 case '\n':
-                    line++;
-                    linepos = current;
+                    zeile++;
+                    zeilenposition = current;
                     break;
 
                 case '"': StringLiteral(); break;
@@ -182,16 +183,117 @@ namespace DDP
                     {
                         NumberLiteral();
                     }
-                    else if (c.IsAlpha())
+                    else if (c.IstDeutsch())
                     {
                         Identifier();
                     }
                     else
                     {
-                        DDP.Error(line, "Unerwarteter character: " + c + " / " + (int)c);
+                        DDP.Fehler(zeile, "Unerwarteter character: " + c + " / " + (int)c);
                     }
                     break;
             }
+        }
+
+        /// <summary>
+        /// Handles String literals (e.g.: "text")
+        /// </summary>
+        private void StringLiteral()
+        {
+            while (Peek() != '"' && !AmEnde)
+            {
+                if (Peek() == '\n') zeile++;
+                Advance();
+            }
+
+            if (AmEnde)
+            {
+                DDP.Fehler(zeile, Fehlermeldungen.stringUnterminated);
+                return;
+            }
+
+            // The closing ".
+            Advance();
+
+            // Trim the surrounding quotes.
+            string wert = quelle.Substring(start + 1, (current - start) - 2);
+            AddToken(STRING, wert);
+        }
+
+        private void CharLiteral()
+        {
+            char? wert = null;
+            if (Peek() != '\'' && !AmEnde)
+            {
+                wert = Advance();
+            }
+
+            if (AmEnde)
+            {
+                DDP.Fehler(zeile, Fehlermeldungen.charUnterminated);
+                return;
+            }
+
+            // The closing ".
+            if (Advance() != '\'')
+            {
+                DDP.Fehler(zeile, Fehlermeldungen.charTooLong);
+            }
+
+            if (wert == null)
+            {
+                DDP.Fehler(zeile, "leerer zeichen");
+            }
+
+            AddToken(CHAR, wert);
+        }
+
+        /// <summary>
+        /// Handles Number Literals (e.g.: 12, 15.2, ect.)
+        /// </summary>
+        private void NumberLiteral()
+        {
+            while (char.IsDigit(Peek())) Advance();
+
+            // wenn es einen komma gefolgt von einer zahl findet
+            if (Peek() == ',' && char.IsDigit(PeekNext()))
+            {
+                // Komma essen
+                Advance();
+
+                while (char.IsDigit(Peek())) Advance();
+            }
+
+            // wenn ein komma existiert, dann wird es ein double sonst wird es ein int
+            if (quelle[start..current].Contains(","))
+            {
+                AddToken(FLOAT, double.Parse(quelle[start..current], NumberStyles.Float, new CultureInfo("de-DE")));
+            }
+            else
+            {
+                AddToken(INT, int.Parse(quelle[start..current]));
+            }
+        }
+
+        /// <summary>
+        /// Handles reserved words
+        /// </summary>
+        private void Identifier()
+        {
+            while (Peek().IsAlphaNumeric()) Advance();
+
+            TokenType typ;
+            string text = quelle[start..current];
+            if (schlüsselwörter.ContainsKey(text))
+            {
+                typ = schlüsselwörter[text];
+            }
+            else
+            {
+                typ = IDENTIFIER;
+            }
+
+            AddToken(typ);
         }
 
         /// <summary>
@@ -200,35 +302,35 @@ namespace DDP
         /// <returns>the next character in the source file</returns>
         private char Advance()
         {
-            return source[current++];
+            return quelle[current++];
         }
 
         /// <summary>
         /// creates a new token for the given type
         /// </summary>
-        private void AddToken(TokenType type)
+        private void AddToken(TokenType typ)
         {
-            AddToken(type, null);
+            AddToken(typ, null);
         }
 
         /// <summary>
         ///  grabs the text of the current lexeme and creates a new token for it
         /// </summary>
-        private void AddToken(TokenType type, object literal)
+        private void AddToken(TokenType typ, object literal)
         {
-            string text = source[start..current];
-            tokens.Add(new Token(type, text, literal, line, current - linepos));
+            string text = quelle[start..current];
+            tokens.Add(new Token(typ, text, literal, zeile, current - zeilenposition));
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="expected"></param>
+        /// <param name="erwartet"></param>
         /// <returns></returns>
-        private bool Match(char expected)
+        private bool Match(char erwartet)
         {
-            if (IsAtEnd) return false;
-            if (source[current] != expected) return false;
+            if (AmEnde) return false;
+            if (quelle[current] != erwartet) return false;
 
             current++;
             return true;
@@ -240,115 +342,14 @@ namespace DDP
         /// <returns></returns>
         private char Peek()
         {
-            if (IsAtEnd) return '\0';
-            return source[current];
-        }
-
-        /// <summary>
-        /// Handles String literals (e.g.: "text")
-        /// </summary>
-        private void StringLiteral()
-        {
-            while (Peek() != '"' && !IsAtEnd)
-            {
-                if (Peek() == '\n') line++;
-                Advance();
-            }
-
-            if (IsAtEnd)
-            {
-                DDP.Error(line, ErrorMessages.stringUnterminated);
-                return;
-            }
-
-            // The closing ".
-            Advance();
-
-            // Trim the surrounding quotes.
-            string value = source.Substring(start + 1, (current - start) - 2);
-            AddToken(STRING, value);
-        }
-
-        private void CharLiteral()
-        {
-            char? value = null;
-            if (Peek() != '\'' && !IsAtEnd)
-            {
-                value = Advance();
-            }
-
-            if (IsAtEnd)
-            {
-                DDP.Error(line, ErrorMessages.charUnterminated);
-                return;
-            }
-
-            // The closing ".
-            if (Advance() != '\'')
-            {
-                DDP.Error(line, ErrorMessages.charTooLong);
-            }
-
-            if (value == null)
-            {
-                DDP.Error(line, "leerer zeichen");
-            }
-
-            // Trim the surrounding quotes.
-            AddToken(CHAR, value);
-        }
-
-        /// <summary>
-        /// Handles Number Literals (e.g.: 12, 15.2, ect.)
-        /// </summary>
-        private void NumberLiteral()
-        {
-            while (char.IsDigit(Peek())) Advance();
-
-            // Look for a fractional part.
-            if (Peek() == ',' && char.IsDigit(PeekNext()))
-            {
-                // Consume the "."
-                Advance();
-
-                while (char.IsDigit(Peek())) Advance();
-            }
-
-            if (source[start..current].Contains(","))
-            {
-                AddToken(FLOAT, double.Parse(source[start..current], NumberStyles.Float, new CultureInfo("de-DE")));
-            }
-            else
-            {
-                AddToken(INT, int.Parse(source[start..current]));
-            }
-        }
-
-        /// <summary>
-        /// Handles reserved words
-        /// </summary>
-        private void Identifier()
-        {
-            while (Peek().IsAlphaNumeric()) Advance();
-
-            TokenType type;
-            string text = source[start..current];
-            if (keywords.ContainsKey(text))
-            {
-                type = keywords[text];
-            }
-            else
-            {
-                type = IDENTIFIER;
-            }
-
-            AddToken(type);
+            if (AmEnde) return '\0';
+            return quelle[current];
         }
 
         private char PeekNext()
         {
-            if (current + 1 >= source.Length) return '\0';
-            return source[current + 1];
+            if (current + 1 >= quelle.Length) return '\0';
+            return quelle[current + 1];
         }
     }
 }

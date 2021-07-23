@@ -2,11 +2,11 @@
 
 namespace DDP
 {
-    public class RuntimeError : Exception
+    public class Laufzeitfehler : Exception
     {
         public readonly Token token;
 
-        public RuntimeError(Token token, string message) : base(message)
+        public Laufzeitfehler(Token token, string nachricht) : base(nachricht)
         {
             this.token = token;
         }

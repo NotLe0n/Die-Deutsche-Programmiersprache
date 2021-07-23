@@ -2,9 +2,9 @@
 
 namespace DDP
 {
-    public static class Extentions
+    public static class Erweiterungen
     {
-        public static bool IsAlpha(this char c)
+        public static bool IstDeutsch(this char c)
         {
             return (c >= 'a' && c <= 'z') ||
                    (c >= 'A' && c <= 'Z') ||
@@ -13,7 +13,7 @@ namespace DDP
 
         public static bool IsAlphaNumeric(this char c)
         {
-            return IsAlpha(c) || char.IsDigit(c);
+            return IstDeutsch(c) || char.IsDigit(c);
         }
 
         public static TValue Put<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)

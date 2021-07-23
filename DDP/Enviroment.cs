@@ -29,7 +29,7 @@ namespace DDP
                 return enclosing.Get(name);
             }
 
-            throw new RuntimeError(name, ErrorMessages.varNotDefined(name.lexeme));
+            throw new Laufzeitfehler(name, Fehlermeldungen.varNotDefined(name.lexeme));
         }
 
         public void Assign(Token name, object value)
@@ -46,7 +46,7 @@ namespace DDP
                 return;
             }
 
-            throw new RuntimeError(name, ErrorMessages.varNotDefined(name.lexeme));
+            throw new Laufzeitfehler(name, Fehlermeldungen.varNotDefined(name.lexeme));
         }
 
         public void Define(string name, object value)

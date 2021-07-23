@@ -8,8 +8,8 @@ namespace DDP
     {
         private static readonly Interpreter interpreter = new();
 
-        private static bool hadError = false;
-        private static bool hadRuntimeError = false;
+        private static bool hatteFehler = false;
+        private static bool hatteLaufzeitfehler = false;
 
         static void Main(string[] args)
         {
@@ -20,31 +20,32 @@ namespace DDP
             }
             else if (args.Length == 1)
             {
-                RunFile(args[0]);
+                DateiAusführen(args[0]);
             }
             else
             {
-                RunPrompt();
+                ReplAusführen();
             }
 
-            if (hadError || hadRuntimeError)
+            // wenn es einen Fehler gab -> Programm nicht schließen
+            if (hatteFehler || hatteLaufzeitfehler)
                 Console.Read();
         }
 
-        private static void RunFile(string path)
+        private static void DateiAusführen(string pfad)
         {
-            string str = File.ReadAllText(path);
-            Run(str);
+            string str = File.ReadAllText(pfad);
+            Ausführen(str);
 
-            if (hadError) return;
-            if (hadRuntimeError) return;
+            if (hatteFehler) return;
+            if (hatteLaufzeitfehler) return;
         }
 
-        private static void RunPrompt()
+        private static void ReplAusführen()
         {
             for (; ; )
             {
-                hadError = false;
+                hatteFehler = false;
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write("\n> ");
@@ -53,70 +54,70 @@ namespace DDP
 
                 if (line == null) break;
 
-                Run(line);
+                Ausführen(line);
             }
         }
 
-        private static void Run(string source)
+        private static void Ausführen(string quelle)
         {
-            Scanner scanner = new Scanner(source);
+            Scanner scanner = new Scanner(quelle);
             List<Token> tokens = scanner.ScanTokens();
 
             Parser parser = new Parser(tokens);
             List<Statement> statements = parser.Parse();
 
-            // Stop if there was a syntax error.
-            if (hadError) return;
+            // Aufhören wenn es einen Fehler gab
+            if (hatteFehler) return;
 
             Resolver resolver = new Resolver(interpreter);
             resolver.Resolve(statements);
 
-            // Stop if there was a resolution error.
-            if (hadError) return;
+            // Aufhören wenn es einen Laufzeitfehler gab
+            if (hatteFehler) return;
 
             interpreter.Interpret(statements);
         }
 
-        public static void Error(int line, string message)
+        public static void Fehler(int zeile, string nachricht)
         {
-            Report(line, 0, "", message);
+            FehlerMelden(zeile, 0, "", nachricht);
         }
 
-        public static void Error(Token token, string message)
+        public static void Fehler(Token token, string nachricht)
         {
             if (token.type == TokenType.EOF)
             {
-                Report(token.line, token.position, "am ende", message);
+                FehlerMelden(token.line, token.position, "am ende", nachricht);
             }
             else
             {
-                Report(token.line, token.position, "bei '" + token.lexeme + "'", message);
+                FehlerMelden(token.line, token.position, "bei '" + token.lexeme + "'", nachricht);
             }
         }
 
-        public static void RuntimeError(RuntimeError error)
+        public static void Laufzeitfehler(Laufzeitfehler fehler)
         {
             Console.ForegroundColor = ConsoleColor.Red;
 
-            if (error.token == null)
+            if (fehler.token == null)
             {
-                Console.Error.WriteLine($"Laufzeitfehler: {error.Message}");
+                Console.Error.WriteLine($"Laufzeitfehler: {fehler.Message}");
             }
             else
             {
-                Console.Error.WriteLine($"[{error.token.line}, {error.token.position}] Laufzeitfehler bei '{error.token.lexeme}' : {error.Message}");
+                Console.Error.WriteLine($"[{fehler.token.line}, {fehler.token.position}] Laufzeitfehler bei '{fehler.token.lexeme}' : {fehler.Message}");
             }
 
             Console.ResetColor();
-            hadRuntimeError = true;
+            hatteLaufzeitfehler = true;
         }
 
-        private static void Report(int line, int position, string where, string message)
+        private static void FehlerMelden(int zeile, int position, string ort, string nachricht)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine($"[{line}, {position}] Fehler {where} : {message}");
+            Console.Error.WriteLine($"[{zeile}, {position}] Fehler {ort} : {nachricht}");
             Console.ResetColor();
-            hadError = true;
+            hatteFehler = true;
         }
     }
 }

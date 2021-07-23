@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    static class ErrorMessages
+    static class Fehlermeldungen
     {
         public const string opSameType = "Operanden müssen den gleichen Typ besitzten!";
         public const string opOnlyInt = "Operanden können nur integrale Zahlen sein!";

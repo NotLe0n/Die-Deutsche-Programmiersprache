@@ -91,7 +91,7 @@ namespace DDP
         {
             if (currentFunction == FunctionType.NONE)
             {
-                DDP.Error(stmt.keyword, ErrorMessages.returnNotInFunc);
+                DDP.Fehler(stmt.keyword, Fehlermeldungen.returnNotInFunc);
             }
 
             if (stmt.value != null)
@@ -189,7 +189,7 @@ namespace DDP
         {
             if (IsDeclaredExact(expr.name.lexeme, false) == true)
             {
-                DDP.Error(expr.name, ErrorMessages.varDefineInInit);
+                DDP.Fehler(expr.name, Fehlermeldungen.varDefineInInit);
             }
 
             ResolveLocal(expr, expr.name);
@@ -230,7 +230,7 @@ namespace DDP
 
             if (scope.ContainsKey(name.lexeme))
             {
-                DDP.Error(name, ErrorMessages.varAlreadyExists);
+                DDP.Fehler(name, Fehlermeldungen.varAlreadyExists);
             }
 
             scope.Put(name.lexeme, false);

@@ -34,10 +34,10 @@ namespace DDP
             {
                 interpreter.ExecuteBlock(declaration.body, environment);
             }
-            catch (Return returnValue)
+            catch (Rückgabe returnValue)
             {
                 if (returnValue == null)
-                    throw new RuntimeError(declaration.name, ErrorMessages.returnTypeWrong);
+                    throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeWrong);
 
                 System.Type returntype;
                 switch (declaration.type.type)
@@ -58,15 +58,15 @@ namespace DDP
                         returntype = typeof(bool);
                         break;
                     default:
-                        throw new RuntimeError(declaration.name, ErrorMessages.returnTypeInvalid);
+                        throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeInvalid);
                 }
-                if (returnValue.value.GetType() == returntype)
+                if (returnValue.wert.GetType() == returntype)
                 {
-                    return returnValue.value;
+                    return returnValue.wert;
                 }
                 else
                 {
-                    throw new RuntimeError(declaration.name, ErrorMessages.returnTypeWrong);
+                    throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeWrong);
                 }
             }
 

@@ -38,9 +38,9 @@ namespace DDP
                     Execute(statement);
                 }
             }
-            catch (RuntimeError error)
+            catch (Laufzeitfehler error)
             {
-                DDP.RuntimeError(error);
+                DDP.Laufzeitfehler(error);
             }
         }
 
@@ -113,7 +113,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, ErrorMessages.ifConditionNotBool);
+                throw new Laufzeitfehler(stmt.token, Fehlermeldungen.ifConditionNotBool);
             }
             return null;
         }
@@ -123,7 +123,7 @@ namespace DDP
             object value = null;
             if (stmt.value != null) value = Evaluate(stmt.value);
 
-            throw new Return(value);
+            throw new Rückgabe(value);
         }
 
         public object VisitVarStmt(Statement.Var stmt)
@@ -138,23 +138,23 @@ namespace DDP
             {
                 case ZAHL:
                     if (value is not int)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Zahl"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zahl"));
                     break;
                 case KOMMAZAHL:
                     if (value is not double)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Kommazahl"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Kommazahl"));
                     break;
                 case ZEICHENKETTE:
                     if (value is not string)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
                     break;
                 case ZEICHEN:
                     if (value is not char)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einem Zeichen"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Zeichen"));
                     break;
                 case BOOLEAN:
                     if (value is not bool)
-                        throw new RuntimeError(stmt.name, ErrorMessages.varWrongType(stmt.name.lexeme, "einem Boolean"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Boolean"));
                     break;
             }
 
@@ -174,7 +174,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, ErrorMessages.whileConditionNotBool);
+                throw new Laufzeitfehler(stmt.token, Fehlermeldungen.whileConditionNotBool);
             }
             return null;
         }
@@ -192,7 +192,7 @@ namespace DDP
             }
             else
             {
-                throw new RuntimeError(stmt.token, ErrorMessages.whileConditionNotBool);
+                throw new Laufzeitfehler(stmt.token, Fehlermeldungen.whileConditionNotBool);
             }
             return null;
         }
@@ -204,7 +204,7 @@ namespace DDP
             dynamic inc = Evaluate(stmt.inc);
 
             if (min is not int && max is not int && inc is not int && min is not double &&  max is not double && inc is not double)
-                throw new RuntimeError(stmt.initializer.name, ErrorMessages.forWrongType);
+                throw new Laufzeitfehler(stmt.initializer.name, Fehlermeldungen.forWrongType);
 
             if (min < max)
             {
@@ -254,69 +254,69 @@ namespace DDP
             {
                 case UNGLEICH:
                     if (_left.GetType() == _right.GetType()) return !left.Equals(right);
-                    throw new RuntimeError(expr.op, ErrorMessages.opSameType);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opSameType);
                 case GLEICH:
                     if (_left.GetType() == _right.GetType()) return left.Equals(right);
-                    throw new RuntimeError(expr.op, ErrorMessages.opSameType);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opSameType);
                 case GRÖßER:
                     if (type == typeof(double)) return (double)left > (double)right;
                     if (type == typeof(int)) return (int)left > (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case GRÖßER_GLEICH:
                     if (type == typeof(double)) return (double)left >= (double)right;
                     if (type == typeof(int)) return (int)left >= (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KLEINER:
                     if (type == typeof(double)) return (double)left < (double)right;
                     if (type == typeof(int)) return (int)left < (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KLEINER_GLEICH:
                     if (type == typeof(double)) return (double)left <= (double)right;
                     if (type == typeof(int)) return (int)left <= (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case MODULO:
                     if (type == typeof(int)) return (int)left % (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyInt);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyInt);
                 case MINUS:
                     if (type == typeof(double)) return (double)left - (double)right;
                     if (type == typeof(int)) return (int)left - (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case PLUS:
                     if (type == typeof(double)) return (double)left + (double)right;
                     if (type == typeof(int)) return (int)left + (int)right;
-                    if (left is string || right is string) return Extentions.Stringify(left) + Extentions.Stringify(right);
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNumOrString);
+                    if (left is string || right is string) return Erweiterungen.Stringify(left) + Erweiterungen.Stringify(right);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNumOrString);
                 case DURCH:
                     if (type == typeof(double)) return (double)left / (double)right;
                     if (type == typeof(int)) return (int)left / (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case MAL:
                     if (type == typeof(double)) return (double)left * (double)right;
                     if (type == typeof(int)) return (int)left * (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case HOCH:
                     if (type == typeof(double)) return Math.Pow((double)left, (double)right);
                     if (type == typeof(int)) return Math.Pow((int)left, (int)right);
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case WURZEL:
                     if (type == typeof(double)) return Math.Pow((double)left, 1 / (double)right);
                     if (type == typeof(int)) return Math.Pow((int)left, 1.0 / (int)right);
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case UND:
                     if (type == typeof(int)) return (int)left & (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case ODER:
                     if (type == typeof(int)) return (int)left | (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case KONTRA:
                     if (type == typeof(int)) return (int)left ^ (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case LINKS:
                     if (type == typeof(int)) return (int)left << (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case RECHTS:
                     if (type == typeof(int)) return (int)left >> (int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.opOnlyNum);
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
             }
 
             // Unreachable.
@@ -335,13 +335,13 @@ namespace DDP
             }
             if (!(callee is ICallable))
             {
-                throw new RuntimeError(expr.paren, ErrorMessages.onlyCallFunc);
+                throw new Laufzeitfehler(expr.paren, Fehlermeldungen.onlyCallFunc);
             }
 
             ICallable function = (ICallable)callee;
             if (arguments.Count != function.Arity)
             {
-                throw new RuntimeError(expr.paren, ErrorMessages.wrongParamCount(function.Arity, arguments.Count));
+                throw new Laufzeitfehler(expr.paren, Fehlermeldungen.wrongParamCount(function.Arity, arguments.Count));
             }
 
             return function.Call(this, arguments);
@@ -386,7 +386,7 @@ namespace DDP
                 case NICHT:
                     if (type == typeof(bool)) return right.Equals(false);
                     if (type == typeof(int)) return ~(int)right;
-                    throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("nicht", "Boolean oder Zahlen"));
+                    throw new Laufzeitfehler(expr.op, Fehlermeldungen.unaryOpWrongType("nicht", "Boolean oder Zahlen"));
                 case BANG_MINUS:
                     return NumberUnary(x => -x);
                 case BETRAG:
@@ -420,7 +420,7 @@ namespace DDP
             {
                 if (type == typeof(double)) return function((double)right);
                 if (type == typeof(int)) return function((int)right);
-                throw new RuntimeError(expr.op, ErrorMessages.unaryOpWrongType("ln", "Zahlen"));
+                throw new Laufzeitfehler(expr.op, Fehlermeldungen.unaryOpWrongType("ln", "Zahlen"));
             }
         }
 
@@ -449,7 +449,7 @@ namespace DDP
             if (operand is string) return typeof(string);
             if (operand is char) return typeof(char);
 
-            throw new RuntimeError(op, ErrorMessages.opInvalid);
+            throw new Laufzeitfehler(op, Fehlermeldungen.opInvalid);
         }
 
         private Type CheckOperandTypes(Token op, object left, object right)
@@ -470,7 +470,7 @@ namespace DDP
             if (left is char && right is char)
                 return typeof(char);
 
-            throw new RuntimeError(op, ErrorMessages.opInvalid);
+            throw new Laufzeitfehler(op, Fehlermeldungen.opInvalid);
         }
     }
 }

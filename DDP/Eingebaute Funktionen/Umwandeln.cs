@@ -16,14 +16,14 @@ namespace DDP.Eingebaute_Funktionen
                 {
                     if (arguments[0] is string)
                     {
-                        if (double.TryParse(Extentions.Stringify(arguments[0]), NumberStyles.Integer, new CultureInfo("de-DE"),  out double result))
+                        if (double.TryParse(Erweiterungen.Stringify(arguments[0]), NumberStyles.Integer, new CultureInfo("de-DE"),  out double result))
                             return (int)result;
                     }
                     return Convert.ToInt32(arguments[0]);
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Zahl"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "eine Zahl"));
                 }
             }
         }
@@ -38,14 +38,14 @@ namespace DDP.Eingebaute_Funktionen
                 {
                     if (arguments[0] is string)
                     {
-                        if (double.TryParse(Extentions.Stringify(arguments[0]), out double result))
+                        if (double.TryParse(Erweiterungen.Stringify(arguments[0]), out double result))
                             return result;
                     }
                     return (double)Convert.ToDouble(arguments[0]);
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Kommazahl"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "eine Kommazahl"));
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "einen Zeichen"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "einen Zeichen"));
                 }
             }
         }
@@ -86,11 +86,11 @@ namespace DDP.Eingebaute_Funktionen
             {
                 try
                 {
-                    return Extentions.Stringify(arguments[0]);
+                    return Erweiterungen.Stringify(arguments[0]);
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "eine Zeichenkette"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "eine Zeichenkette"));
                 }
             }
         }
@@ -105,11 +105,11 @@ namespace DDP.Eingebaute_Funktionen
                 {
                     if (arguments[0] is string)
                     {
-                        if (Extentions.Stringify(arguments[0]) == "wahr")
+                        if (Erweiterungen.Stringify(arguments[0]) == "wahr")
                         {
                             return true;
                         }
-                        else if (Extentions.Stringify(arguments[0]) == "falsch")
+                        else if (Erweiterungen.Stringify(arguments[0]) == "falsch")
                         {
                             return false;
                         }
@@ -118,7 +118,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new RuntimeError(null, ErrorMessages.castInvalid(Extentions.Stringify(arguments[0]), "einen Boolean"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "einen Boolean"));
                 }
             }
         }
