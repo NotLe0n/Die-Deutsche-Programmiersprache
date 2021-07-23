@@ -27,6 +27,13 @@ namespace DDP
             globals.Define("zuZeichen", new Umwandeln.Zeichen());
             globals.Define("zuZeichenkette", new Umwandeln.Zeichenkette());
             globals.Define("zuBoolean", new Umwandeln.Boolean());
+            globals.Define("Min", new Mathematik.Min());
+            globals.Define("Max", new Mathematik.Max());
+            globals.Define("Clamp", new Mathematik.Clamp());
+            globals.Define("Trunkiert", new Mathematik.Trunkiert());
+            globals.Define("Rund", new Mathematik.Rund());
+            globals.Define("Decke", new Mathematik.Decke());
+            globals.Define("Boden", new Mathematik.Boden());
         }
 
         public void Interpret(List<Anweisung> statements)
