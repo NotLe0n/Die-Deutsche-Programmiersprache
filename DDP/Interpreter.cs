@@ -34,6 +34,14 @@ namespace DDP
             globals.Define("Rund", new Mathematik.Rund());
             globals.Define("Decke", new Mathematik.Decke());
             globals.Define("Boden", new Mathematik.Boden());
+            globals.Define("Beschneiden", new Stringmanipulation.Beschneiden());
+            globals.Define("Einfügen", new Stringmanipulation.Einfügen());
+            globals.Define("Entfernen", new Stringmanipulation.Entfernen());
+            globals.Define("Enthält", new Stringmanipulation.Enthält());
+            globals.Define("Ersetzten", new Stringmanipulation.Ersetzten());
+            globals.Define("Länge", new Stringmanipulation.Länge());
+            globals.Define("Spalten", new Stringmanipulation.Spalten());
+            globals.Define("Zuschneiden", new Stringmanipulation.Zuschneiden());
         }
 
         public void Interpret(List<Anweisung> statements)
