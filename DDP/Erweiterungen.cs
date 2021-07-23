@@ -16,32 +16,6 @@ namespace DDP
             return IstDeutsch(c) || char.IsDigit(c);
         }
 
-        public static TValue Put<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
-        {
-            if (dict.ContainsKey(key))
-            {
-                dict[key] = value;
-            }
-            else
-            {
-                dict.Add(key, value);
-            }
-
-            return value;
-        }
-
-        public static object Get<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
-        {
-            if (dict.TryGetValue(key, out TValue val))
-            {
-                return val;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static string Stringify(object obj)
         {
             if (obj == null) return "nix";

@@ -21,7 +21,7 @@ namespace DDP
         {
             if (values.ContainsKey(name.lexeme))
             {
-                return values.Get(name.lexeme);
+                return values[name.lexeme];
             }
 
             if (enclosing != null)
@@ -36,7 +36,7 @@ namespace DDP
         {
             if (values.ContainsKey(name.lexeme))
             {
-                values.Put(name.lexeme, value);
+                values[name.lexeme] = value;
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace DDP
 
         public void Define(string name, object value)
         {
-            values.Put(name, value);
+            values[name] = value;
         }
 
         public Environment Ancestor(int distance)
@@ -67,12 +67,12 @@ namespace DDP
 
         public object GetAt(int distance, string name)
         {
-            return Ancestor(distance).values.Get(name);
+            return Ancestor(distance).values[name];
         }
 
         public void AssignAt(int distance, Token name, object value)
         {
-            Ancestor(distance).values.Put(name.lexeme, value);
+            Ancestor(distance).values[name.lexeme] = value;
         }
 
         public override string ToString()

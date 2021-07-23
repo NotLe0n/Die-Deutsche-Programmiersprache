@@ -233,7 +233,7 @@ namespace DDP
                 DDP.Fehler(name, Fehlermeldungen.varAlreadyExists);
             }
 
-            scope.Put(name.lexeme, false);
+            scope[name.lexeme] = false;
         }
 
         private void Define(Token name)
