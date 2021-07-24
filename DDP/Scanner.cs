@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 using static DDP.SymbolTyp;
 
@@ -23,6 +24,9 @@ namespace DDP
             { "Boolean", BOOLEAN },
             { "Zeichenkette", ZEICHENKETTE },
             { "Zeichen", ZEICHEN },
+            { "Zahlen", ZAHLEN },
+            { "Kommazahlen", KOMMAZAHLEN },
+            { "Zeichenketten", ZEICHENKETTEN },
 
             // boolean
             { "wahr", WAHR },
@@ -30,6 +34,7 @@ namespace DDP
 
             // mathematische operatoren
             { "ist", IST },
+            { "sind", SIND },
             { "plus", PLUS },
             { "minus", MINUS },
             { "mal", MAL },
@@ -39,6 +44,8 @@ namespace DDP
             { "wurzel", WURZEL },
             { "ln", LOG },
             { "Betrag", BETRAG }, // oder Absolutwert (wir haben uns um den namen gestritten)
+            { "an", AN },
+            { "Stelle", STELLE },
 
             // bool'sche vergleichs operatoren
             { "gleich", GLEICH },
@@ -141,6 +148,7 @@ namespace DDP
             {
                 case '(': AddToken(L_KLAMMER); break;
                 case ')': AddToken(R_KLAMMER); break;
+                case '[': ArrayLiteral(); break;
 
                 case ',': AddToken(KOMMA); break;
                 case '.': AddToken(PUNKT); break;
@@ -237,14 +245,10 @@ namespace DDP
 
             // The closing ".
             if (Advance() != '\'')
-            {
-                DDP.Fehler(zeile, Fehlermeldungen.charTooLong);
-            }
+            DDP.Fehler(zeile, Fehlermeldungen.charTooLong);
 
             if (wert == null)
-            {
-                DDP.Fehler(zeile, "leerer zeichen");
-            }
+            DDP.Fehler(zeile, "leerer zeichen");
 
             AddToken(CHAR, wert);
         }
@@ -267,13 +271,53 @@ namespace DDP
 
             // wenn ein komma existiert, dann wird es ein double sonst wird es ein int
             if (quelle[start..current].Contains(","))
-            {
-                AddToken(FLOAT, double.Parse(quelle[start..current], NumberStyles.Float, new CultureInfo("de-DE")));
-            }
+            AddToken(FLOAT, double.Parse(quelle[start..current], NumberStyles.Float, new CultureInfo("de-DE")));
             else
             {
                 AddToken(INT, int.Parse(quelle[start..current]));
             }
+        }
+
+        private void ArrayLiteral()
+        {
+            while (Peek() != ']') Advance();
+
+            string str = quelle[++start..current];
+            var list = str.Split("; ");
+
+            System.Type type;
+            if (list.All(x => x.IstNumerisch() && !x.Contains(','))) type = typeof(int);
+            else if (list.All(x => x.Contains(','))) type = typeof(double);
+            else if (list.All(x => x.Contains('"'))) type = typeof(string);
+            else if (list.All(x => x.Contains('\''))) type = typeof(char);
+            else if (list.All(x => x == "wahr" || x == "falsch")) type = typeof(bool);
+            else
+            {
+                DDP.Fehler(zeile, "invalid array type");
+                return;
+            }
+
+            var li = new List<object>();
+            foreach (var entry in list)
+            {
+                if (type == typeof(int)) li.Add(int.Parse(entry));
+                else if (type == typeof(double)) li.Add(double.Parse(entry, NumberStyles.Float, new CultureInfo("de-DE")));
+                else if (type == typeof(char)) li.Add(entry[0]);
+                else if (type == typeof(string)) li.Add(entry);
+                else if (type == typeof(bool)) li.Add(entry == "wahr" ? true : entry == "falsch" ? false : null);
+            }
+
+            if (Advance() != ']')
+            {
+                DDP.Fehler(zeile, "geschlossene eckige klammer fehlt");
+                return;
+            }
+
+            if (type == typeof(int)) AddToken(INTARR, li.ToArray());
+            else if (type == typeof(double)) AddToken(FLOATARR, li.ToArray());
+            else if (type == typeof(char)) AddToken(CHARARR, li.ToArray());
+            else if (type == typeof(string)) AddToken(STRINGARR, li.ToArray());
+            else if (type == typeof(bool)) AddToken(BOOLEANARR, li.ToArray());
         }
 
         /// <summary>

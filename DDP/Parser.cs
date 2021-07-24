@@ -84,7 +84,7 @@ namespace DDP
                 Consume(VON, Fehlermeldungen.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
                 min = Ausdruck();
 
-                initializer = new Anweisung.Var(matched, name, min);
+                initializer = new Anweisung.Var(DIE, matched, name, min);
             }
             else throw Error(Previous(), Fehlermeldungen.forNoVar);
 
@@ -172,7 +172,7 @@ namespace DDP
             {
                 // falls zu einem Boolean zugewiesen wird, braucht der Syntax: "wahr/falsch wenn"
                 bool negate = false;
-                if (type.typ == BOOLEAN)
+                if (type.typ == BOOLEAN && artikel == DER)
                 {
                     if (Match(out Symbol matched, WAHR, FALSCH))
                     {
@@ -194,8 +194,13 @@ namespace DDP
                 }
             }
 
+            if (Match(SIND))
+            {
+                initializer = Ausdruck();
+            }
+
             Consume(PUNKT, Fehlermeldungen.dotAfterVarDeclaration);
-            return new Anweisung.Var(type, name, initializer);
+            return new Anweisung.Var(artikel, type, name, initializer);
         }
 
         private Symbol CheckArtikel(SymbolTyp artikel)
@@ -207,7 +212,7 @@ namespace DDP
                     type = Consume(BOOLEAN, Fehlermeldungen.wrongArtikel("'der'", "zum Typ Boolean"));
                     break;
                 case DIE:
-                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE))
+                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZAHLEN, KOMMAZAHLEN, BOOLEAN, ZEICHENKETTEN, ZEICHEN))
                     {
                         type = matched;
                     }
@@ -613,7 +618,7 @@ namespace DDP
 
         private Ausdruck Aufruf()
         {
-            Ausdruck expr = Primär();
+            Ausdruck expr = Indexierung();
 
             // "x(y, z)"
             if (Match(L_KLAMMER))
@@ -639,6 +644,24 @@ namespace DDP
             return expr;
         }
 
+        private Ausdruck Indexierung()
+        {
+            Ausdruck expr = Primär();
+
+            if (Match(AN))
+            {
+                Consume(DER, "fehlt an");
+                Consume(STELLE, "fehlt an");
+
+                Symbol op = Previous();
+                Ausdruck right = Primär();
+
+                expr = new Ausdruck.Binär(expr, op, right);
+            }
+
+            return expr;
+        }
+
         private Ausdruck Primär()
         {
             if (Match(FALSCH)) return new Ausdruck.Wert(false);
@@ -649,6 +672,11 @@ namespace DDP
             if (Match(PHI)) return new Ausdruck.Wert(1.6180339887);
 
             if (Match(INT, FLOAT, STRING, CHAR))
+            {
+                return new Ausdruck.Wert(Previous().wert);
+            }
+
+            if (Match(INTARR, FLOATARR, STRINGARR, CHARARR, BOOLEANARR))
             {
                 return new Ausdruck.Wert(Previous().wert);
             }

@@ -31,8 +31,8 @@ namespace DDP
         public const string charUnterminated = "Unterminierter Zeichen!";
         public const string stringUnterminated = "Unterminierte Zeichenkette!";
         public const string groupingParenMissing = "Es wurde eine ')' nach einem Ausdruck erwartet!";
-        public const string ifKommaMissing = "Komma nach after wenn bedingung erwartet!";
-        public const string ifDannMissing = "Komma nach after wenn bedingung erwartet!";
+        public const string ifKommaMissing = "Komma nach wenn bedingung erwartet!";
+        public const string ifDannMissing = "Komma nach wenn bedingung erwartet!";
         public const string ifConditionNotBool = "Die Bedingung einer wenn Anweisung muss ein Boolean sein!";
         public const string whileConditionNotBool = "Die Bedingung einer solange Anweisung muss ein Boolean sein!";
         public const string noArtikel = "Es wird ein Artikel vor einem Variablen Typ erwartet!";

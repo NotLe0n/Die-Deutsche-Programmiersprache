@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 
 namespace DDP
 {
@@ -16,6 +16,11 @@ namespace DDP
             return IstDeutsch(c) || char.IsDigit(c);
         }
 
+        public static bool IstNumerisch(this string str)
+        {
+            return str.ToCharArray().All(x => char.IsDigit(x));
+        }
+
         public static string Stringify(object obj)
         {
             if (obj == null) return "nix";
@@ -23,6 +28,23 @@ namespace DDP
             if (obj is bool boolean)
             {
                 return boolean ? "wahr" : "falsch";
+            }
+
+            if (obj is System.Array)
+            {
+                var arr = obj as object[];
+
+                string str = "[";
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] is string) str += '"';
+                    str += Stringify(arr[i]);
+                    if (arr[i] is string) str += '"';
+
+                    if (i + 1 < arr.Length)
+                        str += "; ";
+                }
+                return str + "]";
             }
 
             return obj.ToString();

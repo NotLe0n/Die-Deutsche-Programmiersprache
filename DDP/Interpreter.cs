@@ -39,7 +39,7 @@ namespace DDP
             globals.Define("Entfernen", new Stringmanipulation.Entfernen());
             globals.Define("Enthält", new Stringmanipulation.Enthält());
             globals.Define("Ersetzten", new Stringmanipulation.Ersetzten());
-            globals.Define("Länge", new Stringmanipulation.Länge());
+            globals.Define("Länge", new Arrays.Länge());
             globals.Define("Spalten", new Stringmanipulation.Spalten());
             globals.Define("Zuschneiden", new Stringmanipulation.Zuschneiden());
         }
@@ -163,13 +163,33 @@ namespace DDP
                     if (wert is not string)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
                     break;
+                case ZEICHEN when stmt.artikel == DIE:
+                    if (wert.GetType().GetElementType() == typeof(char[]))
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichen liste"));
+                    break;
                 case ZEICHEN:
                     if (wert is not char)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Zeichen"));
                     break;
+                case BOOLEAN when stmt.artikel == DIE:
+                    if (wert.GetType().GetElementType() == typeof(bool[]))
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Boolean liste"));
+                    break;
                 case BOOLEAN:
                     if (wert is not bool)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Boolean"));
+                    break;
+                case ZAHLEN:
+                    if (wert.GetType().GetElementType() == typeof(int[]))
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zahlen liste"));
+                    break;
+                case KOMMAZAHLEN:
+                    if (wert.GetType().GetElementType() == typeof(double[]))
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Kommazahlen liste"));
+                    break;
+                case ZEICHENKETTEN:
+                    if (wert.GetType().GetElementType() == typeof(string[]))
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenketten liste"));
                     break;
             }
 
@@ -262,10 +282,21 @@ namespace DDP
             object _left = Evaluate(expr.links);
             object _right = Evaluate(expr.rechts);
 
-            Type typ = CheckOperandTypes(expr.op, _left, _right);
+            Type typ;
+            object left, right;
+            if (_left is not object[])
+            {
+                typ = CheckOperandTypes(expr.op, _left, _right);
 
-            object left = Convert.ChangeType(_left, typ);
-            object right = Convert.ChangeType(_right, typ);
+                left = Convert.ChangeType(_left, typ);
+                right = Convert.ChangeType(_right, typ);
+            }
+            else
+            {
+                typ = typeof(object[]);
+                left = _left;
+                right = Convert.ChangeType(_right, typeof(int));
+            }
 
             switch (expr.op.typ)
             {
@@ -334,6 +365,9 @@ namespace DDP
                 case RECHTS:
                     if (typ == typeof(int)) return (int)left >> (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
+                case STELLE:
+                    if ((left as object[]).Length > (int)right) return (left as object[])[(int)right];
+                    throw new Laufzeitfehler(expr.op, "Index außerhalb des Arrays");
             }
 
             // Unreachable.
