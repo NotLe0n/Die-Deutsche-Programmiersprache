@@ -22,10 +22,6 @@ namespace DDP
             {
                 DateiAusführen(args[0]);
             }
-            else
-            {
-                ReplAusführen();
-            }
 
             // wenn es einen Fehler gab -> Programm nicht schließen
             if (hatteFehler || hatteLaufzeitfehler)
@@ -39,23 +35,6 @@ namespace DDP
 
             if (hatteFehler) return;
             if (hatteLaufzeitfehler) return;
-        }
-
-        private static void ReplAusführen()
-        {
-            for (; ; )
-            {
-                hatteFehler = false;
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("\n> ");
-                Console.ResetColor();
-                string line = Console.ReadLine();
-
-                if (line == null) break;
-
-                Ausführen(line);
-            }
         }
 
         private static void Ausführen(string quelle)
