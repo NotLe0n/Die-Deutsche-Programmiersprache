@@ -161,6 +161,12 @@ namespace DDP
                         // A comment goes until the end of the line.
                         while (Peek() != '\n' && !AmEnde) Advance();
                     }
+                    if (Match('*'))
+                    {
+                        while (Peek() != '*' && PeekNext() != '/' && !AmEnde) Advance();
+                        Advance();
+                        Advance();
+                    }
                     break;
 
                 // tabs have special meaning
