@@ -49,6 +49,23 @@ namespace DDP
             throw new Laufzeitfehler(name, Fehlermeldungen.varNotDefined(name.lexeme));
         }
 
+        public void AssignArray(Symbol name, int stelle, object value)
+        {
+            if (werte.ContainsKey(name.lexeme))
+            {
+                (werte[name.lexeme] as object[])[stelle] = value;
+                return;
+            }
+
+            if (enclosing != null)
+            {
+                enclosing.AssignArray(name, stelle, value);
+                return;
+            }
+
+            throw new Laufzeitfehler(name, Fehlermeldungen.varNotDefined(name.lexeme));
+        }
+
         public void Define(string name, object value)
         {
             werte[name] = value;
@@ -73,6 +90,12 @@ namespace DDP
         public void AssignAt(int distance, Symbol name, object value)
         {
             Ancestor(distance).werte[name.lexeme] = value;
+        }
+
+        public void AssignArrayAt(int distance, Symbol name, int stelle, object value)
+        {
+            object[] arr = Ancestor(distance).werte[name.lexeme] as object[];
+            arr[stelle] = value;
         }
 
         public override string ToString()

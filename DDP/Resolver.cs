@@ -55,6 +55,23 @@ namespace DDP
             currentFunction = enclosingFunction;
         }
 
+        private void ResolveLocal(Ausdruck expr, Symbol name)
+        {
+            // Stack.ToArray returns a reversed array. The first pushed item will be the last in the array.
+            var _scopes = scopes.ToArray();
+
+            for (var i = 0; i < _scopes.Length; i++)
+            {
+                if (_scopes[i].ContainsKey(name.lexeme))
+                {
+                    interpreter.Resolve(expr, i);
+                    return;
+                }
+            }
+
+            // Not found. Assume it is global.
+        }
+
         public object VisitBlockStmt(Anweisung.Block stmt)
         {
             BeginScope();
@@ -138,6 +155,7 @@ namespace DDP
         public object VisitAssignExpr(Ausdruck.Zuweisung expr)
         {
             Resolve(expr.wert);
+            if (expr.stelle != null) Resolve(expr.stelle);
             ResolveLocal(expr, expr.name);
             return null;
         }
@@ -240,23 +258,6 @@ namespace DDP
         {
             if (scopes.Count == 0) return;
             scopes.Peek()[name.lexeme] = true;
-        }
-
-        private void ResolveLocal(Ausdruck expr, Symbol name)
-        {
-            // Stack.ToArray returns a reversed array. The first pushed item will be the last in the array.
-            var _scopes = scopes.ToArray();
-
-            for (var i = 0; i < _scopes.Length; i++)
-            {
-                if (_scopes[i].ContainsKey(name.lexeme))
-                {
-                    interpreter.Resolve(expr, i);
-                    return;
-                }
-            }
-
-            // Not found. Assume it is global.
         }
     }
 }

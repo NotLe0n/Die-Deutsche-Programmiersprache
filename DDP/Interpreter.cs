@@ -264,6 +264,22 @@ namespace DDP
         public object VisitAssignExpr(Ausdruck.Zuweisung expr)
         {
             var wert = Evaluate(expr.wert);
+            object stelle;
+            if (expr.stelle != null)
+            {
+                stelle = Evaluate(expr.stelle);
+
+                if (locals.TryGetValue(expr, out var _distance))
+                {
+                    environment.AssignArrayAt(_distance, expr.name, (int)stelle, wert);
+                }
+                else
+                {
+                    globals.AssignArray(expr.name, (int)stelle, wert);
+                }
+
+                return wert;
+            }
 
             if (locals.TryGetValue(expr, out var distance))
             {

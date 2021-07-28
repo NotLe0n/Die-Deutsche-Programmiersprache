@@ -30,12 +30,20 @@ namespace DDP
                 this.wert = wert;
             }
 
+            public Zuweisung(Symbol name, Ausdruck stelle, Ausdruck wert)
+            {
+                this.name = name;
+                this.stelle = stelle;
+                this.wert = wert;
+            }
+
             public override R Accept<R>(IVisitor<R> visitor)
             {
                 return visitor.VisitAssignExpr(this);
             }
 
             public readonly Symbol name;
+            public readonly Ausdruck stelle;
             public readonly Ausdruck wert;
         }
 

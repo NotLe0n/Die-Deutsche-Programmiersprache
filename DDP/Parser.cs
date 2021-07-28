@@ -366,6 +366,11 @@ namespace DDP
                     return new Ausdruck.Zuweisung(name, value);
                 }
 
+                if (expr is Ausdruck.Binär bin && bin.op.typ == STELLE && bin.links is Ausdruck.Variable _variable)
+                {
+                    return new Ausdruck.Zuweisung(_variable.name, bin.rechts, value);
+                }
+
                 Error(equals, Fehlermeldungen.varInvalidAssignment);
             }
 
