@@ -10,6 +10,7 @@ namespace DDP
 
         private static bool hatteFehler = false;
         private static bool hatteLaufzeitfehler = false;
+        public static string dateiPfad;
 
         static void Main(string[] args)
         {
@@ -30,6 +31,7 @@ namespace DDP
 
         private static void DateiAusführen(string pfad)
         {
+            dateiPfad = pfad;
             string str = File.ReadAllText(pfad);
             Ausführen(str);
 

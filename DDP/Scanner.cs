@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
 using static DDP.SymbolTyp;
@@ -339,12 +340,43 @@ namespace DDP
             {
                 typ = schlüsselwörter[text];
             }
+            else if (text == "binde")
+            {
+                Einbindung();
+                return;
+            }
             else
             {
                 typ = IDENTIFIER;
             }
 
             AddToken(typ);
+        }
+
+        private void Einbindung()
+        {
+            if (Advance() == ' ' && Match('"'))
+            {
+                string str = string.Empty;
+                while (Peek() != '"' && Peek() != '\n' && !AmEnde) str += Advance();
+
+                if (Match('"'))
+                {
+                    if (Advance() == ' ' && Advance() == 'e' && Advance() == 'i' && Advance() == 'n')
+                    {
+                        var path = Path.GetFullPath(Path.Combine(Directory.GetParent(DDP.dateiPfad).FullName, str)) + ".ddp";
+
+                        if (File.Exists(path))
+                        {
+                            var tokens = new Scanner(File.ReadAllText(path)).ScanTokens();
+                            tokens.RemoveAt(tokens.Count - 1);
+                            symbole.AddRange(tokens);
+                        }
+                        else DDP.Fehler(zeile, "Datei zum einbinden nicht gefunden!");
+                    }
+                }
+            }
+            if (!Match('.')) DDP.Fehler(zeile, Fehlermeldungen.dotAfterExpression);
         }
 
         /// <summary>
