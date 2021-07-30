@@ -3,7 +3,7 @@
     public enum SymbolTyp
     {
         // Einzelne Charaktere
-        L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT, TAB,
+        L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT,
 
         // Artikel
         DER, DIE, DAS,

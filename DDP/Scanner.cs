@@ -121,6 +121,7 @@ namespace DDP
         private int zeile = 1;
         private int zeilenposition = 0;
         private int aufeinanderfolgendeLeerzeichen = 0;
+        private int tiefe;
 
         public Scanner(string quelle)
         {
@@ -136,7 +137,7 @@ namespace DDP
                 ScanToken();
             }
 
-            symbole.Add(new Symbol(EOF, "", null, zeile, current));
+            symbole.Add(new Symbol(EOF, "", null, zeile, current, 0));
             return symbole;
         }
 
@@ -171,13 +172,15 @@ namespace DDP
                     break;
 
                 // tabs have special meaning
-                case '\t': AddToken(TAB); break;
+                case '\t':
+                    tiefe++;
+                    break;
 
                 case ' ':
                     // wenn 4 leerzeichen hintereinander auftreten, füge einen tab hinzu
                     if (aufeinanderfolgendeLeerzeichen == 4)
                     {
-                        AddToken(TAB);
+                        tiefe++;
                         aufeinanderfolgendeLeerzeichen = 0;
                     }
                     break;
@@ -187,6 +190,7 @@ namespace DDP
                     break;
 
                 case '\n':
+                    tiefe = 0;
                     zeile++;
                     zeilenposition = current;
                     break;
@@ -402,7 +406,7 @@ namespace DDP
         private void AddToken(SymbolTyp typ, object literal)
         {
             string text = quelle[start..current];
-            symbole.Add(new Symbol(typ, text, literal, zeile, current - zeilenposition));
+            symbole.Add(new Symbol(typ, text, literal, zeile, current - zeilenposition, tiefe));
         }
 
         /// <summary>

@@ -111,7 +111,7 @@ namespace DDP
                 körper,
                 new Anweisung.Ausdruck(new Ausdruck.Zuweisung(initializer.name, new Ausdruck.Binär(
                     new Ausdruck.Variable(initializer.name),
-                    new Symbol(PLUS, "plus", null, initializer.name.zeile, initializer.name.position),
+                    new Symbol(PLUS, "plus", null, initializer.name.zeile, initializer.name.position, depth),
                     schrittgröße)))
             });
 
@@ -136,7 +136,6 @@ namespace DDP
             Consume(DANN, Fehlermeldungen.ifDannMissing);
 
             Anweisung thenBranch = Anweisung();
-            Match(depth, TAB); // consume all tabs (workaround to block issue)
 
             // wenn aber
             Anweisung elseBranch = null;
@@ -190,7 +189,7 @@ namespace DDP
                 // falls "der Boolean x ist falsch wenn y" wird y negiert
                 if (negate)
                 {
-                    initializer = new Ausdruck.Unär(new Symbol(NICHT, "nicht", null, name.zeile, name.position), initializer);
+                    initializer = new Ausdruck.Unär(new Symbol(NICHT, "nicht", null, name.zeile, name.position, depth), initializer);
                 }
             }
 
@@ -340,7 +339,7 @@ namespace DDP
             depth++;
             List<Anweisung> statements = new();
 
-            while (Match(depth, TAB) && !IsAtEnd)
+            while (Peek().tiefe == depth && !IsAtEnd)
             {
                 statements.Add(Deklaration());
             }
@@ -739,32 +738,6 @@ namespace DDP
             }
             matched = null;
             return false;
-        }
-
-        /// <summary>
-        /// <see cref="Match(SymbolTyp[])">Matches</see> the given TokenTypes <paramref name="repeat"/> times
-        /// </summary>
-        /// <param name="repeat">how many times Match should be repeated</param>
-        /// <param name="types">what TokenTypes to match</param>
-        /// <returns>true if one of the TokenTypes have been matched <paramref name="repeat"/> times</returns>
-        private bool Match(int repeat, params SymbolTyp[] types)
-        {
-            if (repeat == 0) return false;
-
-            for (int i = 0; i < repeat; i++)
-            {
-                if (!Match(types))
-                {
-                    while (i > 0)
-                    {
-                        i--;
-                        current--;
-                    }
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         /// <summary>
