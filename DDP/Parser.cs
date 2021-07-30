@@ -171,15 +171,18 @@ namespace DDP
             {
                 // falls zu einem Boolean zugewiesen wird, braucht der Syntax: "wahr/falsch wenn"
                 bool negate = false;
-                if (type.typ == BOOLEAN && artikel == DER)
+                if (type.typ == BOOLEAN)
                 {
                     if (Match(out Symbol matched, WAHR, FALSCH))
                     {
-                        Consume(WENN, "fehlt wenn");
-                        if(matched.typ == FALSCH)
+                        if (Match(WENN))
                         {
-                            negate = true;
+                            if (matched.typ == FALSCH)
+                            {
+                                negate = true;
+                            }
                         }
+                        else current--;
                     }
                     else Error(Peek(), "fehlt wahr/falsch wenn");
                 }
@@ -211,7 +214,7 @@ namespace DDP
                     type = Consume(BOOLEAN, Fehlermeldungen.wrongArtikel("'der'", "zum Typ Boolean"));
                     break;
                 case DIE:
-                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZAHLEN, KOMMAZAHLEN, BOOLEAN, ZEICHENKETTEN, ZEICHEN))
+                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZAHLEN, KOMMAZAHLEN, BOOLEANS, ZEICHENKETTEN, ZEICHEN))
                     {
                         type = matched;
                     }

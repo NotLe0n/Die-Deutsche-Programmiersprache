@@ -171,7 +171,7 @@ namespace DDP
                     if (wert is not char)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Zeichen"));
                     break;
-                case BOOLEAN when stmt.artikel == DIE:
+                case BOOLEANS:
                     if (wert.GetType().GetElementType() == typeof(bool[]))
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Boolean liste"));
                     break;

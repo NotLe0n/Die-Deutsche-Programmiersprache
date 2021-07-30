@@ -28,6 +28,7 @@ namespace DDP
             { "Zahlen", ZAHLEN },
             { "Kommazahlen", KOMMAZAHLEN },
             { "Zeichenketten", ZEICHENKETTEN },
+            { "Booleans", BOOLEANS },
 
             // boolean
             { "wahr", WAHR },
