@@ -8,7 +8,7 @@ Die Deutsche Programmiersprache **(DDP)** ist eine (Witz-)Programmiersprache die
 
 Momentan existieren zwei verschiedene Implementationen, die hier gefunden werden können:
 - [DDP in c#](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache)
-- [DDP in c++](https://github.com/bafto/DDP-cpp)
+- [DDP in c++](https://github.com/bafto/DDP-cpp) (schneller)
 
 Bugs gerne in den Repositorien der jeweiligen Versionen als Issue einreichen.
 
