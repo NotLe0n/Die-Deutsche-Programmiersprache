@@ -2,7 +2,8 @@
 <img 
      src="https://user-images.githubusercontent.com/26361108/130243423-2e78015a-279a-4906-9804-c2f23a78f5b4.png" 
      alt="ddp icon"
-     align="right"></img>
+     align="right"
+/>
 
 Die Deutsche Programmiersprache **(DDP)** ist eine (Witz-)Programmiersprache die so entworfen wurde, dass in ihr geschriebene Programme so gelesen werden können wie (annähernd) korrektes Deutsch.
 
@@ -13,6 +14,7 @@ Momentan existieren zwei verschiedene Implementationen, die hier gefunden werden
 Bugs gerne in den Repositorien der jeweiligen Versionen als Issue einreichen.
 
 ### Bitte besuche das [Wiki](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache/wiki) um mehr zu erfahren!
+
 ***
 
 Man kann DDP auch online ausprobieren:
@@ -39,3 +41,7 @@ für jede Zahl i von 1 bis 100, mache:
             schreibeZeile(i).
 lese(). // damit sich die Konsole nicht sofort schließt
 ```
+
+***
+#### [english README](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache/blob/master/README-EN.md)
+***
