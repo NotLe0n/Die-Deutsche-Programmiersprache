@@ -24,8 +24,8 @@ namespace DDP
             globals.Define("leseZeile", new LeseZeile());
             globals.Define("zuZahl", new Umwandeln.Zahl());
             globals.Define("zuKommazahl", new Umwandeln.Kommazahl());
-            globals.Define("zuZeichen", new Umwandeln.Zeichen());
-            globals.Define("zuZeichenkette", new Umwandeln.Zeichenkette());
+            globals.Define("zuBuchstabe", new Umwandeln.Buchstabe());
+            globals.Define("zuText", new Umwandeln.Text());
             globals.Define("zuBoolean", new Umwandeln.Boolean());
             globals.Define("Min", new Mathematik.Min());
             globals.Define("Max", new Mathematik.Max());
@@ -159,20 +159,20 @@ namespace DDP
                     if (wert is not double)
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Kommazahl"));
                     break;
-                case ZEICHENKETTE:
+                case TEXT:
                     if (wert is not string)
-                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenkette"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Text"));
                     break;
-                case ZEICHEN when stmt.artikel == DIE:
-                    if (wert.GetType().GetElementType() == typeof(char[]))
-                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichen liste"));
+                case BUCHSTABEN:
+                    if (wert is not char[])
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Buchstaben liste"));
                     break;
-                case ZEICHEN:
+                case BUCHSTABE:
                     if (wert is not char)
-                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Zeichen"));
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Buchstabe"));
                     break;
                 case BOOLEANS:
-                    if (wert.GetType().GetElementType() == typeof(bool[]))
+                    if (wert is not bool[])
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Boolean liste"));
                     break;
                 case BOOLEAN:
@@ -180,16 +180,16 @@ namespace DDP
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einem Boolean"));
                     break;
                 case ZAHLEN:
-                    if (wert.GetType().GetElementType() == typeof(int[]))
+                    if (wert is not int[])
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zahlen liste"));
                     break;
                 case KOMMAZAHLEN:
-                    if (wert.GetType().GetElementType() == typeof(double[]))
+                    if (wert is not double[])
                         throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Kommazahlen liste"));
                     break;
-                case ZEICHENKETTEN:
-                    if (wert.GetType().GetElementType() == typeof(string[]))
-                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Zeichenketten liste"));
+                case TEXTE:
+                    if (wert is not string[])
+                        throw new Laufzeitfehler(stmt.name, Fehlermeldungen.varWrongType(stmt.name.lexeme, "einer Text liste"));
                     break;
             }
 
@@ -240,7 +240,7 @@ namespace DDP
             dynamic max = Evaluate(stmt.max);
             dynamic inc = Evaluate(stmt.inc);
 
-            if (min is not int && max is not int && inc is not int && min is not double &&  max is not double && inc is not double)
+            if (min is not int && max is not int && inc is not int && min is not double && max is not double && inc is not double)
                 throw new Laufzeitfehler(stmt.initializierer.name, Fehlermeldungen.forWrongType);
 
             if (min < max)
@@ -257,7 +257,7 @@ namespace DDP
                     Execute(stmt.körper);
                 }
             }
-            
+
             return null;
         }
 
@@ -524,16 +524,12 @@ namespace DDP
 
             if ((left is double && right is int) || (left is int && right is double) || (left is double && right is double))
                 return typeof(double);
-
             if (left is int && right is int)
                 return typeof(int);
-
             if (left is bool && right is bool)
                 return typeof(bool);
-
             if (left is string || right is string)
                 return typeof(string);
-
             if (left is char && right is char)
                 return typeof(char);
 

@@ -7,7 +7,7 @@ namespace DDP
         public const string opSameType = "Operanden müssen den gleichen Typ besitzten!";
         public const string opOnlyInt = "Operanden können nur integrale Zahlen sein!";
         public const string opOnlyNum = "Operanden können nur Zahlen sein!";
-        public const string opOnlyNumOrString = "Operanden können nur Zahlen oder Zeichenketten sein!";
+        public const string opOnlyNumOrString = "Operanden können nur Zahlen oder Texte sein!";
         public const string opInvalid = "Ungültiger Operanden Typ!";
         public const string onlyCallFunc = "Man kann nur Funktionen aufrufen!";
         public const string forWrongType = "für anweisung nimmt nur Nummern als Typ!";
@@ -27,9 +27,9 @@ namespace DDP
         public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";
         public const string returnMissing = "Eine Funktion mit einem Rückgabe typ braucht eine Rückgabe Anweisung!";
         public const string expressionMissing = "Ausdruck erwartet!";
-        public const string charTooLong = "Ein Zeichen kann nur einen zeichen groß sein! Benutzte eine Zeichenkette wenn du mehr willst!";
-        public const string charUnterminated = "Unterminierter Zeichen!";
-        public const string stringUnterminated = "Unterminierte Zeichenkette!";
+        public const string charTooLong = "Ein Buchstabe kann nur einen zeichen groß sein! Benutzte einen Text wenn du mehr willst!";
+        public const string charUnterminated = "Unterminierter Buchstabe!";
+        public const string stringUnterminated = "Unterminierter Text!";
         public const string groupingParenMissing = "Es wurde eine ')' nach einem Ausdruck erwartet!";
         public const string ifKommaMissing = "Komma nach wenn bedingung erwartet!";
         public const string ifDannMissing = "Komma nach wenn bedingung erwartet!";

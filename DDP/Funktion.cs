@@ -48,14 +48,29 @@ namespace DDP
                     case SymbolTyp.KOMMAZAHL:
                         returntype = typeof(double);
                         break;
-                    case SymbolTyp.ZEICHENKETTE:
+                    case SymbolTyp.TEXT:
                         returntype = typeof(string);
                         break;
-                    case SymbolTyp.ZEICHEN:
+                    case SymbolTyp.BUCHSTABE:
                         returntype = typeof(char);
                         break;
                     case SymbolTyp.BOOLEAN:
                         returntype = typeof(bool);
+                        break;
+                    case SymbolTyp.ZAHLEN:
+                        returntype = typeof(int[]);
+                        break;
+                    case SymbolTyp.KOMMAZAHLEN:
+                        returntype = typeof(double[]);
+                        break;
+                    case SymbolTyp.TEXTE:
+                        returntype = typeof(string[]);
+                        break;
+                    case SymbolTyp.BUCHSTABEN:
+                        returntype = typeof(char[]);
+                        break;
+                    case SymbolTyp.BOOLEANS:
+                        returntype = typeof(bool[]);
                         break;
                     default:
                         throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeInvalid);

@@ -50,7 +50,7 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Zeichen : IAufrufbar
+        public class Buchstabe : IAufrufbar
         {
             public int Arity => 1;
 
@@ -73,12 +73,12 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "einen Zeichen"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "einem Buchstaben"));
                 }
             }
         }
 
-        public class Zeichenkette : IAufrufbar
+        public class Text : IAufrufbar
         {
             public int Arity => 1;
 
@@ -90,7 +90,7 @@ namespace DDP.Eingebaute_Funktionen
                 }
                 catch
                 {
-                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "eine Zeichenkette"));
+                    throw new Laufzeitfehler(null, Fehlermeldungen.castInvalid(Erweiterungen.Stringify(arguments[0]), "einem Text"));
                 }
             }
         }

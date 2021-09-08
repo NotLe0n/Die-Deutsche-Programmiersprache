@@ -32,10 +32,10 @@ namespace DDP
         {
             try
             {
-                if (Match(DER)) return VarDeclaration(DER);
-                if (Match(DIE)) return Match(FUNKTION) ? Funktion() : VarDeclaration(DIE);
+                if (Match(DER)) return VarDeklaration(DER);
+                if (Match(DIE)) return Match(FUNKTION) ? Funktion() : VarDeklaration(DIE);
 
-                if (Match(DAS)) return VarDeclaration(DAS);
+                if (Match(DAS)) return VarDeklaration(DAS);
 
                 return Anweisung();
             }
@@ -78,7 +78,7 @@ namespace DDP
             // "Typ von n bis n" syntax
             Anweisung.Var initializer;
             Ausdruck min;
-            if (Match(out Symbol matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZEICHEN))
+            if (Match(out Symbol matched, ZAHL, KOMMAZAHL, TEXT, BUCHSTABE))
             {
                 Symbol name = Consume(IDENTIFIER, Fehlermeldungen.varNameExpected);
                 Consume(VON, Fehlermeldungen.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
@@ -159,48 +159,54 @@ namespace DDP
             return stmt;
         }
 
-        private Anweisung VarDeclaration(SymbolTyp artikel)
+        private Anweisung VarDeklaration(SymbolTyp artikel)
         {
-            // der Boolean/die Zahl/die Kommazahl/die Zeichenkette/das Zeichen x ist (wahr wenn) y.
+            // der Boolean/die Zahl/die Kommazahl/der Text/der Buchstabe/der Boolean x ist (wahr wenn) y.
 
             Symbol type = CheckArtikel(artikel);
             Symbol name = Consume(IDENTIFIER, Fehlermeldungen.varNameExpected);
 
             Ausdruck initializer = null;
-            if (Match(IST))
+            if (type.typ == BOOLEAN || type.typ == ZAHL || type.typ == KOMMAZAHL || type.typ == TEXT || type.typ == BUCHSTABE)
             {
-                // falls zu einem Boolean zugewiesen wird, braucht der Syntax: "wahr/falsch wenn"
-                bool negate = false;
-                if (type.typ == BOOLEAN)
+                if (Match(IST))
                 {
-                    if (Match(out Symbol matched, WAHR, FALSCH))
+                    // falls zu einem Boolean zugewiesen wird, braucht der Syntax: "wahr/falsch wenn"
+                    bool negate = false;
+                    if (type.typ == BOOLEAN)
                     {
-                        if (Match(WENN))
+                        if (Match(out Symbol matched, WAHR, FALSCH))
                         {
-                            if (matched.typ == FALSCH)
+                            if (Match(WENN))
                             {
-                                negate = true;
+                                if (matched.typ == FALSCH)
+                                {
+                                    negate = true;
+                                }
                             }
+                            else current--;
                         }
-                        else current--;
+                        else Error(Peek(), "fehlt wahr/falsch wenn");
                     }
-                    else Error(Peek(), "fehlt wahr/falsch wenn");
-                }
 
-                initializer = Ausdruck();
+                    initializer = Ausdruck();
 
-                // falls "der Boolean x ist falsch wenn y" wird y negiert
-                if (negate)
-                {
-                    initializer = new Ausdruck.Unär(new Symbol(NICHT, "nicht", null, name.zeile, name.position, depth), initializer);
+                    // falls "der Boolean x ist falsch wenn y" wird y negiert
+                    if (negate)
+                    {
+                        initializer = new Ausdruck.Unär(new Symbol(NICHT, "nicht", null, name.zeile, name.position, depth), initializer);
+                    }
                 }
+                else Error(Peek(), "nach dem variablen name muss ein 'ist' stehen!");
             }
-
-            if (Match(SIND))
+            else
             {
-                initializer = Ausdruck();
+                if (Match(SIND))
+                {
+                    initializer = Ausdruck();
+                }
+                else Error(Peek(), "nach dem variablen name einer Array deklaration muss ein 'sind' stehen!");
             }
-
             Consume(PUNKT, Fehlermeldungen.dotAfterVarDeclaration);
             return new Anweisung.Var(artikel, type, name, initializer);
         }
@@ -211,21 +217,20 @@ namespace DDP
             switch (artikel)
             {
                 case DER:
-                    type = Consume(BOOLEAN, Fehlermeldungen.wrongArtikel("'der'", "zum Typ Boolean"));
-                    break;
-                case DIE:
-                    if (Match(out var matched, ZAHL, KOMMAZAHL, ZEICHENKETTE, ZAHLEN, KOMMAZAHLEN, BOOLEANS, ZEICHENKETTEN, ZEICHEN))
+                    if (Match(out var matched, BOOLEAN, BUCHSTABE, TEXT))
                     {
                         type = matched;
+                        break;
                     }
-                    else
+                    else throw Error(Previous(), Fehlermeldungen.wrongArtikel("'der'", "zu den Typen Boolean, Buchstabe, oder Text"));
+                case DIE:
+                    if (Match(out var matched2, ZAHL, KOMMAZAHL, ZAHLEN, KOMMAZAHLEN, BOOLEANS, TEXTE, BUCHSTABEN))
                     {
-                        throw Error(Previous(), Fehlermeldungen.wrongArtikel("'die'", "zu den Typen Zahl, Kommazahl, oder Zeichenkette"));
+                        type = matched2;
+                        break;
                     }
-                    break;
+                    else throw Error(Previous(), Fehlermeldungen.wrongArtikel("'die'", "zu den Typen Zahl, Kommazahl, Zahlen, Kommazahlen, Booleans, Texte, oder Buchstaben"));
                 case DAS:
-                    type = Consume(ZEICHEN, Fehlermeldungen.wrongArtikel("'das'", "zum Typ Zeichen"));
-                    break;
                 default:
                     throw Error(Previous(), Fehlermeldungen.noArtikel);
             }
@@ -279,7 +284,7 @@ namespace DDP
                     Error(Peek(), Fehlermeldungen.tooManyArguments);
                 }
 
-                if (Match(ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
+                if (Match(ZAHL, KOMMAZAHL, BOOLEAN, BUCHSTABE, TEXT, ZAHLEN, KOMMAZAHLEN, BOOLEANS, TEXTE, BUCHSTABEN))
                 {
                     parameters.Add(Consume(IDENTIFIER, Fehlermeldungen.argumentNameExpected));
                 }
@@ -291,7 +296,7 @@ namespace DDP
             if (Match(VOM))
             {
                 Consume(TYP, Fehlermeldungen.tokenMissing("einer vom Anweisung", "ein Typ"));
-                if (Match(out Symbol match, ZAHL, KOMMAZAHL, BOOLEAN, CHAR, ZEICHENKETTE))
+                if (Match(out Symbol match, ZAHL, KOMMAZAHL, BOOLEAN, BUCHSTABE, TEXT, ZAHLEN, KOMMAZAHLEN, BOOLEANS, TEXTE, BUCHSTABEN))
                 {
                     typ = match;
                 }

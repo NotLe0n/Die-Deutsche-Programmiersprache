@@ -30,16 +30,14 @@ namespace DDP
                 return boolean ? "wahr" : "falsch";
             }
 
-            if (obj is System.Array)
+            if (obj is System.Array arr)
             {
-                var arr = obj as object[];
-
                 string str = "[";
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    if (arr[i] is string) str += '"';
-                    str += Stringify(arr[i]);
-                    if (arr[i] is string) str += '"';
+                    if (arr.GetValue(i) is string) str += '"';
+                    str += Stringify(arr.GetValue(i));
+                    if (arr.GetValue(i) is string) str += '"';
 
                     if (i + 1 < arr.Length)
                         str += "; ";

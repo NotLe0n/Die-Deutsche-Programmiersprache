@@ -23,12 +23,13 @@ namespace DDP
             { "Zahl", ZAHL },
             { "Kommazahl", KOMMAZAHL },
             { "Boolean", BOOLEAN },
-            { "Zeichenkette", ZEICHENKETTE },
-            { "Zeichen", ZEICHEN },
+            { "Text", TEXT },
+            { "Buchstabe", BUCHSTABE },
             { "Zahlen", ZAHLEN },
             { "Kommazahlen", KOMMAZAHLEN },
-            { "Zeichenketten", ZEICHENKETTEN },
+            { "Texte", TEXTE },
             { "Booleans", BOOLEANS },
+            { "Buchstaben", BUCHSTABEN },
 
             // boolean
             { "wahr", WAHR },
@@ -309,14 +310,20 @@ namespace DDP
                 return;
             }
 
-            var li = new List<object>();
+            object li = null;
+            if (type == typeof(int)) li = new List<int>();
+            else if (type == typeof(double)) li = new List<double>();
+            else if (type == typeof(char)) li = new List<char>();
+            else if (type == typeof(string)) li = new List<string>();
+            else if (type == typeof(bool)) li = new List<bool>();
+
             foreach (var entry in list)
             {
-                if (type == typeof(int)) li.Add(int.Parse(entry));
-                else if (type == typeof(double)) li.Add(double.Parse(entry, NumberStyles.Float, new CultureInfo("de-DE")));
-                else if (type == typeof(char)) li.Add(entry[0]);
-                else if (type == typeof(string)) li.Add(entry);
-                else if (type == typeof(bool)) li.Add(entry == "wahr" ? true : entry == "falsch" ? false : null);
+                if (type == typeof(int)) (li as List<int>).Add(int.Parse(entry));
+                else if (type == typeof(double)) (li as List<double>).Add(double.Parse(entry, NumberStyles.Float, new CultureInfo("de-DE")));
+                else if (type == typeof(char)) (li as List<char>).Add(entry[1]);
+                else if (type == typeof(string)) (li as List<string>).Add(entry[1..^1]);
+                else if (type == typeof(bool)) (li as List<bool?>).Add(entry == "wahr" ? true : entry == "falsch" ? false : null);
             }
 
             if (Advance() != ']')
@@ -325,11 +332,11 @@ namespace DDP
                 return;
             }
 
-            if (type == typeof(int)) AddToken(INTARR, li.ToArray());
-            else if (type == typeof(double)) AddToken(FLOATARR, li.ToArray());
-            else if (type == typeof(char)) AddToken(CHARARR, li.ToArray());
-            else if (type == typeof(string)) AddToken(STRINGARR, li.ToArray());
-            else if (type == typeof(bool)) AddToken(BOOLEANARR, li.ToArray());
+            if (type == typeof(int)) AddToken(INTARR, (li as List<int>).ToArray());
+            else if (type == typeof(double)) AddToken(FLOATARR, (li as List<double>).ToArray());
+            else if (type == typeof(char)) AddToken(CHARARR, (li as List<char>).ToArray());
+            else if (type == typeof(string)) AddToken(STRINGARR, (li as List<string>).ToArray());
+            else if (type == typeof(bool)) AddToken(BOOLEANARR, (li as List<bool>).ToArray());
         }
 
         /// <summary>
