@@ -12,7 +12,12 @@ namespace DDP.Eingebaute_Funktionen
 
         public object Aufrufen(Interpreter interpreter, List<object> argumente)
         {
-            Thread.Sleep((int)((double)argumente[0] * 1000));
+            if (argumente[0] is not int or double)
+                throw new Laufzeitfehler(null, "warte() argument nimmt nur zahl oder kommazahl");
+
+            var arg = Convert.ToDouble(argumente[0]);
+
+            Thread.Sleep((int)(arg * 1000));
             return null;
         }
     }
