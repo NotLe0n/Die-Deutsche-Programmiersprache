@@ -42,6 +42,7 @@ namespace DDP
             globals.Define("Länge", new Arrays.Länge());
             globals.Define("Spalten", new Stringmanipulation.Spalten());
             globals.Define("Zuschneiden", new Stringmanipulation.Zuschneiden());
+            globals.Define("warte", new Warte());
         }
 
         public void Interpret(List<Anweisung> statements)
