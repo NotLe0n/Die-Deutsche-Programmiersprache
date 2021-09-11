@@ -27,7 +27,12 @@ namespace DDP
 
             for (int i = 0; i < declaration.argumente.Count; i++)
             {
-                environment.Define(declaration.argumente[i].lexeme, arguments[i]);
+                if (arguments[i].GetType() != SymbolTypZuTyp(declaration.argumente[i].typ.typ))
+                {
+                    throw new Laufzeitfehler(declaration.name, "Falscher Argument typ!");
+                }
+
+                environment.Define(declaration.argumente[i].arg.lexeme, arguments[i]);
             }
 
             try
@@ -36,56 +41,31 @@ namespace DDP
             }
             catch (Rückgabe returnValue)
             {
-                if (returnValue == null)
+                if (returnValue == null || returnValue.wert.GetType() != SymbolTypZuTyp(declaration.typ.typ))
                     throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeWrong);
 
-                System.Type returntype;
-                switch (declaration.typ.typ)
-                {
-                    case SymbolTyp.ZAHL:
-                        returntype = typeof(int);
-                        break;
-                    case SymbolTyp.KOMMAZAHL:
-                        returntype = typeof(double);
-                        break;
-                    case SymbolTyp.TEXT:
-                        returntype = typeof(string);
-                        break;
-                    case SymbolTyp.BUCHSTABE:
-                        returntype = typeof(char);
-                        break;
-                    case SymbolTyp.BOOLEAN:
-                        returntype = typeof(bool);
-                        break;
-                    case SymbolTyp.ZAHLEN:
-                        returntype = typeof(int[]);
-                        break;
-                    case SymbolTyp.KOMMAZAHLEN:
-                        returntype = typeof(double[]);
-                        break;
-                    case SymbolTyp.TEXTE:
-                        returntype = typeof(string[]);
-                        break;
-                    case SymbolTyp.BUCHSTABEN:
-                        returntype = typeof(char[]);
-                        break;
-                    case SymbolTyp.BOOLEANS:
-                        returntype = typeof(bool[]);
-                        break;
-                    default:
-                        throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeInvalid);
-                }
-                if (returnValue.wert.GetType() == returntype)
-                {
-                    return returnValue.wert;
-                }
-                else
-                {
-                    throw new Laufzeitfehler(declaration.name, Fehlermeldungen.returnTypeWrong);
-                }
+                return returnValue.wert;
             }
 
             return null;
+        }
+
+        private System.Type SymbolTypZuTyp(SymbolTyp symbolTyp)
+        {
+            return symbolTyp switch
+            {
+                SymbolTyp.ZAHL => typeof(int),
+                SymbolTyp.KOMMAZAHL => typeof(double),
+                SymbolTyp.TEXT => typeof(string),
+                SymbolTyp.BUCHSTABE => typeof(char),
+                SymbolTyp.BOOLEAN => typeof(bool),
+                SymbolTyp.ZAHLEN => typeof(int[]),
+                SymbolTyp.KOMMAZAHLEN => typeof(double[]),
+                SymbolTyp.TEXTE => typeof(string[]),
+                SymbolTyp.BUCHSTABEN => typeof(char[]),
+                SymbolTyp.BOOLEANS => typeof(bool[]),
+                _ => throw new Laufzeitfehler(declaration.name, "Ungültiger Typ!"),
+            };
         }
     }
 }

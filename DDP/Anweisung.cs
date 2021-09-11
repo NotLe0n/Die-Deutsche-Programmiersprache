@@ -74,7 +74,7 @@ namespace DDP
 
         public class Funktion : Anweisung
         {
-            public Funktion(Symbol name, List<Symbol> argumente, Symbol typ, List<Anweisung> körper)
+            public Funktion(Symbol name, List<(Symbol typ, Symbol arg)> argumente, Symbol typ, List<Anweisung> körper)
             {
                 this.name = name;
                 this.argumente = argumente;
@@ -88,7 +88,7 @@ namespace DDP
             }
 
             public readonly Symbol name;
-            public readonly List<Symbol> argumente;
+            public readonly List<(Symbol typ, Symbol arg)> argumente;
             public readonly Symbol typ;
             public readonly List<Anweisung> körper;
         }

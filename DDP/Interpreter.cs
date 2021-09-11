@@ -301,7 +301,7 @@ namespace DDP
 
             Type typ;
             object left, right;
-            if (_left is not object[])
+            if (_left is not Array)
             {
                 typ = CheckOperandTypes(expr.op, _left, _right);
 
@@ -383,7 +383,7 @@ namespace DDP
                     if (typ == typeof(int)) return (int)left >> (int)right;
                     throw new Laufzeitfehler(expr.op, Fehlermeldungen.opOnlyNum);
                 case STELLE:
-                    if ((left as object[]).Length > (int)right) return (left as object[])[(int)right];
+                    if ((left as Array).Length > (int)right) return (left as Array).GetValue((int)right);
                     throw new Laufzeitfehler(expr.op, "Index außerhalb des Arrays");
             }
 

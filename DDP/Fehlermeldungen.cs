@@ -25,6 +25,7 @@ namespace DDP
         public const string returnTypeInvalid = "Ungültiger Rückgabetyp!";
         public const string returnTypeWrong = "Falscher Rückgabetyp!";
         public const string returnNotInFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion vorkommen!";
+        public const string returnInUntypedFunc = "Eine Rückgabe-Anweisung kann nur in einer Funktion mit einem Rückgabetyp vorkommen!";
         public const string returnMissing = "Eine Funktion mit einem Rückgabe typ braucht eine Rückgabe Anweisung!";
         public const string expressionMissing = "Ausdruck erwartet!";
         public const string charTooLong = "Ein Buchstabe kann nur einen zeichen groß sein! Benutzte einen Text wenn du mehr willst!";

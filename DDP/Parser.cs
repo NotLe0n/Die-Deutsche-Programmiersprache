@@ -272,7 +272,7 @@ namespace DDP
         {
             Symbol name = Consume(IDENTIFIER, Fehlermeldungen.funcNameExpected);
             Symbol typ = null;
-            List<Symbol> parameters = new();
+            List<(Symbol typ, Symbol arg)> parameters = new();
 
             // Argumente
             Consume(L_KLAMMER, Fehlermeldungen.tokenMissing("dem Funktionsname", "eine Klammer auf"));
@@ -284,9 +284,9 @@ namespace DDP
                     Error(Peek(), Fehlermeldungen.tooManyArguments);
                 }
 
-                if (Match(ZAHL, KOMMAZAHL, BOOLEAN, BUCHSTABE, TEXT, ZAHLEN, KOMMAZAHLEN, BOOLEANS, TEXTE, BUCHSTABEN))
+                if (Match(out Symbol matched, ZAHL, KOMMAZAHL, BOOLEAN, BUCHSTABE, TEXT, ZAHLEN, KOMMAZAHLEN, BOOLEANS, TEXTE, BUCHSTABEN))
                 {
-                    parameters.Add(Consume(IDENTIFIER, Fehlermeldungen.argumentNameExpected));
+                    parameters.Add((matched, Consume(IDENTIFIER, Fehlermeldungen.argumentNameExpected)));
                 }
             } while (Match(KOMMA));
 
@@ -321,6 +321,14 @@ namespace DDP
                         return new Anweisung.Funktion(name, parameters, typ, body);
                 }
                 Error(name, Fehlermeldungen.returnMissing);
+            }
+            else
+            {
+                foreach (var stmt in body)
+                {
+                    if (stmt is Anweisung.Rückgabe)
+                        Error(name, Fehlermeldungen.returnInUntypedFunc);
+                }
             }
 
             return new Anweisung.Funktion(name, parameters, typ, body);

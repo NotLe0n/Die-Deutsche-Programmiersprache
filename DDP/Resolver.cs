@@ -44,10 +44,10 @@ namespace DDP
             currentFunction = type;
 
             BeginScope();
-            foreach (Symbol param in function.argumente)
+            foreach ((Symbol typ, Symbol arg) param in function.argumente)
             {
-                Declare(param);
-                Define(param);
+                Declare(param.arg);
+                Define(param.arg);
             }
             Resolve(function.körper);
             EndScope();
