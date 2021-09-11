@@ -300,9 +300,9 @@ namespace DDP
 
             System.Type type;
             if (list.All(x => x.IstNumerisch() && !x.Contains(','))) type = typeof(int);
-            else if (list.All(x => x.Contains(','))) type = typeof(double);
-            else if (list.All(x => x.Contains('"'))) type = typeof(string);
-            else if (list.All(x => x.Contains('\''))) type = typeof(char);
+            else if (list.All(x => x.IstNumerisch())) type = typeof(double);
+            else if (list.All(x => x.StartsWith('"'))) type = typeof(string);
+            else if (list.All(x => x.StartsWith('\''))) type = typeof(char);
             else if (list.All(x => x == "wahr" || x == "falsch")) type = typeof(bool);
             else
             {

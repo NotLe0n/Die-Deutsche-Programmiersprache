@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace DDP
 {
@@ -18,7 +19,8 @@ namespace DDP
 
         public static bool IstNumerisch(this string str)
         {
-            return str.ToCharArray().All(x => char.IsDigit(x));
+            bool match = str == Regex.Match(str, "-?(\\d+,?\\d*)").Value;
+            return match;
         }
 
         public static string Stringify(object obj)

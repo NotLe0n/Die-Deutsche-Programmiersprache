@@ -43,6 +43,13 @@ namespace DDP
             globals.Define("Spalten", new Stringmanipulation.Spalten());
             globals.Define("Zuschneiden", new Stringmanipulation.Zuschneiden());
             globals.Define("warte", new Warte());
+            globals.Define("existiertDatei", new IO.ExistiertDatei());
+            globals.Define("leseDatei", new IO.LeseDatei());
+            globals.Define("leseBytes", new IO.LeseBytes());
+            globals.Define("schreibeDatei", new IO.SchreibeDatei());
+            globals.Define("schreibeBytes", new IO.SchreibeBytes());
+            globals.Define("bearbeiteDatei", new IO.BearbeiteDatei());
+            globals.Define("bearbeiteBytes", new IO.BearbeiteBytes());
         }
 
         public void Interpret(List<Anweisung> statements)
