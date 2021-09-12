@@ -609,20 +609,13 @@ namespace DDP
                 return new Ausdruck.Unär(op, right);
             }
 
-            // "der Betrag von x"
-            if (Match(DER))
+            // "Betrag von x"
+            if (Match(BETRAG))
             {
-                if (Match(BETRAG))
-                {
-                    Symbol op = Previous();
-                    Consume(VON, Fehlermeldungen.tokenMissing("dem Betrag operator", "'von'"));
-                    Ausdruck right = Unär();
-                    return new Ausdruck.Unär(op, right);
-                }
-                else
-                {
-                    current--;
-                }
+                Symbol op = Previous();
+                Consume(VON, Fehlermeldungen.tokenMissing("dem Betrag operator", "'von'"));
+                Ausdruck right = Unär();
+                return new Ausdruck.Unär(op, right);
             }
 
             // "nicht/- x"
