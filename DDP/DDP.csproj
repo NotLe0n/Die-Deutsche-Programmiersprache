@@ -6,6 +6,7 @@
     <AssemblyName>DDP</AssemblyName>
     <RootNamespace>DDP</RootNamespace>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
 </Project>
