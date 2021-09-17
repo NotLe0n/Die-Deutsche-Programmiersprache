@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    class ParseFehler : Exception
+    internal class ParseFehler : Exception
     {
         public readonly Symbol symbol;
 

@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    public abstract class Ausdruck
+    internal abstract class Ausdruck
     {
         public abstract R Accept<R>(IVisitor<R> visitor);
 

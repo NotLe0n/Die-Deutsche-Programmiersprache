@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    interface IAufrufbar
+    internal interface IAufrufbar
     {
         int Arity { get; }
 

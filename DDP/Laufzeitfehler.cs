@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    public class Laufzeitfehler : Exception
+    internal class Laufzeitfehler : Exception
     {
         public readonly Symbol symbol;
 

@@ -1,6 +1,6 @@
 ﻿namespace DDP
 {
-    public enum SymbolTyp
+    internal enum SymbolTyp
     {
         // Einzelne Charaktere
         L_KLAMMER, R_KLAMMER, KOMMA, PUNKT, BANG_MINUS, DOPPELPUNKT,

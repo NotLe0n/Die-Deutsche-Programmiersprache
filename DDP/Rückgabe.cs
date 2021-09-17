@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    class Rückgabe : Exception
+    internal class Rückgabe : Exception
     {
         public readonly object wert;
 

@@ -1,6 +1,6 @@
 ﻿namespace DDP
 {
-    public class Symbol
+    internal class Symbol
     {
         public SymbolTyp typ;
         public readonly string lexeme;

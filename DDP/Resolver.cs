@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    class Resolver : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
+    internal class Resolver : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
     {
         private readonly Interpreter interpreter;
         private readonly Stack<Dictionary<string, bool>> scopes = new();

@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    public class Environment
+    internal class Environment
     {
         public readonly Environment enclosing;
         private readonly Dictionary<string, object> werte = new();
