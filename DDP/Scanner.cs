@@ -56,7 +56,9 @@ namespace DDP
             { "kleiner", KLEINER },
             { "kleiner als, oder gleich", KLEINER_GLEICH },
             { "größer", GRÖßER },
+            { "groesser", GRÖßER }, // alternativ
             { "größer als, oder gleich", GRÖßER_GLEICH },
+            { "groesser als, oder gleich", GRÖßER_GLEICH }, // alternativ
             { "als", ALS },
 
             // bitweise operatoren
@@ -99,12 +101,14 @@ namespace DDP
 
             // schleifen
             { "für", FÜR },
+            { "fuer", FÜR }, // alternativ
             { "solange", SOLANGE },
             { "mache", MACHE },
             { "jede", JEDE },
             { "von", VON },
             { "bis", BIS },
             { "schrittgröße", SCHRITTGRÖßE },
+            { "schrittgroesse", SCHRITTGRÖßE }, // alternativ
             { "mit", MIT },
 
             // funktionen
@@ -112,6 +116,7 @@ namespace DDP
             { "macht", MACHT },
             { "gib", GIB },
             { "zurück", ZURÜCK },
+            { "zurueck", ZURÜCK }, // alternativ
             { "vom", VOM },
             { "Typ", TYP }
         };
