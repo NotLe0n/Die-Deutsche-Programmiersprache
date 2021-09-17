@@ -43,6 +43,8 @@ lese(). // damit sich die Konsole nicht sofort schließt
 ```
 ***
 ### Die Deutsche Programmiersprache in C# benutzen.
+
+(Zuvor muss zuerst die DDP-Codesammlung/Library in das Projekt hinzugefügt werden.)
 ```c#
 string meinTestString = @"Dein Code"
 
