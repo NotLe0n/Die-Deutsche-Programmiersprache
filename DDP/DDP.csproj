@@ -7,6 +7,28 @@
     <RootNamespace>DDP</RootNamespace>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <Configurations>LibraryRelease;LibraryDebug;ExeRelease;ExeDebug</Configurations>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'ExeRelease' ">
+    <DefineConstants>TRACECOREAPP;EXE</DefineConstants>
+    <Optimize Condition=" '$(Optimize)' == '' ">true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'ExeDebug' ">
+    <DefineConstants>TRACECOREAPP;EXE</DefineConstants>
+    <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+    <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'LibraryRelease' ">
+    <DefineConstants>TRACECOREAPP;LIBRARY</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'LibraryDebug' ">
+    <DefineConstants>TRACECOREAPP;LIBRARY</DefineConstants>
   </PropertyGroup>
 
 </Project>
