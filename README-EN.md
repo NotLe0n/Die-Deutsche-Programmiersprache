@@ -5,7 +5,7 @@
      align="right"
 />
 
-"Die Deutsche Programmiersprache" **(DDP)** is a (joke-)programming language which was designed so that programs written in it read like (almost) proper german.
+"Die Deutsche Programmiersprache" **(DDP)** is a (joke-)programming language by NotLe0n and bafto, which was designed so that programs written in it read like (almost) proper german.
 
 There exist two implementations, which you can find here:
 - [DDP in c#](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache)
@@ -39,4 +39,15 @@ für jede Zahl i von 1 bis 100, mache:
         sonst:
             schreibeZeile(i).
 lese(). // damit sich die Konsole nicht sofort schließt
+```
+
+***
+### Use DDP in C# 
+
+(The DDP library has to be added to the project beforehand.)
+```c#
+string myTestString = @"Your code"
+
+DDP.DDP.Ausführen(myTestString); // run code string.
+DDP.DDP.DateiAusführen(pathToFile); // run code file.
 ```
