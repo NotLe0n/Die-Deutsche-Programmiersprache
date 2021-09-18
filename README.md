@@ -41,6 +41,16 @@ für jede Zahl i von 1 bis 100, mache:
             schreibeZeile(i).
 lese(). // damit sich die Konsole nicht sofort schließt
 ```
+***
+### Die Deutsche Programmiersprache in C# benutzen.
+
+(Zuvor muss zuerst die DDP-Codesammlung/Library in das Projekt hinzugefügt werden.)
+```c#
+string meinTestString = @"Dein Code"
+
+DDP.DDP.Ausführen(meinTestString); // Codestring ausführen.
+DDP.DDP.DateiAusführen(pfadZurDatei); // Codedatei ausführen.
+```
 
 ***
 #### [english README](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache/blob/master/README-EN.md)

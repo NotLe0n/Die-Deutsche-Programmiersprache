@@ -7,7 +7,7 @@ using static DDP.SymbolTyp;
 
 namespace DDP
 {
-    class Scanner
+    internal class Scanner
     {
         private readonly string quelle;
         private readonly List<Symbol> symbole = new();

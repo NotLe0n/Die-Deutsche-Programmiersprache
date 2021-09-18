@@ -4,13 +4,13 @@ using System.IO;
 
 namespace DDP
 {
-    class DDP
+    public class DDP
     {
         private static readonly Interpreter interpreter = new();
 
         private static bool hatteFehler = false;
         private static bool hatteLaufzeitfehler = false;
-        public static string dateiPfad;
+        internal static string dateiPfad;
 
         static void Main(string[] args)
         {
@@ -29,7 +29,7 @@ namespace DDP
                 Console.Read();
         }
 
-        private static void DateiAusführen(string pfad)
+        public static void DateiAusführen(string pfad)
         {
             dateiPfad = pfad;
             string str = File.ReadAllText(pfad);
@@ -39,7 +39,7 @@ namespace DDP
             if (hatteLaufzeitfehler) return;
         }
 
-        private static void Ausführen(string quelle)
+        public static void Ausführen(string quelle)
         {
             Scanner scanner = new Scanner(quelle);
             List<Symbol> tokens = scanner.ScanTokens();
@@ -59,12 +59,12 @@ namespace DDP
             interpreter.Interpret(statements);
         }
 
-        public static void Fehler(int zeile, string nachricht)
+        internal static void Fehler(int zeile, string nachricht)
         {
             FehlerMelden(zeile, 0, "", nachricht);
         }
 
-        public static void Fehler(Symbol token, string nachricht)
+        internal static void Fehler(Symbol token, string nachricht)
         {
             if (token.typ == SymbolTyp.EOF)
             {
@@ -76,7 +76,7 @@ namespace DDP
             }
         }
 
-        public static void Laufzeitfehler(Laufzeitfehler fehler)
+        internal static void Laufzeitfehler(Laufzeitfehler fehler)
         {
             Console.ForegroundColor = ConsoleColor.Red;
 

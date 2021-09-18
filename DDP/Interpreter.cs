@@ -6,7 +6,7 @@ using static DDP.SymbolTyp;
 
 namespace DDP
 {
-    class Interpreter : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
+    internal class Interpreter : Ausdruck.IVisitor<object>, Anweisung.IVisitor<object>
     {
         public readonly Environment globals = new();
         private Environment environment;

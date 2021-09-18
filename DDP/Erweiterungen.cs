@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    public static class Erweiterungen
+    internal static class Erweiterungen
     {
         public static bool IstDeutsch(this char c)
         {

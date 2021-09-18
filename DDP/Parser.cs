@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-
 using static DDP.SymbolTyp;
 
 namespace DDP
 {
-    public class Parser
+    internal class Parser
     {
         private readonly List<Symbol> symbole;
         private int current = 0;
@@ -12,12 +11,12 @@ namespace DDP
 
         private bool IsAtEnd => Peek().typ == EOF;
 
-        public Parser(List<Symbol> symbole)
+        internal Parser(List<Symbol> symbole)
         {
             this.symbole = symbole;
         }
 
-        public List<Anweisung> Parse()
+        internal List<Anweisung> Parse()
         {
             List<Anweisung> anweisungen = new();
             while (!IsAtEnd)
@@ -207,6 +206,7 @@ namespace DDP
                 }
                 else Error(Peek(), "nach dem variablen name einer Array deklaration muss ein 'sind' stehen!");
             }
+
             Consume(PUNKT, Fehlermeldungen.dotAfterVarDeclaration);
             return new Anweisung.Var(artikel, type, name, initializer);
         }
@@ -320,6 +320,7 @@ namespace DDP
                     if (stmt is Anweisung.Rückgabe)
                         return new Anweisung.Funktion(name, parameters, typ, body);
                 }
+
                 Error(name, Fehlermeldungen.returnMissing);
             }
             else
@@ -645,6 +646,7 @@ namespace DDP
                         {
                             Error(Peek(), Fehlermeldungen.tooManyArguments);
                         }
+
                         arguments.Add(Ausdruck());
                     } while (Match(KOMMA));
                 }
@@ -745,6 +747,7 @@ namespace DDP
                     return true;
                 }
             }
+
             matched = null;
             return false;
         }

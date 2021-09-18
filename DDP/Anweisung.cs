@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    public abstract class Anweisung
+    internal abstract class Anweisung
     {
         public abstract R Accept<R>(IVisitor<R> visitor);
 

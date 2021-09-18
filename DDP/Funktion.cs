@@ -2,7 +2,7 @@
 
 namespace DDP
 {
-    class Funktion : IAufrufbar
+    internal class Funktion : IAufrufbar
     {
         private readonly Anweisung.Funktion declaration;
         private readonly Environment closure;
