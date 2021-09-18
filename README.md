@@ -5,7 +5,7 @@
      align="right"
 />
 
-Die Deutsche Programmiersprache **(DDP)** ist eine (Witz-)Programmiersprache die so entworfen wurde, dass in ihr geschriebene Programme so gelesen werden können wie (annähernd) korrektes Deutsch.
+Die Deutsche Programmiersprache **(DDP)** ist eine (Witz-)Programmiersprache von NotLe0n und bafto, die so entworfen wurde, dass in ihr geschriebene Programme so gelesen werden können wie (annähernd) korrektes Deutsch.
 
 Momentan existieren zwei verschiedene Implementationen, die hier gefunden werden können:
 - [DDP in c#](https://github.com/NotLe0n/Die-Deutsche-Programmiersprache)
