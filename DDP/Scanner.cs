@@ -54,11 +54,11 @@ namespace DDP
             { "gleich", GLEICH },
             { "ungleich", UNGLEICH },
             { "kleiner", KLEINER },
-            { "kleiner als, oder gleich", KLEINER_GLEICH },
+            { "kleiner als, oder", KLEINER_GLEICH },
             { "größer", GRÖßER },
             { "groesser", GRÖßER }, // alternativ
-            { "größer als, oder gleich", GRÖßER_GLEICH },
-            { "groesser als, oder gleich", GRÖßER_GLEICH }, // alternativ
+            { "größer als, oder", GRÖßER_GLEICH },
+            { "groesser als, oder", GRÖßER_GLEICH }, // alternativ
             { "als", ALS },
 
             // bitweise operatoren
@@ -216,7 +216,7 @@ namespace DDP
                     }
                     else
                     {
-                        DDP.Fehler(zeile, "Unerwarteter character: " + c + " / " + (int)c);
+                        DDP.Fehler(zeile, "Unerwartetes Zeichen: " + c + " / " + (int)c);
                     }
                     break;
             }
@@ -227,8 +227,24 @@ namespace DDP
         /// </summary>
         private void StringLiteral()
         {
+            string wert = quelle;
+
             while (Peek() != '"' && !AmEnde)
             {
+                // Escape sequenz
+                if (Peek() == '\\')
+                {
+                    string seq = EscapeSequenz(wert);
+                    if (seq == null)
+                    {
+                        DDP.Fehler(zeile, "Ungültige Escape-Sequenz");
+                    }
+                    else
+                    {
+                        wert = seq;
+                        Advance();
+                    }
+                }
                 if (Peek() == '\n') zeile++;
                 Advance();
             }
@@ -243,7 +259,7 @@ namespace DDP
             Advance();
 
             // Trim the surrounding quotes.
-            string wert = quelle.Substring(start + 1, (current - start) - 2);
+            wert = wert.Substring(start + 1, (current - start) - 2);
             AddToken(STRING, wert);
         }
 
@@ -252,7 +268,24 @@ namespace DDP
             char? wert = null;
             if (Peek() != '\'' && !AmEnde)
             {
-                wert = Advance();
+                // Escape sequenz
+                if (Advance() == '\\')
+                {
+                    char? seq = EscapeSequenz();
+                    if (seq == null)
+                    {
+                        DDP.Fehler(zeile, "Ungültige Escape-Sequenz");
+                    }
+                    else
+                    {
+                        wert = seq;
+                        Advance();
+                    }
+                }
+                else
+                {
+                    wert = Advance();
+                }
             }
 
             if (AmEnde)
@@ -266,9 +299,37 @@ namespace DDP
             DDP.Fehler(zeile, Fehlermeldungen.charTooLong);
 
             if (wert == null)
-            DDP.Fehler(zeile, "leerer zeichen");
+            DDP.Fehler(zeile, "leerer Buchstabe");
 
             AddToken(CHAR, wert);
+        }
+
+        private char? EscapeSequenz()
+        {
+            return Peek() switch
+            {
+                'n' => '\n',
+                'r' => '\r',
+                't' => '\t',
+                '\"' => '\"',
+                '\'' => '\'',
+                '\\' => '\\',
+                _ => null,
+            };
+        }
+
+        private string EscapeSequenz(string wert)
+        {
+            return Peek() switch
+            {
+                'n' => wert.Remove(current, 1).Insert(current, "\n"),
+                'r' => wert.Remove(current, 1).Insert(current, "\r"),
+                't' => wert.Remove(current, 1).Insert(current, "\t"),
+                '\"' => wert.Remove(current, 1).Insert(current, "\""),
+                '\'' => wert.Remove(current, 1).Insert(current, "\'"),
+                '\\' => wert.Remove(current, 1).Insert(current, "\\"),
+                _ => null,
+            };
         }
 
         /// <summary>
