@@ -41,6 +41,10 @@ namespace DDP.Eingebaute_Funktionen
                         if (double.TryParse(Erweiterungen.Stringify(arguments[0]), out double result))
                             return result;
                     }
+                    if (arguments[0] is char)
+                    {
+                        return (double)Convert.ToInt32(arguments[0]);
+                    }
                     return (double)Convert.ToDouble(arguments[0]);
                 }
                 catch
@@ -67,6 +71,11 @@ namespace DDP.Eingebaute_Funktionen
                     if (arguments[0] is string str)
                     {
                         return str[0];
+                    }
+
+                    if (arguments[0] is double num)
+                    {
+                        return (char)num;
                     }
 
                     return Convert.ToChar(arguments[0]);
@@ -114,6 +123,11 @@ namespace DDP.Eingebaute_Funktionen
                             return false;
                         }
                     }
+                    if (arguments[0] is char c)
+                    {
+                        return c == 'w';
+                    }
+
                     return Convert.ToBoolean(arguments[0]);
                 }
                 catch

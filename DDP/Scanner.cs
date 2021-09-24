@@ -269,8 +269,9 @@ namespace DDP
             if (Peek() != '\'' && !AmEnde)
             {
                 // Escape sequenz
-                if (Advance() == '\\')
+                if (Peek() == '\\')
                 {
+                    Advance();
                     char? seq = EscapeSequenz();
                     if (seq == null)
                     {
