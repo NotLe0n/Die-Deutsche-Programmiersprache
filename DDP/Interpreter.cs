@@ -214,6 +214,7 @@ namespace DDP
                 while (wert.Equals(true))
                 {
                     Execute(stmt.körper);
+                    wert = Evaluate(stmt.bedingung);
                 }
             }
             else
@@ -232,6 +233,7 @@ namespace DDP
                 do
                 {
                     Execute(stmt.körper);
+                    wert = Evaluate(stmt.bedingung);
                 }
                 while (wert.Equals(true));
             }
