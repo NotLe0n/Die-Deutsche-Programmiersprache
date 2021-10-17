@@ -132,7 +132,7 @@ namespace DDP
 
         public class Var : Anweisung
         {
-            public Var(SymbolTyp artikel, Symbol typ, Symbol name, global::DDP.Ausdruck initializierer)
+            public Var(Symbol typ, Symbol name, global::DDP.Ausdruck initializierer)
             {
                 this.typ = typ;
                 this.name = name;
@@ -147,7 +147,6 @@ namespace DDP
             public readonly Symbol name;
             public readonly global::DDP.Ausdruck initializierer;
             public readonly Symbol typ;
-            public readonly SymbolTyp artikel;
         }
 
         public class Solange : Anweisung

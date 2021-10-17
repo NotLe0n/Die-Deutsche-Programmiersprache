@@ -50,6 +50,8 @@ namespace DDP
             { "an", AN },
             { "Stelle", STELLE },
 
+            { "Stück", STÜCK },
+
             // bool'sche vergleichs operatoren
             { "gleich", GLEICH },
             { "ungleich", UNGLEICH },

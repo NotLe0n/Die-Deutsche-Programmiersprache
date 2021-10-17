@@ -1,7 +1,7 @@
 ﻿using DDP.Eingebaute_Funktionen;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using static DDP.SymbolTyp;
 
 namespace DDP
@@ -303,6 +303,21 @@ namespace DDP
             return wert;
         }
 
+        public object VisitStandartArrayExpr(Ausdruck.StandartArray expr)
+        {
+            int anzahl = (int)Evaluate(expr.anzahl);
+
+            return expr.typ.typ switch
+            {
+                ZAHLEN => new int[anzahl],
+                KOMMAZAHLEN => new double[anzahl],
+                BOOLEANS => new bool[anzahl],
+                BUCHSTABEN => new char[anzahl],
+                TEXTE => Enumerable.Repeat(string.Empty, anzahl).ToArray(),
+                _ => throw new Laufzeitfehler(expr.typ, "igendwas ist bei standart array schief gelaufen"),
+            };
+        }
+
         public object VisitBinaryExpr(Ausdruck.Binär expr)
         {
             object _left = Evaluate(expr.links);
@@ -488,6 +503,11 @@ namespace DDP
                     return NumberUnary(x => Math.Cosh(x));
                 case HYPERBELTANGENS:
                     return NumberUnary(x => Math.Tanh(x));
+                case STÜCK:
+                    if (rechts is not int)
+                        throw new Laufzeitfehler(expr.op, Fehlermeldungen.unaryOpWrongType("stück", "Zahlen"));
+
+                    return new int[(int)rechts];
             }
 
             // Unreachable.

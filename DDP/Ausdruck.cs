@@ -18,6 +18,7 @@ namespace DDP
             //R visitSetExpr(Set expr);
             //R visitSuperExpr(Super expr);
             //R visitThisExpr(This expr);
+            R VisitStandartArrayExpr(StandartArray expr);
             R VisitUnaryExpr(Unär expr);
             R VisitVariableExpr(Variable expr);
         }
@@ -45,6 +46,23 @@ namespace DDP
             public readonly Symbol name;
             public readonly Ausdruck stelle;
             public readonly Ausdruck wert;
+        }
+
+        public class StandartArray : Ausdruck
+        {
+            public StandartArray(Symbol typ, Ausdruck anzahl)
+            {
+                this.typ = typ;
+                this.anzahl = anzahl;
+            }
+
+            public override R Accept<R>(IVisitor<R> visitor)
+            {
+                return visitor.VisitStandartArrayExpr(this);
+            }
+
+            public readonly Symbol typ;
+            public readonly Ausdruck anzahl;
         }
 
         public class Binär : Ausdruck

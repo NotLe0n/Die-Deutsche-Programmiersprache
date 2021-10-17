@@ -58,18 +58,6 @@ namespace DDP
             return AusdruckAnweisung();
         }
 
-        private Anweisung AusdruckAnweisung()
-        {
-            Ausdruck ausdr = Ausdruck();
-            Consume(PUNKT, Fehlermeldungen.dotAfterExpression);
-            return new Anweisung.Ausdruck(ausdr);
-        }
-
-        private Ausdruck Ausdruck()
-        {
-            return Zuweisung();
-        }
-
         private Anweisung FürAnweisung()
         {
             Consume(JEDE, Fehlermeldungen.tokenMissing("einer für anweisung", "'jede'"));
@@ -83,7 +71,7 @@ namespace DDP
                 Consume(VON, Fehlermeldungen.tokenMissing("der Variablendeklaration in einer für anweisung", "'von'"));
                 min = Ausdruck();
 
-                initializer = new Anweisung.Var(DIE, matched, name, min);
+                initializer = new Anweisung.Var(matched, name, min);
             }
             else throw Error(Previous(), Fehlermeldungen.forNoVar);
 
@@ -203,12 +191,17 @@ namespace DDP
                 if (Match(SIND))
                 {
                     initializer = Ausdruck();
+
+                    if (Match(STÜCK))
+                    {
+                        initializer = new Ausdruck.StandartArray(type, initializer);
+                    }
                 }
                 else Error(Peek(), "nach dem variablen name einer Array deklaration muss ein 'sind' stehen!");
             }
 
             Consume(PUNKT, Fehlermeldungen.dotAfterVarDeclaration);
-            return new Anweisung.Var(artikel, type, name, initializer);
+            return new Anweisung.Var(type, name, initializer);
         }
 
         private Symbol CheckArtikel(SymbolTyp artikel)
@@ -364,6 +357,18 @@ namespace DDP
             depth--;
 
             return statements;
+        }
+
+        private Anweisung AusdruckAnweisung()
+        {
+            Ausdruck ausdr = Ausdruck();
+            Consume(PUNKT, Fehlermeldungen.dotAfterExpression);
+            return new Anweisung.Ausdruck(ausdr);
+        }
+
+        private Ausdruck Ausdruck()
+        {
+            return Zuweisung();
         }
 
         private Ausdruck Zuweisung()

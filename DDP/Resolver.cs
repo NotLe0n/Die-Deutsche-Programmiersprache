@@ -160,6 +160,12 @@ namespace DDP
             return null;
         }
 
+        public object VisitStandartArrayExpr(Ausdruck.StandartArray expr)
+        {
+            Resolve(expr.anzahl);
+            return null;
+        }
+
         public object VisitBinaryExpr(Ausdruck.Binär expr)
         {
             Resolve(expr.links);
