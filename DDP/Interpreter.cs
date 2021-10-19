@@ -260,12 +260,16 @@ namespace DDP
                     Execute(stmt.körper);
                 }
             }
-            else
+            else if (min > max)
             {
                 for (dynamic i = min; i >= max; i += inc)
                 {
                     Execute(stmt.körper);
                 }
+            }
+            else
+            {
+                Execute(stmt.körper);
             }
 
             return null;
