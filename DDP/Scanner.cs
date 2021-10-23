@@ -174,7 +174,11 @@ namespace DDP
                     }
                     if (Match('*'))
                     {
-                        while (!(Peek() == '*' && PeekNext() == '/') && !AmEnde) Advance();
+                        while (!(Peek() == '*' && PeekNext() == '/') && !AmEnde)
+                        {
+                            if (Advance() == '\n')
+                                zeile++;
+                        }
                         Advance();
                         Advance();
                     }
