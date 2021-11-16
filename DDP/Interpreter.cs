@@ -38,7 +38,7 @@ namespace DDP
             globals.Define("Einfügen", new Stringmanipulation.Einfügen());
             globals.Define("Entfernen", new Stringmanipulation.Entfernen());
             globals.Define("Enthält", new Stringmanipulation.Enthält());
-            globals.Define("Ersetzten", new Stringmanipulation.Ersetzten());
+            globals.Define("Ersetzen", new Stringmanipulation.Ersetzen());
             globals.Define("Länge", new Arrays.Länge());
             globals.Define("Spalten", new Stringmanipulation.Spalten());
             globals.Define("Zuschneiden", new Stringmanipulation.Zuschneiden());

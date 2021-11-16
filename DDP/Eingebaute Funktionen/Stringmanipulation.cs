@@ -33,7 +33,7 @@ namespace DDP.Eingebaute_Funktionen
             }
         }
 
-        public class Ersetzten : IAufrufbar
+        public class Ersetzen : IAufrufbar
         {
             public int Arity => 3;
 
