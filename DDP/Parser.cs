@@ -485,10 +485,13 @@ namespace DDP
             // "x logisch oder/und y"
             while (Match(LOGISCH))
             {
-                Ausdruck _expr = Term();
-                Symbol op = Advance();
-                Ausdruck right = Term();
-                return new Ausdruck.Binär(_expr, op, right);
+                if (!Check(NICHT))
+                {
+                    Ausdruck _expr = Term();
+                    Symbol op = Advance();
+                    Ausdruck right = Term();
+                    return new Ausdruck.Binär(_expr, op, right);
+                }
             }
 
             Ausdruck expr = Term();
