@@ -9,7 +9,7 @@ namespace DDP.Eingebaute_Funktionen
 
         public object Aufrufen(Interpreter interpreter, List<object> arguments)
         {
-            return Console.Read();
+            return (char)Console.Read();
         }
 
         public override string ToString() => "<native fn>";
