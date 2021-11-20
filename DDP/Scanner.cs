@@ -109,8 +109,8 @@ namespace DDP
             { "jede", JEDE },
             { "von", VON },
             { "bis", BIS },
-            { "schrittgröße", SCHRITTGRÖßE },
-            { "schrittgroesse", SCHRITTGRÖßE }, // alternativ
+            { "Schrittgröße", SCHRITTGRÖßE },
+            { "Schrittgroesse", SCHRITTGRÖßE }, // alternativ
             { "mit", MIT },
 
             // funktionen
