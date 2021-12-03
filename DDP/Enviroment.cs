@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DDP
 {
@@ -53,7 +54,7 @@ namespace DDP
         {
             if (werte.ContainsKey(name.lexeme))
             {
-                (werte[name.lexeme] as object[])[stelle] = value;
+                (werte[name.lexeme] as Array).SetValue(value, stelle);
                 return;
             }
 
@@ -94,8 +95,8 @@ namespace DDP
 
         public void AssignArrayAt(int distance, Symbol name, int stelle, object value)
         {
-            object[] arr = Ancestor(distance).werte[name.lexeme] as object[];
-            arr[stelle] = value;
+            Array arr = Ancestor(distance).werte[name.lexeme] as Array;
+            arr.SetValue(value, stelle);
         }
 
         public override string ToString()

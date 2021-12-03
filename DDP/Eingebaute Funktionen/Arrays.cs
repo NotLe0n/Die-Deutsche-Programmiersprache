@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DDP.Eingebaute_Funktionen
 {
@@ -10,7 +11,7 @@ namespace DDP.Eingebaute_Funktionen
 
             public object Aufrufen(Interpreter interpreter, List<object> argumente)
             {
-                if (argumente[0] is object[] arr)
+                if (argumente[0] is Array arr)
                     return arr.Length;
 
                 if (argumente[0] is string s)
