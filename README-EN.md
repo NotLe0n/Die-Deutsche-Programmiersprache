@@ -1,3 +1,5 @@
+# This repository has been moved [here](https://github.com/DDP-Projekt/Kompilierer). This version of DDP is now outdated!
+
 # Welcome to "Die Deutsche Programmiersprache"
 <img 
      src="https://user-images.githubusercontent.com/26361108/130243423-2e78015a-279a-4906-9804-c2f23a78f5b4.png" 
